@@ -1,0 +1,15 @@
+{
+  "files.associations": {
+    "errno.h": "c",
+    "sector_mm.h": "c",
+    "segment.h": "c",
+    "sched_x86.h": "c",
+    "page_x86.h": "c",
+    "mm_page.h": "c",
+    "type.h": "c",
+    "string.h": "c",
+    "sched.h": "c",
+    "address.h": "c",
+    "irq.h": "c"
+  }
+}
