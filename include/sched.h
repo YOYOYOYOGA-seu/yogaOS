@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-21 20:25:27
- * @LastEditTime 2020-03-09 05:48:40
+ * @LastEditTime 2020-03-10 02:05:49
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/include/sched.h
@@ -21,7 +21,7 @@
 #define SCHED_MAX_TASK_NAME_SIZE      15
 // PCB&ring0  L1 page tbl  L2 page tbl x2  stack
 #define TASK_DEFUALT_TIME_SLICE       15   //unit :system tick
-#define TASK_INIT_NEED_PAGE_NUM       5   
+#define TASK_INIT_NEED_PAGE_NUM       6   
 
 #define TASK_READY_LIST_MAX_VALUE     0xFFFFFFFF
 #define TASK_SUSP_LIST_MAX_VALUE     0xFFFFFFFF
@@ -31,7 +31,8 @@ typedef struct{
   volatile uint32_t status;
   //point to the physical stack base page in linear address space
   // don't represent the current top of stack(this well be direct recording by register)
-  void *pStack;
+  void *pStackPage;
+  void *retFuncPage;  //point to the page base addr which save the handle of task return(exit)
   pid_t  pid;    //prio 0 respect system task (for test when don't have fork() function)
   pid_t  pidStatic;
   uint32_t totalTimeSlice;  

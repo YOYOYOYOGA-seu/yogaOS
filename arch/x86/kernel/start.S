@@ -138,7 +138,7 @@ initIDT_defualt:
   mov $256, %ecx
 
 __loop_initIDT:
-  movl $irq_default, %eax
+  movl $0, %eax
   movw %ax, (%edi)
   shr $16, %eax
   movw %ax, 6(%edi)

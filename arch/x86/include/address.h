@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-15 22:02:03
- * @LastEditTime 2020-02-27 04:34:12
+ * @LastEditTime 2020-03-10 02:06:25
  * @LastEditors Shi Zhangkun
  * @Description 
  * 
@@ -169,8 +169,9 @@
 
 
 /* -------------------------- Linear address map ------------------------- */
+#define TASK_RETURN_HANDLER_ADDR        0x00000002             
 #define TASK_STACK_TOP                  0x00001000
-#define TASK_STACK_BASE                 0x003fffff   // stack growing down
+#define TASK_STACK_BASE                 0x00400000   // stack growing down
 #define TASK_CODE_START_ADDR            0x00400000
 #define PCB_BASE_ADDR                   0x3fc00000
 #define TASK_RING_0_STACK_TOP           0x3fc00400

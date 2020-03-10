@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-22 02:59:19
- * @LastEditTime 2020-03-08 10:03:26
+ * @LastEditTime 2020-03-10 06:33:29
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/arch/x86/kernel/sched/task_x86.c
@@ -14,8 +14,8 @@
 #include "segment.h"
 #include "mm_page.h"
 #include "string.h"
-
-
+extern void task_retHandler(void);
+extern void task_copyRetHandler(void *retFuncBase);
 /**
  * @brief  init the arch relevant struct in PCB
  * @note  x86 arch, contain LDT, TSS, LDT_selector
@@ -46,7 +46,10 @@ error_t task_initPCBArchRelevant(PCB_t *pPCB, void (*taskFunc)(void))
   mm_initDesc(&p->ldt[2], (uint32_t)NULL, 0xffffffff,DESC_DPL_3,DESC_TYPE_C,1);
   p->selLDTData = 0x08|SEL_TI_MASK|DESC_DPL_3;
   p->selLDTCode = 0x10|SEL_TI_MASK|DESC_DPL_3;
-  
+
+  // copy the task return handle function and push it's addr to the task stack(first item of stack)
+  task_copyRetHandler(pPCB->retFuncPage);
+  *(uint32_t *)(pPCB->pStackPage + PAGE_SIZE -4) = (uint32_t)TASK_RETURN_HANDLER_ADDR;
   if(pPCB->prio <= 1) //init task, now prio 0 respect system task, don't have any father task
   {
     p->pStackKernel->gs = SEL_GDT_VIDEO;
@@ -65,7 +68,7 @@ error_t task_initPCBArchRelevant(PCB_t *pPCB, void (*taskFunc)(void))
     p->pStackKernel->eip = (uint32_t)taskFunc;
     p->pStackKernel->cs = p->selLDTCode;
     p->pStackKernel->eflags = INIT_EFLAGS;
-    p->pStackKernel->esp = TASK_STACK_BASE;
+    p->pStackKernel->esp = TASK_STACK_BASE - sizeof(void *);
     p->pStackKernel->ss = p->selLDTData;
   }
   else //not the first task
@@ -100,7 +103,8 @@ error_t task_initTaskPage(PCB_t * pPCB)
 
   //alloc phy mem for page table which describe the task stack space
   pL2 = mm_allocOnePage(&pPCB->usingPageList);
-  pL2[PAGE_SIZE/sizeof(pageTblItem_t) - 1] = pToPhy(pPCB->pStack)|PTE_P|PTE_RW|PTE_US;
+  pL2[0] = pToPhy(pPCB->retFuncPage)|PTE_P|PTE_RW|PTE_US;
+  pL2[PAGE_SIZE/sizeof(pageTblItem_t) - 1] = pToPhy(pPCB->pStackPage)|PTE_P|PTE_RW|PTE_US;
   pL1[0] = pToPhy(pL2)|PDE_P|PDE_RW|PDE_US;
 
   return ENOERR;

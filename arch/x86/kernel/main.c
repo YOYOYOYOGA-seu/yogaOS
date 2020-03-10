@@ -12,10 +12,8 @@ void init_task(void)
 {
   int a = 1;
   
-  while(1)
-  {
-
-  }
+  sleep(1);
+  return;
 }
 void idle_task(void) //test scheduler
 {

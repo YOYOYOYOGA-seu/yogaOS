@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-24 22:21:50
- * @LastEditTime 2020-03-08 07:19:14
+ * @LastEditTime 2020-03-10 02:07:40
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/kernel/sched/task.c
@@ -36,8 +36,8 @@ error_t task_initPCB(PCB_t *pPCB,uint32_t prio, const char* name,void (*taskFunc
   pPCB->pidStatic = pPCB->pid;
   pPCB->totalTimeSlice = TASK_DEFUALT_TIME_SLICE;
   pPCB->timeLeft = TASK_DEFUALT_TIME_SLICE;
-  pPCB->pStack = mm_allocOnePage(&pPCB->usingPageList);
-  
+  pPCB->pStackPage = mm_allocOnePage(&pPCB->usingPageList);
+  pPCB->retFuncPage = mm_allocOnePage(&pPCB->usingPageList);
   
   
   for(i = 0; (i < SCHED_MAX_TASK_NAME_SIZE && name[i] != '\0'); i++)
