@@ -20,12 +20,13 @@ export S_FLAGS :=$(CC_DBG_CFG) -m32
 export LD_FLAGS := -s --oformat binary  -m elf_i386 -o
 ARCH_DIR := arch/$(ARCH)
 OUTPUT_DIR := $(ARCH_DIR)/output
-GLOBAL_INC_DIR := include 
+GLOBAL_INC_DIR := include \
+									include/libh
 
 
 TAG_FLAG += DEBUG=$(DEBUG) \
 						ARCH=$(ARCH) \
-						GLOBAL_INC_DIR=../$(GLOBAL_INC_DIR) \
+						GLOBAL_INC_DIR="$(patsubst %,../%, $(GLOBAL_INC_DIR))" \
 						OUTPUT_DIR=../$(OUTPUT_DIR)
 
 

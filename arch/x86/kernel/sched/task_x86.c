@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-22 02:59:19
- * @LastEditTime 2020-02-29 09:11:24
+ * @LastEditTime 2020-03-08 10:03:26
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/arch/x86/kernel/sched/task_x86.c
@@ -23,7 +23,7 @@
  *        {void (*)(void)} taskFunc: point to the entry of task code
  * @retval error_t
  */
-error_t sched_initPCBArchRelevant(PCB_t *pPCB, void (*taskFunc)(void))
+error_t task_initPCBArchRelevant(PCB_t *pPCB, void (*taskFunc)(void))
 {
   uint32_t i;
   x86_taskStruct_t *p;
@@ -47,7 +47,7 @@ error_t sched_initPCBArchRelevant(PCB_t *pPCB, void (*taskFunc)(void))
   p->selLDTData = 0x08|SEL_TI_MASK|DESC_DPL_3;
   p->selLDTCode = 0x10|SEL_TI_MASK|DESC_DPL_3;
   
-  if(pPCB->prio == 0) //init task, now prio 0 respect system task, don't have any father task
+  if(pPCB->prio <= 1) //init task, now prio 0 respect system task, don't have any father task
   {
     p->pStackKernel->gs = SEL_GDT_VIDEO;
     p->pStackKernel->fs = p->selLDTData;
@@ -84,7 +84,7 @@ error_t sched_initPCBArchRelevant(PCB_t *pPCB, void (*taskFunc)(void))
  * @param {PCB_t *} pPCB
  * @retval error_t
  */
-error_t sched_initTaskPage(PCB_t * pPCB)
+error_t task_initTaskPage(PCB_t * pPCB)
 {
   pageTblItem_t *pL1;
   pageTblItem_t *pL2;

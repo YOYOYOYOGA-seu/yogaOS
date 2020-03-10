@@ -29,5 +29,5 @@ mbr.o: mbr.s
 clean:
 	# must ad '-f'(force remove),or it will return fail and 
 	# shutdown the "make clean" process
-	rm -f	*_r.asm
+	rm -f	*_r.asm *.bin *.o *.img
 	

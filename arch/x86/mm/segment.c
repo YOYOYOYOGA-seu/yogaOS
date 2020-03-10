@@ -16,7 +16,7 @@
 0 respect the first zero descriptor */
 volatile struct{
   uint16_t descNum;
-  /* Creat a continuous memory area to sign the state(using/idle) of every descriptor
+  /* Creat a continuous memory area to sign the status(using/idle) of every descriptor
     in the GDT. Using bit to sign */
   uint32_t gdtStateMap[NUM_OF_GDT_STATE_MAP_ARRY] ;
   
@@ -112,20 +112,20 @@ uint16_t mm_getGdtNum(void)
 }
 
 /**
- * @brief  Set the bit which represent the GDT descriptor's state(using/idle) 
+ * @brief  Set the bit which represent the GDT descriptor's status(using/idle) 
  * @note  
  * @param {uint16_t} number   :the index of the desc in GDT
- *        {uint16_t} state    :0 idle, 1 busy
+ *        {uint16_t} status    :0 idle, 1 busy
  * @retval error_t
  */
-static error_t setGDTdescState(uint16_t num, uint16_t state)
+static error_t setGDTdescState(uint16_t num, uint16_t status)
 {
   uint16_t index, bitNum;
   uint32_t lastStateMap;
   index = num/(8*sizeof(uint32_t));
   bitNum = num%(8*sizeof(uint32_t));
   lastStateMap = GDT.gdtStateMap[index];
-  if(!state)
+  if(!status)
     GDT.gdtStateMap[index] &= ~(0x01<<bitNum);
   else
     GDT.gdtStateMap[index] |= 0x01<<bitNum; 

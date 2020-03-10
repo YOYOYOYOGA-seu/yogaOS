@@ -1,7 +1,8 @@
-INC_DIR = -I $(GLOBAL_INC_DIR) \
-					-I $(x86_INC_DIR) \
-					-I $(x86_AS_INC_DIR)
+INC_DIR = $(GLOBAL_INC_DIR) \
+					$(x86_INC_DIR) \
+					$(x86_AS_INC_DIR)
 
+INC_DIR := $(patsubst %, -I %, $(INC_DIR))
 SRC_DIR := ./ 
 
 OBJ_DIR = ./

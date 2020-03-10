@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-18 02:35:29
- * @LastEditTime 2020-02-29 08:05:58
+ * @LastEditTime 2020-03-08 01:05:08
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/arch/x86/kernel/init.c
@@ -15,6 +15,8 @@
 #include "sched.h"
 #include "string.h"
 #include "sched_x86.h"
+#include "time.h"
+#include "io.h"
 extern void disp_string32(char *info);
 const sysMsg_t *const sysMessage = (const sysMsg_t *)(SYS_MESSAGE_ADDR);
 /**
@@ -110,4 +112,19 @@ void initMemManage(void)
 {
   mm_initPageManage();
   disp_string32("Page manager init success!!!\n\0");
+}
+
+
+/**
+ * @brief  
+ * @note  
+ * @param {type} none
+ * @retval none
+ */
+
+void init8254Timer(void)
+{
+  IO_outByte(0x34,0x43);
+  IO_outByte((uint8_t)TIMER_FREQ*SYSTEM_TICK/1000,0x40);
+  IO_outByte((uint8_t)((TIMER_FREQ*SYSTEM_TICK/1000)>>8),0x40);
 }

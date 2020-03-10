@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-21 20:59:03
- * @LastEditTime 2020-02-28 23:30:15
+ * @LastEditTime 2020-03-09 04:24:36
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/include/list.h
@@ -17,7 +17,7 @@ typedef struct listItem{
   struct listItem * pNext;
   struct listItem * pPrevious;
   void * pOwner;
-  void * pListIndex;
+  void * pOwnList;
 }listItem_t;
 /* double linked  list */
 typedef struct{
@@ -43,4 +43,8 @@ typedef struct{
 
 void list_initList(list_t *list, uint32_t listMaxValue);
 error_t list_insertList(list_t *list, listItem_t *item);
+error_t list_insertHead(list_t *list, listItem_t *item);
+error_t list_insertTail(list_t *list, listItem_t *item);
+error_t list_removeformList(listItem_t *item);
+
 #endif

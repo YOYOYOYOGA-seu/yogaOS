@@ -21,5 +21,17 @@ typedef uint32_t pid_t;
 typedef int error_t;
 
 typedef long size_t;
+
+typedef enum{
+  SYS_EXIT_VECTOR = 0,
+  SYS_FORK_VECTOR,
+  SYS_SLEEP_VECTOR,
+  SYS_WAIT_VECTOR,
+  SYS_KILL_VECTOR,
+  SYS_EXCVE_VECTOR,
+  SYS_GET_PID_VECTOR,
+  SYS_GET_TIME_VECTOR
+}syscall_vector_t;
+
 #define NULL (void *)0
 #endif

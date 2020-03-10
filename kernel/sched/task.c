@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-24 22:21:50
- * @LastEditTime 2020-02-29 02:28:37
+ * @LastEditTime 2020-03-08 07:19:14
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/kernel/sched/task.c
@@ -11,7 +11,13 @@
 #include "errno.h"
 #include "mm_page.h"
 extern pid_t systemMaxPID;
-error_t sched_initPCB(PCB_t *pPCB,uint32_t prio, const char* name,void (*taskFunc)(void), pageList_t temp)
+/**
+ * @brief  
+ * @note  
+ * @param {type} none
+ * @retval none
+ */
+error_t task_initPCB(PCB_t *pPCB,uint32_t prio, const char* name,void (*taskFunc)(void), pageList_t temp)
 {
   uint32_t i;
   pPCB->stateListItem.pOwner = pPCB;
@@ -19,7 +25,7 @@ error_t sched_initPCB(PCB_t *pPCB,uint32_t prio, const char* name,void (*taskFun
   pPCB->usingPageList.numberOfItem = 1;  //the PCB localed page itself
   pPCB->usingPageList.pFirstItem = temp.pFirstItem;
   
-  pPCB->state = TASK_READY;
+  pPCB->status = TASK_READY;
   pPCB->L1PageTbl = mm_allocOnePage(&pPCB->usingPageList);
     if(prio < SCHED_MAX_PRIO_NUM)
     pPCB->prio = prio;
@@ -37,17 +43,20 @@ error_t sched_initPCB(PCB_t *pPCB,uint32_t prio, const char* name,void (*taskFun
   for(i = 0; (i < SCHED_MAX_TASK_NAME_SIZE && name[i] != '\0'); i++)
     pPCB->name[i] = name[i];
   pPCB->name[i] = '\0';
-  sched_initPCBArchRelevant(pPCB,taskFunc);
+  task_initPCBArchRelevant(pPCB,taskFunc);
 }
-/**
- * @brief  
- * @note  
- * @param {type} none
- * @retval none
- */
-extern void disp_string32(char *info);
 
-error_t sched_creatNewSysTask(void (*taskFunc)(void), uint32_t codeSize, uint32_t prio, const char* name)
+/**
+ * @brief  Create a new task (with out father task)
+ * @note   it would be use only in test system task
+ * @param {void(*)(void)} taskFunc : point to the task function
+ *        {uint32_t} codeSize 
+ *        {uint32_t} prio
+ *        {const char *} name
+ * @retval error_t 
+ */
+
+error_t task_creatNewSysTask(void (*taskFunc)(void), uint32_t codeSize, uint32_t prio, const char* name)
 {
   
   if(taskFunc == NULL || prio >= SCHED_MAX_PRIO_NUM )
@@ -62,7 +71,7 @@ error_t sched_creatNewSysTask(void (*taskFunc)(void), uint32_t codeSize, uint32_
   if(mm_checkIdleMemNum(systemMaxPID) == ENOSPC)
     return ENOSPC;
   pNewPCB = mm_allocOnePage(&temp);
-  sched_initPCB(pNewPCB, prio, name, taskFunc,temp);
-  sched_initTaskPage(pNewPCB);
-  sched_addToList(pNewPCB,pNewPCB->state);
+  task_initPCB(pNewPCB, prio, name, taskFunc,temp);
+  task_initTaskPage(pNewPCB);
+  sched_addToList(pNewPCB);
 }

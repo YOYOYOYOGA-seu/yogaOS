@@ -3,8 +3,8 @@
 .global irq_default
 .global timer_IRQhandler
 
-.extern   sched
-.extern  do_timer // defined in irq_handler.h
+
+// defined in irq_handler.h
 irq_default:
   hlt
   jmp irq_default
@@ -24,17 +24,21 @@ timer_IRQhandler:
   push %fs
   push %gs
   push %eax
+  mov $SEL_GDT_GLOBAL_DATA, %ax
+  mov %ax, %es
+  mov %ax, %fs
   mov $0x20, %al
   out %al, $0x20
   pop %eax
   call do_timer
-__sched:
-  call sched
+
+__schedule:
+  call schedule
   cmp $0, %eax
-  je not_sched
+  je ret_irq
   sub $SYS_BASE_LINEAR_ADDR, %eax
   mov %eax, %cr3
-
+  jmp ret_irq
 
 
 

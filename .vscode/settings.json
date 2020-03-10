@@ -10,6 +10,9 @@
     "string.h": "c",
     "sched.h": "c",
     "address.h": "c",
-    "irq.h": "c"
+    "irq.h": "c",
+    "sys.h": "c",
+    "io.h": "c",
+    "unistd.h": "c"
   }
 }

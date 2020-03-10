@@ -17,7 +17,7 @@ x86_LIB_DIR := lib
 x86_LD_OBJ :=  $(x86_OUTPUT_DIR)/*.o  $(x86_OUTPUT_DIR)/*.a
 # variable to send to the next level Makefile
 TAG_FLAG += DEBUG=$(DEBUG) \
-							GLOBAL_INC_DIR=../../$(GLOBAL_INC_DIR) \
+							GLOBAL_INC_DIR="$(patsubst %, ../../%, $(GLOBAL_INC_DIR))" \
 							x86_IMAGE_DIR=../$(x86_IMAGE_DIR) \
 							x86_OUTPUT_DIR=../$(x86_OUTPUT_DIR) \
 							x86_INC_DIR=../$(x86_INC_DIR) \

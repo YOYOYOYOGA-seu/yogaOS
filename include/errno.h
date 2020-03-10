@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-18 00:59:44
- * @LastEditTime 2020-02-27 22:24:37
+ * @LastEditTime 2020-03-08 05:46:08
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/include/errno.h
@@ -94,7 +94,7 @@ typedef enum{
 #define EBADMSG 74 /* Not a data message */
 #define EOVERFLOW 75 /* Value too large for defined data type */
 #define ENOTUNIQ 76 /* Name not unique on network */
-#define EBADFD 77 /* File descriptor in bad state */
+#define EBADFD 77 /* File descriptor in bad status */
 #define EREMCHG 78 /* Remote address changed */
 #define ELIBACC 79 /* Can not access a needed shared library */
 #define ELIBBAD 80 /* Accessing a corrupted shared library */
@@ -146,6 +146,10 @@ typedef enum{
 /* -------------------------- yogaOS custom errno ----------------------- */
 // list about
 #define E_OUT_LIST_VALUE        1001/* Out the list max value when insert circle list  */
+#define E_NOT_IN_LIST           1002
+#define E_ITEM_NUM_ERR          1003
 //task and scheduler
 #define E_SCHED_NOT_SPT_STATE   1021
+#define E_SUSPEND               1022
+#define E_SCHED_NOT_RUN         1023
 #endif

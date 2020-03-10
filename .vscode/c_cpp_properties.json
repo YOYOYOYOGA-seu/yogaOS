@@ -5,6 +5,7 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/include",
+                "${workspaceFolder}/include/libh",
                 "${workspaceFolder}/arch/x86/*"
             ],
             "compilerPath": "/usr/bin/gcc",
