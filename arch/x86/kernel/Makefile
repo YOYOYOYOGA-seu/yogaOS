@@ -1,6 +1,6 @@
 INC_DIR := $(GLOBAL_INC_DIR) \
 					$(x86_INC_DIR) \
-					$(x86_AS_INC_DIR)
+
 
 INC_DIR := $(patsubst %, -I %, $(INC_DIR))
 SRC_DIR := ./ \

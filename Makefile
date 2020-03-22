@@ -15,13 +15,14 @@ export AS := $(CROSS_COMPILE)as
 export AR := $(CROSS_COMPILE)ar
 export DISASM := ndisasm
 
-export C_FLAGS :=$(CC_DBG_CFG) -s  -fno-pic -fno-asynchronous-unwind-tables -m32 -fno-stack-protector
+export C_FLAGS :=$(CC_DBG_CFG) -O -s  -fno-pic -fno-asynchronous-unwind-tables -m32 -fno-stack-protector
 export S_FLAGS :=$(CC_DBG_CFG) -m32
 export LD_FLAGS := -s --oformat binary  -m elf_i386 -o
 ARCH_DIR := arch/$(ARCH)
 OUTPUT_DIR := $(ARCH_DIR)/output
 GLOBAL_INC_DIR := include \
-									include/libh
+									include/libh \
+									include/driver 
 
 
 TAG_FLAG += DEBUG=$(DEBUG) \

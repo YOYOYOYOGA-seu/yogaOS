@@ -198,8 +198,8 @@ init8259A:
   out %al, $0xA1  //ICW4, 8259A slave
   call io_delay
 
-  mov $0xFE, %al
-  out %al, $0x21  //close all 8259A master irq
+  mov $0xFC, %al
+  out %al, $0x21  //enable 8259A master timer irq, keyboard irq
   call io_delay
 
   mov $0xFF, %al

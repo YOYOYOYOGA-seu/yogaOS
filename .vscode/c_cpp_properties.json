@@ -5,8 +5,11 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/include",
+                "${workspaceFolder}/include/driver",
                 "${workspaceFolder}/include/libh",
-                "${workspaceFolder}/arch/x86/*"
+                "${workspaceFolder}/arch/x86/include",
+                "${workspaceFolder}/arch/x86/include/driver",
+                "${workspaceFolder}/arch/x86/include/asm"
             ],
             "compilerPath": "/usr/bin/gcc",
             "cStandard": "c11",
