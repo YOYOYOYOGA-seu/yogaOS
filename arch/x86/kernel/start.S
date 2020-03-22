@@ -161,6 +161,7 @@ disp_string32:
   mov %esp, %ebp
   pushl %esi
   mov 8(%ebp), %esi
+  push %edi
   mov disp_pos, %edi
 
   push %gs
@@ -197,6 +198,7 @@ __loop2:
 
   popl %eax
   pop %gs
+  popl %edi
   popl %esi
   popl %ebp
 

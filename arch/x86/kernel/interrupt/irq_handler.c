@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-20 05:11:29
- * @LastEditTime 2020-03-21 08:08:47
+ * @LastEditTime 2020-03-21 23:55:06
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/arch/x86/kernel/interrupt/irq_handler.c
@@ -32,8 +32,10 @@ void initInterrupt(void)
 void do_timer(void)
 {
   timeCount+= SYSTEM_TICK;
+  /*  test code
   if(timeCount%1000 == 0)
     disp_string32("a\0");
+    */
   sched_timeTick();
 }
 

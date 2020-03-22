@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-03-09 02:17:29
- * @LastEditTime 2020-03-09 06:34:08
+ * @LastEditTime 2020-03-21 21:36:19
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/lib/process.c
@@ -35,9 +35,19 @@ pid_t fork(void)
  */
 unsigned sleep(unsigned int __seconds)
 {
-  return (unsigned)enterSystemCall(SYS_SLEEP_VECTOR, __seconds, 0, 0);
+  return (unsigned)enterSystemCall(SYS_SLEEP_VECTOR, 1000*__seconds, 0, 0);
 }
 
+/**
+ * @brief  
+ * @note  
+ * @param {type} none
+ * @retval none
+ */
+unsigned msleep(unsigned int __microsecond)
+{
+  return (unsigned)enterSystemCall(SYS_SLEEP_VECTOR, __microsecond, 0, 0);
+}
 /**
  * @brief  
  * @note  

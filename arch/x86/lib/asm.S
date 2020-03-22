@@ -6,9 +6,17 @@
  * @retval none
  */
 enterSystemCall:
-  mov 16(%esp), %edx
-  mov 12(%esp), %ecx
-  mov 8(%esp), %ebx
-  mov 4(%esp), %eax
+  push %eax
+  push %ebx
+  push %ecx
+  push %edx
+  mov 32(%esp), %edx
+  mov 28(%esp), %ecx
+  mov 24(%esp), %ebx
+  mov 20(%esp), %eax
   int $0x80
+  pop %edx
+  pop %ecx
+  pop %ebx
+  pop %eax
   ret

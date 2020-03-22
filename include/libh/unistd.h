@@ -15,6 +15,6 @@ pid_t fork(void);
 pid_t getpid(void);
 unsigned sleep(unsigned int __seconds);
 unsigned usleep(unsigned int __useconds);
-
+unsigned msleep(unsigned int __microsecond);
 int execve(const char *__path, char * const __argv[], char * const __envp[] );
 #endif

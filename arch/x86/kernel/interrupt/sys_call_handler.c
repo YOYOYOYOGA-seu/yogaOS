@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-03-07 22:35:04
- * @LastEditTime 2020-03-09 05:48:15
+ * @LastEditTime 2020-03-21 21:37:43
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/arch/x86/kernel/interrupt/sys_call_handler.c
@@ -36,12 +36,12 @@ __attribute__((weak)) int sys_fork(void)
 /**
  * @brief  sleep system call handler
  * @note  
- * @param {int} s :unit second
+ * @param {int} ms :unit microsecond
  * @retval none
  */
-__attribute__((weak)) int sys_sleep(int s)
+__attribute__((weak)) int sys_sleep(int ms)
 {
-  sched_suspendTask(NULL, s*1000/SYSTEM_TICK);
+  sched_suspendTask(NULL, ms/SYSTEM_TICK);
   return 0;
 }
 

@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-03-21 04:14:30
- * @LastEditTime 2020-03-21 08:36:53
+ * @LastEditTime 2020-03-21 22:07:32
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/arch/x86/include/driver/keyboard.h
@@ -123,9 +123,10 @@ typedef struct {
 #define PAD_INS		PAD_0			/* Ins		*/
 #define PAD_MID		PAD_5			/* Middle key	*/
 #define PAD_DEL		PAD_DOT			/* Del		*/
-
-
+/* ------------------------ extern variable --------------------------- */
+extern uint32_t keymap[NR_SCAN_CODES * MAP_COLS];
 /* ------------------------ function declear --------------------------- */
 void kb_writeBuff(uint8_t data);
+uint32_t kb_read(uint32_t num, uint32_t *buff);
 #endif
 
