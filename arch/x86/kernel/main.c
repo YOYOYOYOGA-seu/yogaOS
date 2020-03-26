@@ -50,6 +50,7 @@ void testTask3(void) //test scheduler
   }
 }
 
+static uint32_t keyState;
 
 
 void server_tty(void)
@@ -57,42 +58,91 @@ void server_tty(void)
   uint32_t scanCode[10];
   uint32_t count,i,j;
   char charBuff[11];
-  while(10)
+  uint32_t flag_E0;
+  uint32_t make;
+  uint32_t column;
+  uint32_t key;
+  while(1)
   {
 
     count = kb_read(10,scanCode);
-    msleep(50);
+    msleep(50);   /*    注意！！！！！！！！！！在后期加入IPC功能后，改为等待信号量，在键盘中断中投喂信号量  */
     if(!count)
       continue;
 
     
     for(i = 0,j = 0;i<count;i++)
     {
-      if(scanCode[i] == 0xE1)
+      if(scanCode[i] == 0xE1)   //PAUSE key(don't support yet)
       {
 
       }
-      else if(scanCode[i] == 0xE0)
+      else if(scanCode[i] == 0xE0)// PrintScreen(don't support yet) or other(F1, F2,ESC....)
       {
-
-      }
-      else
-      {
-        if(scanCode[i]&FLAG_BREAK)
+        if(i == count + 1)  // need ready form keyboard buff
         {
-
+          while(!kb_read(1,&scanCode[i]))
+            msleep(50);                 /*    注意！！！！！！！！！！在后期加入IPC功能后，改为等待信号量，在键盘中断中投喂信号量  */
         }
         else
         {
-          if(scanCode[i] < NR_SCAN_CODES)
-          {
-            charBuff[j] = keymap[scanCode[i] * MAP_COLS];
-            j++;
-          }
-          
+          i++;     //0xE0 0xXX two code make up a key
         }
         
+        flag_E0 = 1;
       }
+      if(1/* key != PRINTSCREEN && key != PAUSE */)
+      {
+        make = (scanCode[i] & FLAG_BREAK ? 0:1);
+
+        column = 0;
+        if(keyState&FLAG_SHIFT_L || keyState&FLAG_SHIFT_R)
+          column = 1;
+        if(flag_E0)
+        {
+          column = 2;     
+          flag_E0 = 0;
+        }
+        key =  keymap[(scanCode[i]&0x7F) * MAP_COLS + column];                                      // make code
+        switch (key)
+        {
+        case SHIFT_L:
+          make ? (keyState |= FLAG_SHIFT_L ): (keyState &= ~FLAG_SHIFT_L);
+          key = 0;
+          break;
+        case SHIFT_R:
+          make ? (keyState |= FLAG_SHIFT_R) : (keyState &= ~FLAG_SHIFT_R);
+          key = 0;
+          break;
+        case ALT_L:
+          make ? (keyState |= FLAG_ALT_L) : (keyState &= ~FLAG_ALT_L);
+          key = 0;
+          break;
+        case ALT_R:
+          make ? (keyState |= FLAG_ALT_R) : (keyState &= ~FLAG_ALT_R);
+          key = 0;
+          break;
+        case CTRL_L:
+          make ? (keyState |= FLAG_CTRL_L) : (keyState &= ~FLAG_CTRL_L);
+          key = 0;
+          break;
+        case CTRL_R:
+          make ? (keyState |= FLAG_CTRL_R) : (keyState &= ~FLAG_CTRL_R);
+          key = 0;
+          break;
+
+        default:     //if notbreak code
+          if(!make)
+            key = 0;
+          break;
+        }
+        if(key)  //is a code 
+        {
+          charBuff[j] = key;
+          j++;
+        }
+      }
+        
     }
     charBuff[j] = '\0';
     disp_string32(charBuff);

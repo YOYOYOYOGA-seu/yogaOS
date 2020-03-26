@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-03-21 03:55:43
- * @LastEditTime 2020-03-21 22:10:24
+ * @LastEditTime 2020-03-26 06:47:50
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/arch/x86/driver/char/keyboard.c
@@ -21,6 +21,16 @@ void kb_init(void)
   keyBoardBuff.count = 0;
 }
 
+/**
+ * @brief  
+ * @note  
+ * @param {type} none
+ * @retval none
+ */
+void kb_process(void)
+{
+  
+}
 /**
  * @brief  
  * @note  
@@ -56,7 +66,7 @@ uint32_t kb_read(uint32_t num, uint32_t *buff)
   uint32_t count = 0;
   while(keyBoardBuff.count > 0 && count < num)
   {
-    *buff = keyBoardBuff.buff[keyBoardBuff.tail];
+    buff[count] = keyBoardBuff.buff[keyBoardBuff.tail];
     if(keyBoardBuff.tail < KB_BUFF_SIZE - 1)       //if reach the top addr of buff
       keyBoardBuff.tail ++;
     else

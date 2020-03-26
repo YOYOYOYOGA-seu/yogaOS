@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-18 02:35:29
- * @LastEditTime 2020-03-21 22:51:37
+ * @LastEditTime 2020-03-26 04:41:32
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/arch/x86/kernel/init.c
@@ -30,7 +30,7 @@ error_t initGDT(void)
   mm_initGDTStruct();
   mm_addDescToGDT(SYS_PAGE_DIR_BASE_ADDR,SYS_PAGE_DIR_SIZE,0,DESC_TYPE_RW,1);
   mm_addDescToGDT(SYS_PAGE_TBL_BASE_ADDR,SYS_PAGE_TBL_SIZE,0,DESC_TYPE_RW,1);
-  // 为了测试tty改成的dpl = 3，之后看到记得改回来！！！！！
+  // 注意！！！！为了测试tty改成的dpl = 3，之后看到记得改回来！！！！！
   mm_addDescToGDT(VIDEO_MEM_BASE_ADDR,VIDEO_MEM_SIZE,3,DESC_TYPE_RW,1);
   
   disp_string32("GDT init success!!!\n\0");

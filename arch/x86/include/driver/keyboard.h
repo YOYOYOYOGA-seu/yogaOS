@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-03-21 04:14:30
- * @LastEditTime 2020-03-21 22:07:32
+ * @LastEditTime 2020-03-26 04:15:11
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/arch/x86/include/driver/keyboard.h
@@ -20,6 +20,8 @@ typedef struct {
   uint8_t buff[KB_BUFF_SIZE];    //buff
 
 }KBbuff_t;
+
+
 
 #define MAP_COLS	3	/* Number of columns in keymap */
 #define NR_SCAN_CODES	0x80	/* Number of scan codes (rows in keymap) */

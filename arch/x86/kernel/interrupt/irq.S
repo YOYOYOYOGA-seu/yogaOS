@@ -29,13 +29,14 @@ timer_IRQhandler:
   push %fs
   push %gs
 
+  
   mov $SEL_GDT_GLOBAL_DATA, %ax
   mov %ax, %es
   mov %ax, %fs
   mov $0x20, %al
   out %al, $0x20 //enable other 8295A  irq
-
-  call do_timer
+  sti
+  
 
 __check_lock:   // P-V lock function, ensure the schedule can't be nested 
   movw shced_lock, %ax
@@ -47,6 +48,7 @@ __schedule:
 __lock:
   add $1, shced_lock
 
+  call do_timer
   call schedule
   cmp $0, %eax
   je ret_irq
@@ -72,12 +74,15 @@ _unlock:
   push %es
   push %fs
   push %gs
-
+  
+   //be cause 8295A(keyboard IC) IRQ will only be triggered after read data from it's buff(operated in do_keyboard)
+   //so we don't have to consider IRQ nest(the next )
+              
   mov $0x20, %al //enable other 8295A  irq 
   out %al, $0x20
-
-  call do_keyboard
-
+  call do_keyboard  //
+  sti
+  
   jmp ret_irq
 /**
  * @brief  irq handler return point

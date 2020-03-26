@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-20 05:11:29
- * @LastEditTime 2020-03-21 23:55:06
+ * @LastEditTime 2020-03-26 04:49:36
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/arch/x86/kernel/interrupt/irq_handler.c
@@ -46,5 +46,9 @@ void do_keyboard(void)
   uint8_t data;
   data = IO_inByte(0x60);
   kb_writeBuff(data);
+  if(data != 0xE0 && data != 0xE1)
+  {
+    //semctl();           /*注意！！！！！当后期加入IPC后，在这里发送信号量以唤醒tty服务进程
+  }
   //disp_string32(key);
 }
