@@ -1,13 +1,13 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-22 05:13:44
- * @LastEditTime 2020-02-26 23:33:04
+ * @LastEditTime 2020-03-28 05:03:26
  * @LastEditors Shi Zhangkun
  * @Description none
- * @FilePath /project/mm/mm_page.c
+ * @FilePath /project/kernel/mm/page.c
  */
 
-#include "mm_page.h"
+#include "page.h"
 #include "type.h"
 #include "errno.h"
 /* ------------------------ varible declare --------------------------- */
@@ -22,13 +22,13 @@ static uint32_t idleMemLinearBase;
  * @param {type} none
  * @retval none
  */
-void mm_initPageManage(void)
+void page_initPageManage(void)
 {
   uint16_t i;
   uint32_t value;
   page_t * p;
   
-  idlePageList.pFirstItem = mm_locatePageList(&pageListSize, &idleMemPhyrBase, &idleMemLinearBase);
+  idlePageList.pFirstItem = page_locateList(&pageListSize, &idleMemPhyrBase, &idleMemLinearBase);
   idlePageList.numberOfItem = pageListSize;
   p = idlePageList.pFirstItem;
   value = idleMemPhyrBase;
@@ -54,7 +54,7 @@ void mm_initPageManage(void)
  *         linear address of this idle page(= phy addr + sys_base_linear_addr)
  */
 
-void *mm_allocOnePage(pageList_t *usingList)
+void *page_allocOne(pageList_t *usingList)
 {
   uint32_t i;
   page_t * p = idlePageList.pFirstItem;
@@ -79,7 +79,7 @@ void *mm_allocOnePage(pageList_t *usingList)
  * @param {type} none
  * @retval none
  */
-error_t mm_checkIdleMemNum(uint32_t allocNum)
+error_t page_checkIdleMemNum(uint32_t allocNum)
 {
   return (allocNum <= idlePageList.numberOfItem ? ENOERR:ENOSPC);
 }

@@ -1,10 +1,10 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-18 00:59:44
- * @LastEditTime 2020-03-08 05:46:08
+ * @LastEditTime 2020-03-27 07:04:28
  * @LastEditors Shi Zhangkun
  * @Description none
- * @FilePath /project/include/errno.h
+ * @FilePath /project/include/libh/errno.h
  */
 #ifndef __ERRNO_H
 #define __ERRNO_H
@@ -148,6 +148,9 @@ typedef enum{
 #define E_OUT_LIST_VALUE        1001/* Out the list max value when insert circle list  */
 #define E_NOT_IN_LIST           1002
 #define E_ITEM_NUM_ERR          1003
+// queue about 
+#define E_QUEUE_NULL_P          1011
+#define E_QUEUE_FULL            1012
 //task and scheduler
 #define E_SCHED_NOT_SPT_STATE   1021
 #define E_SUSPEND               1022

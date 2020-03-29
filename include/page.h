@@ -1,12 +1,13 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-22 05:14:13
- * @LastEditTime 2020-02-26 05:14:18
+ * @LastEditTime 2020-03-28 05:02:55
  * @LastEditors Shi Zhangkun
  * @Description none
- * @FilePath /project/include/mm_page.h
+ * @FilePath /project/include/page.h
  */
-
+#ifndef __MM_PAGE_H
+#define __MM_PAGE_H
 #include "type.h"
 #include "list.h"
 #include "errno.h"
@@ -27,10 +28,13 @@ typedef miniList_t     pageList_t; //page manage list
 
 /* ------- Arch relevant function (defined in arch/xxx/xxx/xxx.c) ----------------- */
 
-page_t *mm_locatePageList(uint32_t *size, uint32_t *phyrBase, uint32_t * linearBase);
+page_t *page_locateList(uint32_t *size, uint32_t *phyrBase, uint32_t * linearBase);
 
 
 /* ------------------------------function declaration ----------------------------- */
-void *mm_allocOnePage(pageList_t *usingList);
-error_t mm_checkIdleMemNum(uint32_t allocNum);
-void mm_initPageManage(void);
+void *page_allocOne(pageList_t *usingList);
+error_t page_checkIdleMemNum(uint32_t allocNum);
+void page_initPageManage(void);
+
+
+#endif

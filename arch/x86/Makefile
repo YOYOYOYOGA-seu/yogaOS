@@ -16,6 +16,7 @@ x86_MM_DIR := mm
 x86_LIB_DIR := lib
 x86_DRIVER_DIR := driver
 
+
 x86_LD_OBJ :=  $(x86_OUTPUT_DIR)/*.o  $(x86_OUTPUT_DIR)/*.a
 # variable to send to the next level Makefile
 TAG_FLAG += DEBUG=$(DEBUG) \
@@ -38,6 +39,7 @@ default:
 	make -C $(x86_MM_DIR) $(TAG_FLAG)
 	make -C $(x86_LIB_DIR) $(TAG_FLAG)
 	make -C $(x86_DRIVER_DIR) $(TAG_FLAG)
+	
 
 	$(LD) $(LD_FLAGS) $(KERNEL_FILE) $(x86_LD_OBJ) -T $(LDS_FILE)
 	$(LD)  -m elf_i386 -o output/kernel_dbg.elf $(x86_LD_OBJ) -T $(LDS_FILE)

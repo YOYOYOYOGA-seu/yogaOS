@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-18 02:35:29
- * @LastEditTime 2020-03-26 04:41:32
+ * @LastEditTime 2020-03-27 22:27:45
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/arch/x86/kernel/init.c
@@ -11,7 +11,7 @@
 #include "segment.h"
 #include "address.h"
 #include "system_x86.h"
-#include "mm_page.h"
+#include "page.h"
 #include "sched.h"
 #include "string.h"
 #include "sched_x86.h"
@@ -27,11 +27,11 @@ const sysMsg_t *const sysMessage = (const sysMsg_t *)(SYS_MESSAGE_ADDR);
  */
 error_t initGDT(void)
 {
-  mm_initGDTStruct();
-  mm_addDescToGDT(SYS_PAGE_DIR_BASE_ADDR,SYS_PAGE_DIR_SIZE,0,DESC_TYPE_RW,1);
-  mm_addDescToGDT(SYS_PAGE_TBL_BASE_ADDR,SYS_PAGE_TBL_SIZE,0,DESC_TYPE_RW,1);
+  seg_initGDTStruct();
+  seg_addDescToGDT(SYS_PAGE_DIR_BASE_ADDR,SYS_PAGE_DIR_SIZE,0,DESC_TYPE_RW,1);
+  seg_addDescToGDT(SYS_PAGE_TBL_BASE_ADDR,SYS_PAGE_TBL_SIZE,0,DESC_TYPE_RW,1);
   // 注意！！！！为了测试tty改成的dpl = 3，之后看到记得改回来！！！！！
-  mm_addDescToGDT(VIDEO_MEM_BASE_ADDR,VIDEO_MEM_SIZE,3,DESC_TYPE_RW,1);
+  seg_addDescToGDT(VIDEO_MEM_BASE_ADDR,VIDEO_MEM_SIZE,3,DESC_TYPE_RW,1);
   
   disp_string32("GDT init success!!!\n\0");
   return ENOERR;
@@ -47,12 +47,12 @@ error_t initGDT(void)
 error_t initLDT(void)
 {
   selector_t  sel;
-  sel = mm_addDescToGDT(PCB_BASE_ADDR + sizeof(PCB_t) + sizeof(TSS_t),LDT_SIZE,0,DESC_TYPE_LDT,1);
+  sel = seg_addDescToGDT(PCB_BASE_ADDR + sizeof(PCB_t) + sizeof(TSS_t),LDT_SIZE,0,DESC_TYPE_LDT,1);
   __asm__("lldt %0"
           :
           :"r"(sel)
           );
-  sel = mm_addDescToGDT(PCB_BASE_ADDR + sizeof(PCB_t),sizeof(TSS_t),0,DESC_TYPE_386TSS_A,1);
+  sel = seg_addDescToGDT(PCB_BASE_ADDR + sizeof(PCB_t),sizeof(TSS_t),0,DESC_TYPE_386TSS_A,1);
   __asm__("ltr %0"
           :
           :"r"(sel)
@@ -111,7 +111,7 @@ void initSysMsg(void)
  */
 void initMemManage(void)
 {
-  mm_initPageManage();
+  page_initPageManage();
   disp_string32("Page manager init success!!!\n\0");
 }
 
@@ -129,3 +129,4 @@ void init8254Timer(void)
   IO_outByte((uint8_t)TIMER_FREQ*SYSTEM_TICK/1000,0x40);
   IO_outByte((uint8_t)((TIMER_FREQ*SYSTEM_TICK/1000)>>8),0x40);
 }
+

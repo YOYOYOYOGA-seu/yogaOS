@@ -1,10 +1,10 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-03-21 03:55:43
- * @LastEditTime 2020-03-26 06:47:50
+ * @LastEditTime 2020-03-27 06:59:12
  * @LastEditors Shi Zhangkun
  * @Description none
- * @FilePath /project/arch/x86/driver/char/keyboard.c
+ * @FilePath /project/arch/x86/driver/keyboard.c
  */
 #include "keyboard.h"
 static KBbuff_t keyBoardBuff;

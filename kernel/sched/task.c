@@ -9,7 +9,7 @@
 #include "type.h"
 #include "sched.h"
 #include "errno.h"
-#include "mm_page.h"
+#include "page.h"
 extern pid_t systemMaxPID;
 /**
  * @brief  
@@ -26,7 +26,7 @@ error_t task_initPCB(PCB_t *pPCB,uint32_t prio, const char* name,void (*taskFunc
   pPCB->usingPageList.pFirstItem = temp.pFirstItem;
   
   pPCB->status = TASK_READY;
-  pPCB->L1PageTbl = mm_allocOnePage(&pPCB->usingPageList);
+  pPCB->L1PageTbl = page_allocOne(&pPCB->usingPageList);
     if(prio < SCHED_MAX_PRIO_NUM)
     pPCB->prio = prio;
   else
@@ -36,8 +36,8 @@ error_t task_initPCB(PCB_t *pPCB,uint32_t prio, const char* name,void (*taskFunc
   pPCB->pidStatic = pPCB->pid;
   pPCB->totalTimeSlice = TASK_DEFUALT_TIME_SLICE;
   pPCB->timeLeft = TASK_DEFUALT_TIME_SLICE;
-  pPCB->pStackPage = mm_allocOnePage(&pPCB->usingPageList);
-  pPCB->retFuncPage = mm_allocOnePage(&pPCB->usingPageList);
+  pPCB->pStackPage = page_allocOne(&pPCB->usingPageList);
+  pPCB->retFuncPage = page_allocOne(&pPCB->usingPageList);
   
   
   for(i = 0; (i < SCHED_MAX_TASK_NAME_SIZE && name[i] != '\0'); i++)
@@ -68,9 +68,9 @@ error_t task_creatNewSysTask(void (*taskFunc)(void), uint32_t codeSize, uint32_t
   }
   PCB_t * pNewPCB;
   pageList_t temp = {0,NULL};
-  if(mm_checkIdleMemNum(systemMaxPID) == ENOSPC)
+  if(page_checkIdleMemNum(systemMaxPID) == ENOSPC)
     return ENOSPC;
-  pNewPCB = mm_allocOnePage(&temp);
+  pNewPCB = page_allocOne(&temp);
   task_initPCB(pNewPCB, prio, name, taskFunc,temp);
   task_initTaskPage(pNewPCB);
   sched_addToList(pNewPCB);

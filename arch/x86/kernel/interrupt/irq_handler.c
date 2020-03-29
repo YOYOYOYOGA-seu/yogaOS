@@ -17,15 +17,16 @@
 #include "keyboard.h"
 #include "kb_map.h"
 
-extern void disp_string32(char *info);
+//extern void disp_string32(char *info);
 
 extern long timeCount;
 gateDesc_t * const IDT = (gateDesc_t *)IDT_BASE_ADDR;
+
 void initInterrupt(void)
 {
-  initGate(&IDT[TIME_IRQ_VECTOR],(uint32_t)timer_IRQhandler,SEL_GDT_GLOBAL_CODE,DESC_DPL_3,DESC_TYPE_386GATE_I);
-  initGate(&IDT[KEYBOARD_IRQ_VECTOR],(uint32_t)keyboard_IRQhandler,SEL_GDT_GLOBAL_CODE,DESC_DPL_3,DESC_TYPE_386GATE_I);
-  initGate(&IDT[SYSTEM_CALL_VECTOR],(uint32_t)system_call,SEL_GDT_GLOBAL_CODE,DESC_DPL_3,DESC_TYPE_386GATE_I);
+  seg_initGate(&IDT[TIME_IRQ_VECTOR],(uint32_t)timer_IRQhandler,SEL_GDT_GLOBAL_CODE,DESC_DPL_3,DESC_TYPE_386GATE_I);
+  seg_initGate(&IDT[KEYBOARD_IRQ_VECTOR],(uint32_t)keyboard_IRQhandler,SEL_GDT_GLOBAL_CODE,DESC_DPL_3,DESC_TYPE_386GATE_I);
+  seg_initGate(&IDT[SYSTEM_CALL_VECTOR],(uint32_t)system_call,SEL_GDT_GLOBAL_CODE,DESC_DPL_3,DESC_TYPE_386GATE_I);
   //__enableIRQ();
 }
 

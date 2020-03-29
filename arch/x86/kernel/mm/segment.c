@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-17 21:58:40
- * @LastEditTime 2020-02-29 04:58:22
+ * @LastEditTime 2020-03-28 05:05:41
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/arch/x86/mm/segment.c
@@ -35,7 +35,7 @@ volatile struct{
  *                            represent the code is 32bit( = 1) or 16bit(= 0)
  * @retval error_t
  */
-error_t mm_initDesc(memSegDesc_t *desc, uint32_t baseAddr, uint32_t length,\
+error_t seg_initDesc(memSegDesc_t *desc, uint32_t baseAddr, uint32_t length,\
                      descDPL_t dpl,descType_t type,uint8_t d_b_bit )
 {
   if(type < DESC_TYPE_Read && type != DESC_TYPE_LDT     \
@@ -82,7 +82,7 @@ error_t mm_initDesc(memSegDesc_t *desc, uint32_t baseAddr, uint32_t length,\
  *        {descType_t}type    :type of descriptor
  * @retval error_t
  */
-error_t initGate(gateDesc_t *desc, uint32_t offsetAddr,\
+error_t seg_initGate(gateDesc_t *desc, uint32_t offsetAddr,\
                      selector_t sel, descDPL_t dpl,descType_t type)
 {
   if(type != DESC_TYPE_386GATE_C && type != DESC_TYPE_386GATE_TR && type != DESC_TYPE_386GATE_I)
@@ -101,12 +101,12 @@ error_t initGate(gateDesc_t *desc, uint32_t offsetAddr,\
 
 static volatile uint16_t gdtNum = INIT_GDT_NUM;
 /**
- * @brief  mm_getGdtNum
+ * @brief  seg_getGdtNum
  * @note  
  * @param {type} none
  * @retval The total number of descriptor in GDT
  */
-uint16_t mm_getGdtNum(void)
+uint16_t seg_getGdtNum(void)
 {
   return GDT.descNum;
 }
@@ -206,7 +206,7 @@ findIdleDesc:
  *        {uintt8_t}d_b_bit   :the D/B bit 
  * @retval selector_t
  */
-selector_t mm_addDescToGDT(uint32_t baseAddr, uint32_t length,\
+selector_t seg_addDescToGDT(uint32_t baseAddr, uint32_t length,\
                      descDPL_t dpl,descType_t type,uint8_t d_b_bit)
 {
   error_t flag;
@@ -216,7 +216,7 @@ selector_t mm_addDescToGDT(uint32_t baseAddr, uint32_t length,\
   if(descNum)
   {
     temp += descNum;
-    if(mm_initDesc(temp,baseAddr,length,dpl,type,d_b_bit) != ENOERR)
+    if(seg_initDesc(temp,baseAddr,length,dpl,type,d_b_bit) != ENOERR)
       return 0;
   }
   else
@@ -232,7 +232,7 @@ selector_t mm_addDescToGDT(uint32_t baseAddr, uint32_t length,\
  * @param {type} none
  * @retval none
  */
-void mm_initGDTStruct(void)
+void seg_initGDTStruct(void)
 {
   int i;
   GDT.descNum = INIT_GDT_NUM;

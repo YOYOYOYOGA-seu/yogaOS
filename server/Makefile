@@ -2,9 +2,7 @@ INC_DIR := $(GLOBAL_INC_DIR) \
 
 INC_DIR := $(patsubst %, -I %, $(INC_DIR))
 
-SRC_DIR := ./ \
-					 char \
-					 block
+SRC_DIR := ./ 
 
 OBJ_DIR = $(OUTPUT_DIR)
 
@@ -21,4 +19,4 @@ defualt:$(OBJS)
 	# -fno-pic: don't use location Unrelated compiling mode (or it will creat relocation sector)
 	# -fno-asynchronous-unwind-tables: to aviod creat sector .eh_frame
 $(C_OBJS) : $(OBJ_DIR)/%.o : %.c
-	$(CC) $(C_FLAGS) $(INC_DIR) -c -o $@ $<
+	$(CC) $(C_FLAGS)  $(INC_DIR) -c -o $@ $<

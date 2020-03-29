@@ -9,7 +9,7 @@
 #include "type.h"
 #include "sched.h"
 #include "errno.h"
-#include "mm_page.h"
+#include "page.h"
 #include "kernel.h"
 #include "time.h"
 PCB_t * currentActiveTask = NULL; 

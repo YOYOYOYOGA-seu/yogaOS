@@ -5,7 +5,7 @@
     "segment.h": "c",
     "sched_x86.h": "c",
     "page_x86.h": "c",
-    "mm_page.h": "c",
+    "page.h": "c",
     "type.h": "c",
     "string.h": "c",
     "sched.h": "c",
@@ -13,6 +13,9 @@
     "irq.h": "c",
     "sys.h": "c",
     "io.h": "c",
-    "unistd.h": "c"
+    "unistd.h": "c",
+    "tty.h": "c",
+    "console.h": "c",
+    "keyboard.h": "c"
   }
 }

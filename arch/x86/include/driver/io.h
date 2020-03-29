@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-03-08 00:32:21
- * @LastEditTime 2020-03-21 06:35:39
+ * @LastEditTime 2020-03-27 21:02:30
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/arch/x86/include/driver/io.h
@@ -9,12 +9,14 @@
 #ifndef __IO_H
 #define __IO_H
 #include "type.h"
+inline void  __enableIRQ(void){__asm__("sti"::);}
+inline void  __disableIRQ(void){__asm__("cli"::);}
 
 inline void IO_outByte(uint8_t data, uint16_t port)
 {
-  __asm__("outb %0, %%dx"
+  __asm__("outb %%al, %%dx"
           :
-          :"q"(data), "d"(port)
+          :"a"(data), "d"(port)
           );
 }
 

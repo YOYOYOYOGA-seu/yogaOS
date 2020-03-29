@@ -40,7 +40,7 @@ typedef struct {
 #define FLAG_CTRL_R	      0x1000		/* Control key			*/
 #define FLAG_ALT_L	      0x2000		/* Alternate key		*/
 #define FLAG_ALT_R      	0x4000		/* Alternate key		*/
-#define FLAG_PAD	        0x8000		/* keys in num pad		*/
+#define FLAG_CAPS         0x8000    /* capsLock key   */
 /* Special keys */
 #define ESC		(0x01 + FLAG_EXT)	/* Esc		*/
 #define TAB		(0x02 + FLAG_EXT)	/* Tab		*/
@@ -128,6 +128,7 @@ typedef struct {
 /* ------------------------ extern variable --------------------------- */
 extern uint32_t keymap[NR_SCAN_CODES * MAP_COLS];
 /* ------------------------ function declear --------------------------- */
+void kb_init(void);
 void kb_writeBuff(uint8_t data);
 uint32_t kb_read(uint32_t num, uint32_t *buff);
 #endif

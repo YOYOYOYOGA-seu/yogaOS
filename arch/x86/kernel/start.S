@@ -11,6 +11,7 @@
 
 .global disp_string32
 .global _start
+.global disp_pos
 .section .text
 _start:
   
@@ -168,7 +169,7 @@ disp_string32:
   pushl %eax
   mov $selVideo, %ax
   mov %ax, %gs
-  mov $0xf, %ah
+  mov $0x7, %ah
 
 __loop1:
   lodsb
@@ -208,7 +209,7 @@ __loop2:
 //test .data segment
 .data
 disp_pos:
-  .long (80*10 + 0)*2
+  .long (80*0 + 0)*2
 abc:
   .long 0
   .long 0

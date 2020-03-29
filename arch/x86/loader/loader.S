@@ -92,6 +92,7 @@ strInit8259A: .ascii "Initialize 8295A...\n\r"
 strNotFound: .ascii "No kernel!!!\n\r"
 strFound: .ascii "loading kernel...\n\r"
 strFinish: .ascii "Kernel load.\n\r"
+strLoading: .ascii "..."
 
 __strEnd:
 strMemNotEoughLen =strInitDesc - strMemNotEough
@@ -210,6 +211,23 @@ init_descriptor:
   mov $strInitDesc, %di
   mov $strInitDescLen, %cx
   call DispString
+  
+  mov $3, %cx
+__ShowloadingProcess:
+  mov $strLoading,%di
+  push %cx
+  mov $3, %cx
+  call DispString
+  mov $0xffff,%cx
+__loadingLoop:
+  call io_delay
+  loop __loadingLoop
+
+  pop %cx
+  loop __ShowloadingProcess
+  #reset screen
+  mov $0x02, %ax
+  int $0x10
 // init the gdtr regisiter 
 // |    32bit    |  16bit  |
 // |  base addr  |  limit  |
@@ -277,6 +295,7 @@ __traverseLoop:
 notfoundKernel:
   jmp dead_loop16
 foundKernel:
+
   ret
 /**
  * @brief  findKernel
@@ -518,7 +537,7 @@ dead_loop16:
  */
 io_delay:
   pushw %cx
-  mov $10, %cx
+  mov $100, %cx
 __nop_loop:
   nop
   loop __nop_loop

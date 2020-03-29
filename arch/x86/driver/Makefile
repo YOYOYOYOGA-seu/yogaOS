@@ -3,9 +3,7 @@ INC_DIR := $(GLOBAL_INC_DIR) \
 
 
 INC_DIR := $(patsubst %, -I %, $(INC_DIR))
-SRC_DIR := ./ \
-						char \
-						block
+SRC_DIR := ./ 
 
 OBJ_DIR = $(x86_OUTPUT_DIR)
 

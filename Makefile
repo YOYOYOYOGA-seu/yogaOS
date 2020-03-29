@@ -40,6 +40,8 @@ default:archIrrelevant
 archIrrelevant:
 	make -C mm	$(TAG_FLAG)
 	make -C kernel	$(TAG_FLAG)
+	make -C driver	$(TAG_FLAG)
+	make -C server	$(TAG_FLAG)
 	make -C lib	$(TAG_FLAG)
 .PHNOY:clean
 clean:

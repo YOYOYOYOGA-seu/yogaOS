@@ -1,10 +1,10 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-03-21 05:30:17
- * @LastEditTime 2020-03-21 06:26:36
+ * @LastEditTime 2020-03-27 23:59:40
  * @LastEditors Shi Zhangkun
  * @Description none
- * @FilePath /project/arch/x86/include/driver/kb_map.h
+ * @FilePath /project/include/driver/kb_map.h
  */
 #ifndef __KB_MAP_H
 #define __KB_MAP_H
@@ -98,7 +98,7 @@ uint32_t keymap[NR_SCAN_CODES * MAP_COLS] = {
 /* 0x51 - PgDown	*/	PAD_PAGEDOWN,	'3',		PAGEDOWN,
 /* 0x52 - Insert	*/	PAD_INS,	'0',		INSERT,
 /* 0x53 - Delete	*/	PAD_DOT,	'.',		DELETE,
-/* 0x54 - Enter		*/	0,		0,		0,
+/* 0x54 - Enter		*/	0,		0,		0,       
 /* 0x55 - ???		*/	0,		0,		0,
 /* 0x56 - ???		*/	0,		0,		0,
 /* 0x57 - F11		*/	F11,		F11,		0,	

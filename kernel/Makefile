@@ -4,7 +4,7 @@ INC_DIR := $(patsubst %, -I %, $(INC_DIR))
 
 SRC_DIR := ./ \
 					 sched \
-					 server
+					 mm
 
 OBJ_DIR = $(OUTPUT_DIR)
 

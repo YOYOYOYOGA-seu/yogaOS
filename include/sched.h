@@ -11,7 +11,7 @@
 
 #include "type.h"
 #include "list.h"
-#include "mm_page.h"
+#include "page.h"
 /* -------------------------------- define ---------------------------------- */
 #define SCHED_MAX_PRIO_NUM            16
 

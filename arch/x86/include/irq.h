@@ -13,8 +13,7 @@
 
 #define SYSTEM_CALL_VECTOR       0x80
 
-extern inline void  __enableIRQ(void){__asm__("sti"::);}
-extern inline void  __disableIRQ(void){__asm__("cli"::);}
+
 
 extern void timer_IRQhandler(void);
 extern void keyboard_IRQhandler(void);

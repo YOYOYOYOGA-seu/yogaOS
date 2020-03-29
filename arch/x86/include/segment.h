@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-17 21:59:46
- * @LastEditTime 2020-02-24 22:18:50
+ * @LastEditTime 2020-03-28 05:06:07
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/arch/x86/include/segment.h
@@ -95,11 +95,11 @@ typedef gateDesc_t trapGateDesc_t;
 
 #define SEL_TI_MASK            0x04
 /* ------------------------ function declare --------------------------- */
-uint16_t mm_getGdtNum(void);
-selector_t mm_addDescToGDT(uint32_t baseAddr, uint32_t length, descDPL_t dpl,descType_t type,uint8_t d_b_bit);
-error_t mm_initDesc(memSegDesc_t *desc, uint32_t baseAddr, uint32_t length, descDPL_t dpl,descType_t type,uint8_t d_b_bit);
-error_t initGate(gateDesc_t *desc, uint32_t offsetAddr, selector_t sel, descDPL_t dpl,descType_t type);
-void mm_initGDTStruct(void);
+uint16_t seg_getGdtNum(void);
+selector_t seg_addDescToGDT(uint32_t baseAddr, uint32_t length, descDPL_t dpl,descType_t type,uint8_t d_b_bit);
+error_t seg_initDesc(memSegDesc_t *desc, uint32_t baseAddr, uint32_t length, descDPL_t dpl,descType_t type,uint8_t d_b_bit);
+error_t seg_initGate(gateDesc_t *desc, uint32_t offsetAddr, selector_t sel, descDPL_t dpl,descType_t type);
+void seg_initGDTStruct(void);
 
 
 #endif
