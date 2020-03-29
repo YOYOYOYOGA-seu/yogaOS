@@ -81,17 +81,18 @@ initKrnelPage:
   je __align_4M
   add $1<<22, %eax  //if not, make it 4M align 
 __align_4M:
+//L1 table :
   shr $22, %eax
   mov %eax, %ecx
   mov $PHY_SYS_PAGE_DIR_BASE_ADDR,%edi
   xor %eax,%eax
-  mov $PHY_SYS_PAGE_TBL_BASE_ADDR|PDE_P|PDE_RW|PDE_US, %eax
+  mov $PHY_SYS_PAGE_TBL_BASE_ADDR|PDE_P|PDE_RW, %eax //system page can't be visted by user task
 __1:
   stosl
   add $4096, %eax
   loop __1
   
- 
+ //L1 table :relocate system area
   movl sysMemSize, %eax
   shr $22, %eax
   mov %eax, %ecx
@@ -100,19 +101,20 @@ __1:
   add  $PHY_SYS_PAGE_DIR_BASE_ADDR, %eax
   mov %eax, %edi
   xor %eax,%eax
-  mov $PHY_SYS_PAGE_TBL_BASE_ADDR|PDE_P|PDE_RW|PDE_US, %eax
+  mov $PHY_SYS_PAGE_TBL_BASE_ADDR|PDE_P|PDE_RW, %eax  //system page can't be visted by user task
   
 __2:
   stosl
   add $4096, %eax
   loop __2
-
+//L2 table
   movl sysMemSize, %eax
   shr $12, %eax
   mov %eax, %ecx
   mov $PHY_SYS_PAGE_TBL_BASE_ADDR,%edi
   xor %eax,%eax
-  mov $PDE_P|PDE_RW|PDE_G|PDE_US, %eax
+  mov $PTE_P|PTE_RW|PTE_G, %eax //this L2 page is relacted in high addr, all page can't be visted by user 
+                                  //directly(but can be visted by using user L2 page to the phy mem it own)
 __3:
   stosl
   add $4096, %eax

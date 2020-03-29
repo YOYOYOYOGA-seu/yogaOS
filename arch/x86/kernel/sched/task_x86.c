@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-22 02:59:19
- * @LastEditTime 2020-03-27 23:38:35
+ * @LastEditTime 2020-03-29 00:15:00
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/arch/x86/kernel/sched/task_x86.c
@@ -77,8 +77,8 @@ error_t task_initPCBArchRelevant(PCB_t *pPCB, void (*taskFunc)(void))
   {
     seg_initDesc(&p->ldt[1], (uint32_t)NULL, 0xffffffff,DESC_DPL_3,DESC_TYPE_RW,1); 
     seg_initDesc(&p->ldt[2], (uint32_t)NULL, 0xffffffff,DESC_DPL_3,DESC_TYPE_C,1);
-    p->selLDTData = 0x08|SEL_TI_MASK|DESC_DPL_1;
-    p->selLDTCode = 0x10|SEL_TI_MASK|DESC_DPL_1;
+    p->selLDTData = 0x08|SEL_TI_MASK|DESC_DPL_3;
+    p->selLDTCode = 0x10|SEL_TI_MASK|DESC_DPL_3;
     /* code */
   }
   p->ring0Stack_SP = TASK_RING_0_STACK_BASE - sizeof(x86_stackFrame_t);
@@ -100,17 +100,17 @@ error_t task_initTaskPage(PCB_t * pPCB)
   pageTblItem_t *pL3;
   pL1 = pPCB->L1PageTbl;
   
-  memcpy((void *)pL1,(const void *)SYS_PAGE_DIR_BASE_ADDR, PAGE_SIZE);
+  memcpy((void *)pL1,(const void *)SYS_PAGE_DIR_BASE_ADDR, PAGE_SIZE);  //copy system use L1 page table
   //alloc phy mem for PCB ring0 stack, page dir, task use page table 
   pL2 = page_allocOne(&pPCB->usingPageList);
-  pL2[0] = pToPhy(pPCB)|PTE_P|PTE_RW|PTE_US;
-  pL2[1] = pToPhy(pL1)|PTE_P|PTE_RW|PTE_US;
-  pL1[PCB_BASE_ADDR>>22] = pToPhy(pL2)|PDE_P|PDE_RW|PDE_US;
+  pL2[0] = pToPhy(pPCB)|PTE_P|PTE_RW;     // pcb, user task can't visit
+  pL2[1] = pToPhy(pL1)|PTE_P|PTE_RW;      // page dir (L1 page table), user task can't visit
+  pL1[PCB_BASE_ADDR>>22] = pToPhy(pL2)|PDE_P|PDE_RW;  //page table(L2 table), user task can't visit
 
   //alloc phy mem for page table which describe the task stack space
   pL2 = page_allocOne(&pPCB->usingPageList);
-  pL2[0] = pToPhy(pPCB->retFuncPage)|PTE_P|PTE_RW|PTE_US;
-  pL2[PAGE_SIZE/sizeof(pageTblItem_t) - 1] = pToPhy(pPCB->pStackPage)|PTE_P|PTE_RW|PTE_US;
+  pL2[0] = pToPhy(pPCB->retFuncPage)|PTE_P|PTE_RW|PTE_US; //task return page, user task can visit
+  pL2[PAGE_SIZE/sizeof(pageTblItem_t) - 1] = pToPhy(pPCB->pStackPage)|PTE_P|PTE_RW|PTE_US; //user stack, user task can visit
   pL1[0] = pToPhy(pL2)|PDE_P|PDE_RW|PDE_US;
 
   return ENOERR;
