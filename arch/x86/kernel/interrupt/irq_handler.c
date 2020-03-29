@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-20 05:11:29
- * @LastEditTime 2020-03-26 04:49:36
+ * @LastEditTime 2020-03-28 23:18:34
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/arch/x86/kernel/interrupt/irq_handler.c
@@ -21,7 +21,12 @@
 
 extern long timeCount;
 gateDesc_t * const IDT = (gateDesc_t *)IDT_BASE_ADDR;
-
+/**
+ * @brief  
+ * @note  
+ * @param {type} none
+ * @retval none
+ */
 void initInterrupt(void)
 {
   seg_initGate(&IDT[TIME_IRQ_VECTOR],(uint32_t)timer_IRQhandler,SEL_GDT_GLOBAL_CODE,DESC_DPL_3,DESC_TYPE_386GATE_I);
@@ -30,6 +35,12 @@ void initInterrupt(void)
   //__enableIRQ();
 }
 
+/**
+ * @brief  
+ * @note  
+ * @param {type} none
+ * @retval none
+ */
 void do_timer(void)
 {
   timeCount+= SYSTEM_TICK;
@@ -41,7 +52,12 @@ void do_timer(void)
 }
 
 
-
+/**
+ * @brief  
+ * @note  
+ * @param {type} none
+ * @retval none
+ */
 void do_keyboard(void)
 {
   uint8_t data;

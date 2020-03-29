@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-03-26 20:36:31
- * @LastEditTime 2020-03-28 02:14:23
+ * @LastEditTime 2020-03-28 23:12:51
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/arch/x86/driver/x86_console.c
@@ -10,6 +10,7 @@
 #include "vga.h"
 #include "io.h"
 #include "address.h"
+/* ------------------------------------- define --------------------------------------- */
 #define CONSOLE_HIGHT           25
 #define CONSOLE_WIDTH           80
 #define UNIT_SIZE               2
@@ -18,9 +19,12 @@
 #define CONSOLE_SCREEN_SIZE     (CONSOLE_HIGHT*CONSOLE_WIDTH*UNIT_SIZE)
 #define TOTAL_VEDIO_MEM_SIZE    0x8000   //32KB
 #define CONSOLE_MAX_MEM_SIZE    0x2800    //10KB
+
+/* ------------------------------------- variables --------------------------------------- */
 static console_t s_console[SYS_MAX_CONSOLE_NUM];
 static uint32_t numOfConsoleUsed = 0;
 extern uint32_t disp_pos;
+
 /**
  * @brief  
  * @note  
@@ -45,10 +49,10 @@ void console_init(void)
 }
 
 /**
- * @brief  
+ * @brief  alloc one console to link to a tty struct
  * @note  
  * @param {type} none
- * @retval none
+ * @retval index of console
  */
 uint32_t console_alloc(void)
 {
@@ -68,7 +72,7 @@ uint32_t console_alloc(void)
 /**
  * @brief  
  * @note  
- * @param {type} none
+ * @param {uint32_t} local : location of cursor, relative address from base addr of video memory(.baseAddr + .cursor)
  * @retval none
  */ 
 void vga_setCursor(uint32_t local)
@@ -80,10 +84,11 @@ void vga_setCursor(uint32_t local)
   IO_outByte((uint8_t)((local/2) & 0xff),(uint16_t)VGA_CRT_DATA);
   __enableIRQ();
 }
+
 /**
- * @brief  
+ * @brief  switch screen to a console
  * @note  
- * @param {type} none
+ * @param {uint32_t} consoleNum : console index
  * @retval none
  */
 void console_switch(uint32_t consoleNum)
@@ -97,10 +102,14 @@ void console_switch(uint32_t consoleNum)
  vga_setCursor(s_console[consoleNum].cursor + s_console[consoleNum].baseAddr);
 
 }
+
 /**
- * @brief  
+ * @brief  move page up or down for appoint lines
  * @note  
- * @param {type} none
+ * @param {uint32_t} consoleNum
+ *        {uint32_t} line : lines want to move
+ *        {uint32_t} dir : 1  page down
+ *                         0  page up
  * @retval none
  */
 void console_pageMove(uint32_t consoleNum, uint32_t line, uint32_t dir)
@@ -148,6 +157,17 @@ void console_blockShift(uint32_t consoleNum)
 {
 
 }
+
+/**
+ * @brief  display string to a console from a output buff
+ * @note   write char buff to console's part of video memory
+ * @param {char *} pstr : base addr of output char buff
+ *        {uint32_t} num : numbers of output char
+ *        {uint32_t} consoleNum : console index
+ *        {uint8_t}  bColor : back color 
+ *        {uint8_t}  fColor : front color 
+ * @retval none
+ */
 uint32_t console_dispStr(char *pstr, uint32_t num, uint32_t consoleNum, uint8_t bColor, uint8_t fColor)
 {
   int i;

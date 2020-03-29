@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-03-21 03:48:55
- * @LastEditTime 2020-03-28 02:01:22
+ * @LastEditTime 2020-03-28 23:06:06
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/include/driver/tty.h
@@ -14,7 +14,7 @@
 #include "queue.h"
 #include "console.h"
 #include "sched.h"
-
+/* ------------------------------------- define --------------------------------------- */
 #define SYS_TTY_NUM              3
 #define TTY_CHAR_BUFF_SIZE       64
 #define TTY_OUTPUT_BUFF_SIZE     64
@@ -26,6 +26,7 @@
 #define TTY_TYPE_STD             0xE1
 #define TTY_TYPE_SERIAL          0xE2
 #define TTY_TYPE_VIRTUAL         0xE3
+/* ------------------------------------- typedef --------------------------------------- */
 typedef struct{
   char charBuff[TTY_CHAR_BUFF_SIZE];
   char outputBuff[TTY_OUTPUT_BUFF_SIZE];
@@ -55,7 +56,7 @@ typedef struct{
   uint8_t frontColor;
 }tty_t;
 
-
+/* --------------------------------- function declear ---------------------------- */
 void tty_init(void);
 uint32_t tty_decode(tty_t * ptty);
 void tty_process(uint32_t key,tty_t * ptty);

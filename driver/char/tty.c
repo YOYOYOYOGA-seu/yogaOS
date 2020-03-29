@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-03-21 03:50:55
- * @LastEditTime 2020-03-28 02:05:31
+ * @LastEditTime 2020-03-28 22:50:03
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/driver/char/tty.c
@@ -11,6 +11,13 @@
 uint32_t keyState;
 tty_t s_tty[SYS_TTY_NUM];
 tty_t * pCurrentActiveTTY;
+
+/**
+ * @brief  init tty driver and data struct
+ * @note  
+ * @param {type} none
+ * @retval none
+ */
 void tty_init(void)
 {
   int i;
@@ -37,10 +44,10 @@ void tty_init(void)
 }
 
 /**
- * @brief  
+ * @brief  transfer capital between lowercase
  * @note  
- * @param {type} none
- * @retval none
+ * @param {char} c 
+ * @retval transferred char
  */
 char ascii_CapsTransfer(char c)
 {
@@ -52,11 +59,12 @@ char ascii_CapsTransfer(char c)
     return c;
   
 }
+
 /**
- * @brief  
+ * @brief  switch current active tty
  * @note  
- * @param {type} none
- * @retval none
+ * @param {tty_t *} ptty
+ * @retval error_t
  */
 error_t tty_switchTTY(tty_t *ptty)
 {
@@ -71,10 +79,12 @@ error_t tty_switchTTY(tty_t *ptty)
   
 }
 /**
- * @brief  
- * @note  
- * @param {type} none
- * @retval none
+ * @brief  decode the scancode from input device
+ * @note   key code strcute : 
+ *        |    bit0 - bit7   |          bit8        |    bit9 - bit 31     |
+ *        |       data       |    flag extern key   |  flag of ctrl,alt... |
+ * @param {tty_t *} ptty 
+ * @retval uint32_t :key code 
  */
 uint32_t tty_decode(tty_t * ptty)
 {
@@ -168,9 +178,13 @@ uint32_t tty_decode(tty_t * ptty)
 }
 
 /**
- * @brief  
- * @note  
- * @param {type} none
+ * @brief  tty handler function, handler different key code
+ * @note  key code strcute : 
+ *        |    bit0 - bit7   |          bit8        |    bit9 - bit 31     |
+ *        |       data       |    flag extern key   |  flag of ctrl,alt... |
+ * 
+ * @param {uint32_t} key :key code 
+ *        {tty_t *} tty 
  * @retval none
  */
 void tty_process(uint32_t key,tty_t * ptty)

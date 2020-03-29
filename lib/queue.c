@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-03-27 06:25:32
- * @LastEditTime 2020-03-27 07:27:36
+ * @LastEditTime 2020-03-28 23:02:12
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/lib/queue.c
@@ -10,6 +10,15 @@
 #include "errno.h"
 #include "type.h"
 
+/**
+ * @brief  init a queue
+ * @note  
+ * @param {unsigned int} size : max num of this queue
+ *        {unsigned int} unitSize :item size(how many bytes ,can only be 1, 2, 4, 8)
+ *        {void * }  base : base addr of queue buff
+ *        {queue_t *} q : point to the queue_t
+ * @retval error_t
+ */
 error_t queue_init(unsigned int size, unsigned int unitSize, void * base, queue_t *q)
 {
   if(base == NULL)
@@ -20,7 +29,17 @@ error_t queue_init(unsigned int size, unsigned int unitSize, void * base, queue_
   q->queue = base;
   q->size = size;
   q->unitSize = unitSize;
+  return ENOERR;
 }
+
+/**
+ * @brief  read  item from queue
+ * @note  
+ * @param {unsigned int} num : numbers want to read
+ *        {void *}  buff : receiving buff 
+ *        {queue_t *} q : point to the queue_t
+ * @retval numbers of item been readed actually
+ */
 unsigned int queue_read(unsigned int num, void *buff, queue_t *q)
 {
   uint32_t count = 0,i;
@@ -44,6 +63,14 @@ unsigned int queue_read(unsigned int num, void *buff, queue_t *q)
   }
   return count;
 }
+
+/**
+ * @brief  write one item to queue
+ * @note  
+ * @param {unsigned long} item : item want write
+ *        {queue_t *} q : point to the queue_t
+ * @retval error_t
+ */
 error_t queue_write(unsigned long item, queue_t *q)
 {
   int i;

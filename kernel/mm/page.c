@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-22 05:13:44
- * @LastEditTime 2020-03-28 05:03:26
+ * @LastEditTime 2020-03-28 23:04:17
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/kernel/mm/page.c
@@ -74,10 +74,10 @@ void *page_allocOne(pageList_t *usingList)
 }
 
 /**
- * @brief  
+ * @brief  judge if the are enough idle page to alloc
  * @note  
- * @param {type} none
- * @retval none
+ * @param {uint32_t} allocNum : num of applying page
+ * @retval error_t
  */
 error_t page_checkIdleMemNum(uint32_t allocNum)
 {
