@@ -1,17 +1,11 @@
 
-# 组织结构
+# x86下镜像
 
-* driver:相关的设备底层驱动（如键盘、显卡） 
-        |___ block:块设备    
-        |___ char: 字符设备    
-* image:最终生成的包含MBR、引导程序与内核和文件系统的软盘镜像   
-* include:头文件  
-* kernel:内核功能与架构有关的底层实现  
-        |___ irq:中断有关  
-        |___ sched: 调度器有关  
-  
-* lib：库文件的架构相关实现   
-* loader: MBR与引导程序loader  
-* mm: 内存管理有关  
-* output:内核编译中生成的各output文件  
-* server:系统服务进程（由于不同架构下操作不同，所以放在arch/xxx中）
+* 目前采用的是软盘镜像加载系统的  
+* 首先顶层makefile依次调用根目录文件夹下的makefile编译**架构无关**的源文件，放在./output文件夹中（lib文件则单独放在./lib下）
+* 然后进入arch/x86下的makefile，开始编译**x86**架构相关的资源文件
+  1、首先执行loader文件夹的makefile,一是直接生成loader.bin、mbr.bin，二是生成一个空的软盘镜像a.img，并将mbr写入前512字节，移动到image文件夹下
+  2、编译其他文件夹下的文件
+  3、库文件单独链接成lib.a，并放在output下
+  4、将output下所有的.o文件链接成kernel.bin，如果定义了DEBUG = 1,则再连接一份kernel.elf文件以供GDB调试
+  5、调用creatImage.sh，挂载image文件夹下的a.img将kernel.bin复制到软盘镜像中
