@@ -7,8 +7,9 @@
   5、目前是在x86上运行的，希望能够多架构支持（至少在设计上是这么考虑的，虽然不一定有时间移植）  
 
 
-
-
+# 源文件结构
+  ![图片不存在](https://raw.githubusercontent.com/YOYOYOYOGA-seu/yogaOS/develop/readme/structure.png)  
+    
 # 开发日志
 2020.2.01 - 2020.2.22   
 完成x86架构下系统由MBR -> loader -> 载入系统 的内容  
