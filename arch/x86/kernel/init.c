@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-18 02:35:29
- * @LastEditTime 2020-03-27 22:27:45
+ * @LastEditTime 2020-03-29 02:02:49
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/arch/x86/kernel/init.c
@@ -75,7 +75,7 @@ error_t initSegment(void)
 }
 /**
  * @brief  reset the page dir (L1 page) head to zero
- * @note   the whole physical memory space have been 
+ * @note   partial physical memory(now 16M) space have been 
  *         mapped to the same address in linear address
  *         space before page table init complete,this function
  *         is to reset them in linear address after the whole
@@ -86,7 +86,7 @@ error_t initSegment(void)
  */
 void resetPageDir(void)
 {
- memset((void *)SYS_PAGE_DIR_BASE_ADDR,0, sysMessage->memSize>>20);
+ memset((void *)SYS_PAGE_DIR_BASE_ADDR,0, 4*NUM_OF_TMP_MAP_IN_PAGE_DIR);  //4 item in L1 table ,16M area 
 }
 /**
  * @brief  init sys

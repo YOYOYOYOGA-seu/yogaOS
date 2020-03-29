@@ -80,20 +80,8 @@ initKrnelPage:
   cmp sysMemSize, %eax  
   je __align_4M
   add $1<<22, %eax  //if not, make it 4M align 
-__align_4M:
-//L1 table :
-  shr $22, %eax
-  mov %eax, %ecx
-  mov $PHY_SYS_PAGE_DIR_BASE_ADDR,%edi
-  xor %eax,%eax
-  mov $PHY_SYS_PAGE_TBL_BASE_ADDR|PDE_P|PDE_RW, %eax //system page can't be visted by user task
-__1:
-  stosl
-  add $4096, %eax
-  loop __1
-  
+__align_4M: 
  //L1 table :relocate system area
-  movl sysMemSize, %eax
   shr $22, %eax
   mov %eax, %ecx
   mov $SYS_BASE_LINEAR_ADDR,%eax   //get the sys relocate addr in page dir 
@@ -101,12 +89,23 @@ __1:
   add  $PHY_SYS_PAGE_DIR_BASE_ADDR, %eax
   mov %eax, %edi
   xor %eax,%eax
-  mov $PHY_SYS_PAGE_TBL_BASE_ADDR|PDE_P|PDE_RW, %eax  //system page can't be visted by user task
+  mov $PHY_SYS_PAGE_TBL_BASE_ADDR|PDE_P|PDE_RW|PDE_US, %eax  //L1 page tabe don't restrict dpl
   
+__1:
+  stosl
+  add $4096, %eax
+  loop __1
+
+//L1 table :temporary, in the low addr for system init before jump to high area(only map 4M area)
+  mov $NUM_OF_TMP_MAP_IN_PAGE_DIR, %ecx
+  mov $PHY_SYS_PAGE_DIR_BASE_ADDR,%edi
+  xor %eax,%eax
+  mov $PHY_SYS_PAGE_TBL_BASE_ADDR|PDE_P|PDE_RW|PDE_US, %eax //L1 page tabe don't restrict dpl
 __2:
   stosl
   add $4096, %eax
   loop __2
+  
 //L2 table
   movl sysMemSize, %eax
   shr $12, %eax
@@ -119,6 +118,23 @@ __3:
   stosl
   add $4096, %eax
   loop __3
+
+
+//L2 table : file buff area
+  movl $SYS_FILE_BUFF_SIZE, %eax
+  shr $12, %eax
+  mov %eax, %ecx
+  mov $PHY_FILE_BUFF_BASE_ADDR,%eax   //get the sys relocate addr in page dir 
+  shr $10, %eax
+  add $PHY_SYS_PAGE_TBL_BASE_ADDR,%eax
+  mov %eax, %edi
+  xor %eax,%eax
+  mov $PHY_FILE_BUFF_BASE_ADDR|PTE_P|PTE_RW|PTE_G|PTE_US, %eax //file buff area can be accessed by all user (public)
+__4:
+  stosl
+  add $4096, %eax
+  loop __4
+
 
 __load_reg:
   mov $PHY_SYS_PAGE_DIR_BASE_ADDR, %eax

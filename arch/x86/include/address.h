@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-15 22:02:03
- * @LastEditTime 2020-03-29 00:19:29
+ * @LastEditTime 2020-03-29 00:58:03
  * @LastEditors Shi Zhangkun
  * @Description 
  * 
@@ -151,10 +151,12 @@
 #define GDT_AREA_SIZE             (PHY_IDT_BASE_ADDR - PHY_GDT_BASE_ADDR)
 #define IDT_AREA_SIZE             (PHY_LOADER_CODE_BASE_ADDR - PHY_IDT_BASE_ADDR)
 #define SYSTEM_RESERVE_AREA_SIZE  (PHY_IDLE_MEM_BASE_ADDR )       
-
+ 
 #define SYS_PAGE_DIR_SIZE         (PHY_SYS_PAGE_TBL_BASE_ADDR - PHY_SYS_PAGE_DIR_BASE_ADDR)
 #define SYS_PAGE_TBL_SIZE         (PHY_PAGE_MM_LIST_BASE_ADDR  - PHY_SYS_PAGE_TBL_BASE_ADDR)
+
 #define PAGE_MM_LIST_SIZE         (PHY_FILE_BUFF_BASE_ADDR - PHY_PAGE_MM_LIST_BASE_ADDR)
+#define SYS_FILE_BUFF_SIZE        (PHY_IDLE_MEM_BASE_ADDR - PHY_FILE_BUFF_BASE_ADDR)
 #define VIDEO_MEM_SIZE            0xffff
 
 #define SYS_MSG_MEM_SIZE_ADDR     PHY_SYS_MESSAGE_ADDR         

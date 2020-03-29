@@ -16,7 +16,7 @@
 
 #define sysMemSize        PHY_SYS_MESSAGE_ADDR
 
-
+#define NUM_OF_TMP_MAP_IN_PAGE_DIR     4    //temporary mapping in L1 page table low addr area for system init 
 
 #define DA_386I_GATE 0x8E + 0x60
 #endif
