@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-03-21 03:50:55
- * @LastEditTime 2020-03-28 22:50:03
+ * @LastEditTime 2020-04-04 04:22:15
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/driver/char/tty.c
@@ -34,8 +34,8 @@ void tty_init(void)
     s_tty[i].readNum = 0;
     s_tty[i].operateFlag = 0;
 
-    s_tty[i].echoFlag = 1;
-    s_tty[i].flagNLCR = 1;
+    s_tty[i].flag = TTY_FLAG_ECHO|TTY_FLAG_NLCR|TTY_FLAG_BS_GLOBAL;
+  
     
     s_tty[i].frontColor = WHITE;
     s_tty[i].backColor = BLACK;
@@ -198,16 +198,19 @@ void tty_process(uint32_t key,tty_t * ptty)
     ascii = (char)(key&0xff);
     if(key & FLAG_CAPS)
       ascii = ascii_CapsTransfer(ascii);
-    if(ptty->operateFlag = TTY_OP_TASK_READING) //if need write charBuff for task reading
+    if(ptty->operateFlag == TTY_OP_TASK_READING) //if need write charBuff for task reading
     {
-      ptty->charBuff[ptty->cbCount] = ascii;
-      ptty->cbCount ++;
-      if(ptty->cbCount >= ptty->readNum) //if compelet
+      if(ptty->cbCount >= ptty->readNum ||ptty->cbCount >= TTY_CHAR_BUFF_SIZE) //if compelet
       {
         //注意！！！！！这里填上唤醒等待读取的任务
       }
+      else
+      {
+        ptty->charBuff[ptty->cbCount] = ascii;
+        ptty->cbCount ++;
+      }
     }
-    if(ptty->echoFlag)  //if open echo
+    if(ptty->flag & TTY_FLAG_ECHO)  //if open echo
     {
       queue_write(ascii,&ptty->outputQueue);
     }
@@ -217,17 +220,27 @@ void tty_process(uint32_t key,tty_t * ptty)
     switch (key&((FLAG_EXT<<1)-1))
     {
     case ENTER:
-      if(ptty->echoFlag&&ptty->flagNLCR)  //if open echo
+      if((ptty->flag & TTY_FLAG_NLCR) && (ptty->flag & TTY_FLAG_ECHO))  //if open echo
       {
         queue_write('\n',&ptty->outputQueue);
         queue_write('\r',&ptty->outputQueue);
       }
-      if(ptty->operateFlag = TTY_OP_TASK_READING) //if some task is reading, then finish it(enter key)
+      if(ptty->operateFlag == TTY_OP_TASK_READING) //if some task is reading, then finish it(enter key)
       {
         //注意！！！！！这里填上唤醒等待读取的任务
       }
       break;
-    
+      
+    case BACKSPACE:
+     //backspace can delete all character or backspace can only delete char sent to user task(in charBuff)
+      if(ptty->flag & TTY_FLAG_BS_GLOBAL ||  ptty->cbCount > 0) 
+      {
+        queue_write(8,&ptty->outputQueue);
+      }
+      if( ptty->cbCount > 0)  //
+        ptty->cbCount --;    
+      break;
+
     default:
       break;
     }

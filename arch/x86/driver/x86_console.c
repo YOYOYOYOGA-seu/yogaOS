@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-03-26 20:36:31
- * @LastEditTime 2020-03-29 00:06:36
+ * @LastEditTime 2020-04-04 04:55:18
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/arch/x86/driver/x86_console.c
@@ -41,6 +41,7 @@ void console_init(void)
     s_console[i].limit = CONSOLE_MAX_MEM_SIZE;
     s_console[i].unitSize = UNIT_SIZE;
     s_console[i].currentStartAddr = s_console[i].baseAddr;
+    s_console[i].lastLFline = -1;
     s_console[i].Usingflag = 0;
 
   }
@@ -107,30 +108,30 @@ void console_switch(uint32_t consoleNum)
  * @brief  move page up or down for appoint lines
  * @note  
  * @param {uint32_t} consoleNum
- *        {uint32_t} line : lines want to move
- *        {uint32_t} dir : 1  page down
- *                         0  page up
+ * @param {uint32_t} line : lines want to move
+ * @param {uint32_t} dir : 1  page down 0  page up 2  relocate to cursor               
  * @retval none
  */
 void console_pageMove(uint32_t consoleNum, uint32_t line, uint32_t dir)
 {
   uint32_t cursorline;
-  if(dir > 1)
-    return;
-  cursorline = s_console[consoleNum].cursor - s_console[consoleNum].cursor % CONSOLE_LINE_SIZE;
-  if(dir)
+  cursorline =  s_console[consoleNum].cursor - s_console[consoleNum].cursor % CONSOLE_LINE_SIZE;
+  if(dir == 1) //page down
   {
+    if(s_console[consoleNum].currentStartAddr + CONSOLE_SCREEN_SIZE > s_console[consoleNum].baseAddr + s_console[consoleNum].cursor)
+      return;
     s_console[consoleNum].currentStartAddr += line * CONSOLE_LINE_SIZE;
-    if(s_console[consoleNum].currentStartAddr > cursorline)
+    if(s_console[consoleNum].currentStartAddr + CONSOLE_SCREEN_SIZE > cursorline + CONSOLE_LINE_SIZE + s_console[consoleNum].baseAddr)  //page start line can't higher than cusor line
     {
-      s_console[consoleNum].currentStartAddr = cursorline;
+      s_console[consoleNum].currentStartAddr =s_console[consoleNum].baseAddr + cursorline + CONSOLE_LINE_SIZE - CONSOLE_SCREEN_SIZE;
     }
+    // if reached consor mem button
     if(s_console[consoleNum].currentStartAddr + CONSOLE_SCREEN_SIZE > s_console[consoleNum].baseAddr + s_console[consoleNum].limit)
     {
       s_console[consoleNum].currentStartAddr = s_console[consoleNum].baseAddr + s_console[consoleNum].limit - CONSOLE_SCREEN_SIZE;
     }
   }
-  else
+  else if(dir == 0) // page up
   {
     if(s_console[consoleNum].currentStartAddr > s_console[consoleNum].baseAddr + line * CONSOLE_LINE_SIZE)
       s_console[consoleNum].currentStartAddr -= line * CONSOLE_LINE_SIZE;
@@ -138,7 +139,14 @@ void console_pageMove(uint32_t consoleNum, uint32_t line, uint32_t dir)
       s_console[consoleNum].currentStartAddr = s_console[consoleNum].baseAddr;
     /* code */
   }
-
+  else if(dir == 2) // relocate to cursor
+  {
+    if(s_console[consoleNum].baseAddr + cursorline + CONSOLE_LINE_SIZE > CONSOLE_SCREEN_SIZE)
+      s_console[consoleNum].currentStartAddr =s_console[consoleNum].baseAddr + cursorline + CONSOLE_LINE_SIZE - CONSOLE_SCREEN_SIZE;
+    else
+      s_console[consoleNum].currentStartAddr = s_console[consoleNum].baseAddr;
+  }
+  
   __disableIRQ();
   IO_outByte(VGA_START_ADDR_H,VGA_CRT_ADDR);
   IO_outByte(((s_console[consoleNum].currentStartAddr/2)>>8)&0xff,VGA_CRT_DATA);
@@ -147,6 +155,10 @@ void console_pageMove(uint32_t consoleNum, uint32_t line, uint32_t dir)
   __enableIRQ();
 }
 
+void console_moveToCusor(uint32_t consoleNum)
+{
+
+}
 /**
  * @brief  
  * @note  
@@ -159,13 +171,28 @@ void console_blockShift(uint32_t consoleNum)
 }
 
 /**
+ * @brief  
+ * @note  
+ * @param {uint16_t} temp : high 8 bit respect color(back,front), low 8 bit is char data
+ * @param {uint32_t} addr
+ * @retval none
+ */
+inline void console_writeMem(uint16_t temp,uint32_t addr)
+{
+      __asm__("mov %0, %%gs:(%1)"
+              :
+              :"r"(temp),"d"(addr)
+              );
+}
+
+/**
  * @brief  display string to a console from a output buff
  * @note   write char buff to console's part of video memory
  * @param {char *} pstr : base addr of output char buff
- *        {uint32_t} num : numbers of output char
- *        {uint32_t} consoleNum : console index
- *        {uint8_t}  bColor : back color 
- *        {uint8_t}  fColor : front color 
+ * @param {uint32_t} num : numbers of output char
+ * @param {uint32_t} consoleNum : console index
+ * @param {uint8_t}  bColor : back color 
+ * @param {uint8_t}  fColor : front color 
  * @retval none
  */
 uint32_t console_dispStr(char *pstr, uint32_t num, uint32_t consoleNum, uint8_t bColor, uint8_t fColor)
@@ -179,29 +206,42 @@ uint32_t console_dispStr(char *pstr, uint32_t num, uint32_t consoleNum, uint8_t 
   {
     if(pstr[i] == '\n') // line feed
     {
+      s_console[consoleNum].lastLFline = s_console[consoleNum].cursor/CONSOLE_LINE_SIZE; //record newest LF line
       s_console[consoleNum].cursor += UNIT_SIZE * CONSOLE_WIDTH;
     }
+
     else if (pstr[i] == '\r') // return to the beginning of line
     {
       s_console[consoleNum].cursor -= s_console[consoleNum].cursor%(UNIT_SIZE * CONSOLE_WIDTH);
     }
-    
+
+    else if(pstr[i] == 8) //backspace
+    {
+      //if backspace to the begining of one line, and last line end with LF flag, then can't continue backspace to last line
+      if(!(s_console[consoleNum].cursor % CONSOLE_LINE_SIZE)&&    \
+            s_console[consoleNum].cursor/CONSOLE_LINE_SIZE <= s_console[consoleNum].lastLFline + 1)
+      {
+        continue;   
+      }
+      s_console[consoleNum].cursor -= UNIT_SIZE;
+      addr = s_console[consoleNum].baseAddr + s_console[consoleNum].cursor;
+      temp = (temp&0xff00) + ' ';
+      console_writeMem(temp,addr);  // write ' ' to erase
+    }
+
     if(s_console[consoleNum].cursor > s_console[consoleNum].limit )  // reach the top of this console memory
     {
       console_blockShift(consoleNum);  // shift all console memory to get some free memory
     }
-    if(s_console[consoleNum].cursor > s_console[consoleNum].currentStartAddr + CONSOLE_SCREEN_SIZE) // out of the screen
+    if(s_console[consoleNum].cursor > s_console[consoleNum].currentStartAddr + CONSOLE_SCREEN_SIZE -s_console[consoleNum].baseAddr) // out of the screen
     {
-      console_pageMove(consoleNum,1,1); //page down 1 line
+      console_pageMove(consoleNum,1,2); //page down 1 line
     }
     if(pstr[i] >= 32)  // Ensure only printable ascii can be print(like '\r','\n')
     {
       addr = s_console[consoleNum].baseAddr + s_console[consoleNum].cursor;
       temp = (temp&0xff00) + pstr[i];
-      __asm__("mov %0, %%gs:(%1)"
-              :
-              :"r"(temp),"d"(addr)
-              );
+      console_writeMem(temp,addr);
       s_console[consoleNum].cursor += UNIT_SIZE;
     }
     

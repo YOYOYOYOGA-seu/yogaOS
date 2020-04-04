@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-03-27 02:00:42
- * @LastEditTime 2020-03-28 01:44:21
+ * @LastEditTime 2020-04-04 04:32:00
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/include/driver/console.h
@@ -16,7 +16,7 @@ typedef struct{
   uint32_t limit;            
   uint32_t unitSize;         /* one char occupies memsize in video mem */
   uint32_t cursor;           /* cursor location in this console (relative location of base addr)*/
-  
+  int lastLFline;       /* last LF flag location, use for erase(backspace) handler, can't erase char before LF code */
   uint32_t Usingflag;       /* if linked to a tty struct */
 }console_t;
 

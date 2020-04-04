@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-03-21 03:48:55
- * @LastEditTime 2020-03-28 23:06:06
+ * @LastEditTime 2020-04-04 03:46:41
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/include/driver/tty.h
@@ -26,6 +26,10 @@
 #define TTY_TYPE_STD             0xE1
 #define TTY_TYPE_SERIAL          0xE2
 #define TTY_TYPE_VIRTUAL         0xE3
+/* ----------------------------- tty attribute flag define --------------------------------- */
+#define TTY_FLAG_ECHO            0x0001  /* echo */
+#define TTY_FLAG_NLCR            0x0002  /* if enter function key related to "\n\r", only used when input is keyboard(std tty) */
+#define TTY_FLAG_BS_GLOBAL           0x0004  /* if CTR_ON bit = 1, tty will handler the backspace key, else tty will regard it as a ascii */
 /* ------------------------------------- typedef --------------------------------------- */
 typedef struct{
   char charBuff[TTY_CHAR_BUFF_SIZE];
@@ -47,8 +51,9 @@ typedef struct{
 
   uint32_t operateFlag;  /* 0 idle, 1 some task wait for reading , 2 outputing */ 
 
-  uint32_t echoFlag;
-  uint32_t flagNLCR;   /* if enter function key related to "\n\r", only used when input is keyboard(std tty) */
+  uint32_t flagNLCR;  
+
+  uint32_t flag;
 
   uint32_t type;
 
