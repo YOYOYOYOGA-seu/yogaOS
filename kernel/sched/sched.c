@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-25 00:19:41
- * @LastEditTime 2020-03-09 05:02:41
+ * @LastEditTime 2020-04-03 20:30:09
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/kernel/sched/sched.c
@@ -16,10 +16,10 @@ PCB_t * currentActiveTask = NULL;
 uint32_t taskLeftTime;
 uint32_t schedRunningTime = 0; 
 uint32_t nextTaskwakeTime = 0;
-list_t  readyTaskList[SCHED_MAX_PRIO_NUM];  //Ready task list
+list_t  readyTaskList[SCHED_MAX_P_PRIO_NUM];  //Ready task list
 list_t  suspendTaskList;
 
-uint32_t volatile topReadyPriority = SCHED_MAX_PRIO_NUM; //save the highest task prio in ready list
+uint32_t volatile topReadyPriority = SCHED_MAX_P_PRIO_NUM; //save the highest task p_prio in ready list
 shcedulerState_t shcedulerState = SCHEDULER_STOP; //scheduler status
 pid_t systemMaxPID = 0; //record the pid have been alloced(now don't recycle pit)
 
@@ -32,7 +32,7 @@ pid_t systemMaxPID = 0; //record the pid have been alloced(now don't recycle pit
 void shced_switchToNextReadyPrio(void)
 {
   uint32_t i;
-  for(i = topReadyPriority; i < SCHED_MAX_PRIO_NUM; i++)
+  for(i = topReadyPriority; i < SCHED_MAX_P_PRIO_NUM; i++)
   {
     if(readyTaskList[i].numberOfItem > 0)
     {
@@ -82,9 +82,9 @@ error_t sched_addToList(PCB_t *pPCB)
   switch (pPCB->status)
   {
   case TASK_READY:
-    list_insertTail(&readyTaskList[pPCB->prio], &(pPCB->stateListItem));
-    if(pPCB->prio < topReadyPriority)  //update the highest ready priority
-    topReadyPriority = pPCB->prio;
+    list_insertTail(&readyTaskList[pPCB->p_prio], &(pPCB->stateListItem));
+    if(pPCB->p_prio < topReadyPriority)  //update the highest ready priority
+    topReadyPriority = pPCB->p_prio;
     break;
   case TASK_SUSPENDING:
     list_insertList(&suspendTaskList, &(pPCB->stateListItem));
@@ -113,7 +113,7 @@ error_t removeFromStateList(PCB_t *pPCB)
   if(errno != ENOERR)
     return errno;
   
-  if (flag && pPCB->prio <= topReadyPriority)  // if this is a task in ready list ,we should check topReadyPrio
+  if (flag && pPCB->p_prio <= topReadyPriority)  // if this is a task in ready list ,we should check topReadyPrio
   {
    shced_switchToNextReadyPrio();
   }
@@ -132,7 +132,7 @@ error_t sched_initScheduler(void)
 {
   uint32_t i;
   taskLeftTime = 0;
-  for(i = 0; i < SCHED_MAX_PRIO_NUM; i++)
+  for(i = 0; i < SCHED_MAX_P_PRIO_NUM; i++)
   {
     list_initList(&readyTaskList[i], TASK_READY_LIST_MAX_VALUE);
     
@@ -250,29 +250,29 @@ uint32_t schedule(void)
     if(currentActiveTask->status == TASK_RUN)  //if current task haven't be pending
       currentActiveTask->status = TASK_READY;
 
-    if(readyTaskList[currentActiveTask->prio].numberOfItem != 0) // prevent the current prio have no task
+    if(readyTaskList[currentActiveTask->p_prio].numberOfItem != 0) // prevent the current p_prio have no task
     {
-      readyTaskList[currentActiveTask->prio].pFirstItem =readyTaskList[currentActiveTask->prio].pFirstItem->pNext;
-      currentActiveTask = readyTaskList[currentActiveTask->prio].pFirstItem->pOwner;
+      readyTaskList[currentActiveTask->p_prio].pFirstItem =readyTaskList[currentActiveTask->p_prio].pFirstItem->pNext;
+      currentActiveTask = readyTaskList[currentActiveTask->p_prio].pFirstItem->pOwner;
       currentActiveTask -> status = TASK_RUN;
     }
     else
     {
-      if(topReadyPriority >= currentActiveTask->prio)
+      if(topReadyPriority >= currentActiveTask->p_prio)
         painc("topReadyPriority error!\n");
     }
-    //before check the if the are a higher prio,we suppose it is the task to run
+    //before check the if the are a higher p_prio,we suppose it is the task to run
     taskLeftTime = currentActiveTask->timeLeft; 
     flag = 1;
   }
-  //relocate the task to run , if the are a higher prio task ready, or current task is pending
-  if(topReadyPriority < currentActiveTask->prio || currentActiveTask->status != TASK_RUN)  
+  //relocate the task to run , if the are a higher p_prio task ready, or current task is pending
+  if(topReadyPriority < currentActiveTask->p_prio || currentActiveTask->status != TASK_RUN)  
   {
     currentActiveTask->timeLeft = taskLeftTime; //save current task left time slice
     if(currentActiveTask->status == TASK_RUN)
       currentActiveTask->status = TASK_READY;
     if(readyTaskList[topReadyPriority].numberOfItem == 0)
-      painc("No task in this prio!\n");
+      painc("No task in this preempting priority!\n");
     currentActiveTask = readyTaskList[topReadyPriority].pFirstItem->pOwner;
     currentActiveTask->status = TASK_RUN;
     taskLeftTime = currentActiveTask->timeLeft;

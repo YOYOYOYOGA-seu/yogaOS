@@ -32,7 +32,7 @@ error_t task_initPCBArchRelevant(PCB_t *pPCB, void (*taskFunc)(void))
   p->pStackKernel = (x86_stackFrame_t *)((uint32_t)pPCB + PAGE_SIZE - sizeof(x86_stackFrame_t));
   seg_initDesc(&p->ldt[0], (uint32_t)NULL, 0,0,0,0);
   /*
-  if(pPCB->prio <= SCHED_SYS_STASK_PRIO_N) //system task, code is in system space
+  if(pPCB->p_prio <= SCHED_SYS_TASK_P_PRIO_N) //system task, code is in system space
   {
     //data&stack, D/B must = 1, stack access using eax(32bit)
     seg_initDesc(&p->ldt[1], (uint32_t)NULL, 0xffffffff,DESC_DPL_1,DESC_TYPE_RW,1); 
@@ -48,7 +48,7 @@ error_t task_initPCBArchRelevant(PCB_t *pPCB, void (*taskFunc)(void))
   // copy the task return handle function and push it's addr to the task stack(first item of stack)
   task_copyRetHandler(pPCB->retFuncPage);
   *(uint32_t *)(pPCB->pStackPage + PAGE_SIZE -4) = (uint32_t)TASK_RETURN_HANDLER_ADDR;
-  if(pPCB->prio <= 1) //system task, now prio 0,1 respect system task, don't have any father task
+  if(pPCB->p_prio <= 1) //system task, now p_prio 0,1 respect system task, don't have any father task
   {
     p->selLDTData = 0x08|SEL_TI_MASK|DESC_DPL_1;
     p->selLDTCode = 0x10|SEL_TI_MASK|DESC_DPL_1;
