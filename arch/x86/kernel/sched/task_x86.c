@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-22 02:59:19
- * @LastEditTime 2020-03-29 01:42:38
+ * @LastEditTime 2020-04-04 08:35:14
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/arch/x86/kernel/sched/task_x86.c
@@ -20,7 +20,7 @@ extern void task_copyRetHandler(void *retFuncBase);
  * @brief  init the arch relevant struct in PCB
  * @note  x86 arch, contain LDT, TSS, LDT_selector
  * @param {PCB_t *} pPCB
- *        {void (*)(void)} taskFunc: point to the entry of task code
+ * @param {void (*)(void)} taskFunc: point to the entry of task code
  * @retval error_t
  */
 error_t task_initPCBArchRelevant(PCB_t *pPCB, void (*taskFunc)(void))

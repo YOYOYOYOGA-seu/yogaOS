@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-24 22:21:50
- * @LastEditTime 2020-04-04 07:17:16
+ * @LastEditTime 2020-04-04 08:36:39
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/kernel/sched/task.c
@@ -57,9 +57,9 @@ error_t task_initPCB(PCB_t *pPCB,uint32_t p_prio,uint32_t t_prio ,const char* na
  * @brief  Create a new task (with out father task)
  * @note   it would be use only in test system task
  * @param {void(*)(void)} taskFunc : point to the task function
- *        {uint32_t} codeSize 
- *        {uint32_t} p_prio
- *        {const char *} name
+ * @param {uint32_t} codeSize 
+ * @param {uint32_t} p_prio
+ * @param {const char *} name
  * @retval error_t 
  */
 

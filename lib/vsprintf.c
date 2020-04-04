@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-04-03 23:38:31
- * @LastEditTime 2020-04-04 02:11:50
+ * @LastEditTime 2020-04-04 08:28:38
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/lib/vsprintf.c
@@ -13,7 +13,9 @@
 /**
  * @brief  
  * @note  
- * @param {type} none
+ * @param {char *} string : point to the receive char buf
+ * @param {char *} format : point to the input foarmat string
+ * @param {va_list} param : point to first param
  * @retval none
  */
 int vsprintf(char *string, char *format, va_list param)

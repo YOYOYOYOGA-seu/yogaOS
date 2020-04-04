@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-22 22:42:24
- * @LastEditTime 2020-03-09 04:55:53
+ * @LastEditTime 2020-04-04 08:37:07
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/lib/list.c
@@ -14,7 +14,7 @@
  * @brief  add a list item to list, ranged by item.value
  * @note  
  * @param {list_t *} list
- *        {listItem_t *}  item
+ * @param {listItem_t *}  item
  * @retval error_t
  */
 error_t list_insertList(list_t *list, listItem_t *item)
@@ -57,7 +57,7 @@ error_t list_insertList(list_t *list, listItem_t *item)
  * @brief  add a list item to list's head(first item)
  * @note  
  * @param {list_t *} list
- *        {listItem_t *}  item
+ * @param {listItem_t *}  item
  * @retval error_t
  */
 error_t list_insertHead(list_t *list, listItem_t *item)
@@ -89,7 +89,7 @@ error_t list_insertHead(list_t *list, listItem_t *item)
  * @brief  add a list item to list's tail(last item)
  * @note  
  * @param {list_t *} list
- *        {listItem_t *}  item
+ * @param {listItem_t *}  item
  * @retval error_t
  */
 error_t list_insertTail(list_t *list, listItem_t *item)

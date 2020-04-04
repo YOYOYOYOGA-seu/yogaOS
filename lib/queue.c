@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-03-27 06:25:32
- * @LastEditTime 2020-03-28 23:02:12
+ * @LastEditTime 2020-04-04 08:37:31
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/lib/queue.c
@@ -14,9 +14,9 @@
  * @brief  init a queue
  * @note  
  * @param {unsigned int} size : max num of this queue
- *        {unsigned int} unitSize :item size(how many bytes ,can only be 1, 2, 4, 8)
- *        {void * }  base : base addr of queue buff
- *        {queue_t *} q : point to the queue_t
+ * @param {unsigned int} unitSize :item size(how many bytes ,can only be 1, 2, 4, 8)
+ * @param {void * }  base : base addr of queue buff
+ * @param {queue_t *} q : point to the queue_t
  * @retval error_t
  */
 error_t queue_init(unsigned int size, unsigned int unitSize, void * base, queue_t *q)

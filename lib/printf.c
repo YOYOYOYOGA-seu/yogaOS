@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-04-03 23:02:17
- * @LastEditTime 2020-04-04 08:23:19
+ * @LastEditTime 2020-04-04 08:42:03
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/lib/printf.c
@@ -10,9 +10,10 @@
 #include "stdarg.h"
 #include "unistd.h"
 /**
- * @brief  
+ * @brief  print format string to tty
  * @note  
- * @param {type} none
+ * @param {const char *} format : format string
+ * @param {...} ... : format param
  * @retval none
  */
 int printf(const char *format,...)
@@ -27,9 +28,11 @@ int printf(const char *format,...)
 }
 
 /**
- * @brief  
+ * @brief  print format string to appoint buf
  * @note  
- * @param {type} none
+ * @param {char *} string : recevie char buf (output buf)
+ * @param {const char *} format : format string
+ * @param {...} ... : format param
  * @retval none
  */
 int sprintf(char *string, const char *format,...)

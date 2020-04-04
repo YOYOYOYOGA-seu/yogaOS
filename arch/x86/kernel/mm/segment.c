@@ -27,11 +27,11 @@ volatile struct{
  * @brief  init a descriptor
  * @note  
  * @param {memSegDesc_t *} desc :point to the Descriptor
- *        {uint32_t} baseAddr :Base address of the segment 
- *        {uint32_t} length   :length of the segment
- *        {descDPL_t} dpl     :Descriptor Privilege Level
- *        {descType_t}type    :type of descriptor
- *        {uintt8_t}d_b_bit   :the D/B bit  when the desc type is code, it
+ * @param {uint32_t} baseAddr :Base address of the segment 
+ * @param {uint32_t} length   :length of the segment
+ * @param {descDPL_t} dpl     :Descriptor Privilege Level
+ * @param {descType_t}type    :type of descriptor
+ * @param {uintt8_t}d_b_bit   :the D/B bit  when the desc type is code, it 
  *                            represent the code is 32bit( = 1) or 16bit(= 0)
  * @retval error_t
  */
@@ -76,10 +76,10 @@ error_t seg_initDesc(memSegDesc_t *desc, uint32_t baseAddr, uint32_t length,\
  * @brief  init a Gate descriptor
  * @note  
  * @param {memSegDesc_t *} desc :point to the Gate Descriptor
- *        {uint32_t} offsetAddr :The code addr offset in the segment
- *        {selector_t} sel   :selector of the segment which the code localed
- *        {descDPL_t} dpl     :Descriptor Privilege Level
- *        {descType_t}type    :type of descriptor
+ * @param {uint32_t} offsetAddr :The code addr offset in the segment
+ * @param {selector_t} sel   :selector of the segment which the code localed
+ * @param {descDPL_t} dpl     :Descriptor Privilege Level
+ * @param {descType_t}type    :type of descriptor
  * @retval error_t
  */
 error_t seg_initGate(gateDesc_t *desc, uint32_t offsetAddr,\
@@ -115,7 +115,7 @@ uint16_t seg_getGdtNum(void)
  * @brief  Set the bit which represent the GDT descriptor's status(using/idle) 
  * @note  
  * @param {uint16_t} number   :the index of the desc in GDT
- *        {uint16_t} status    :0 idle, 1 busy
+ * @param {uint16_t} status    :0 idle, 1 busy
  * @retval error_t
  */
 static error_t setGDTdescState(uint16_t num, uint16_t status)
@@ -200,10 +200,10 @@ findIdleDesc:
  * @brief  Add a new desc to GDT
  * @note  
  * @param {uint32_t} baseAddr :Base address of the segment 
- *        {uint32_t} length   :length of the segment
- *        {descDPL_t} dpl     :Descriptor Privilege Level
- *        {descType_t}type    :type of descriptor
- *        {uintt8_t}d_b_bit   :the D/B bit 
+ * @param {uint32_t} length   :length of the segment
+ * @param {descDPL_t} dpl     :Descriptor Privilege Level
+ * @param {descType_t}type    :type of descriptor
+ * @param {uintt8_t}d_b_bit   :the D/B bit 
  * @retval selector_t
  */
 selector_t seg_addDescToGDT(uint32_t baseAddr, uint32_t length,\

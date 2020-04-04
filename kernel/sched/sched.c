@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-25 00:19:41
- * @LastEditTime 2020-04-03 20:30:09
+ * @LastEditTime 2020-04-04 08:36:24
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/kernel/sched/sched.c
@@ -160,7 +160,7 @@ void sched_startScheduler(void)
  * @brief  Suspend a task for a certain time
  * @note  
  * @param {PCB_t *} pPCB
- *        {uint32_t} time
+ * @param {uint32_t} time
  * @retval error_t
  */
 error_t sched_suspendTask(PCB_t *pPCB, uint32_t time)
@@ -190,7 +190,7 @@ error_t sched_suspendTask(PCB_t *pPCB, uint32_t time)
  * @brief  wake task which suspend time is over
  * @note  
  * @param {PCB_t *} pPCB
- *        {uint32_t} time
+ * @param {uint32_t} time
  * @retval error_t
  */
 error_t sched_wakeTask(void)
