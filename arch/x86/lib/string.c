@@ -31,7 +31,7 @@ __asm__("cld\n\t"
  * @param {type} none
  * @retval none
  */
-void * memset(void *s, int ch, size_t n)
+void * memset(void *s, int ch, ssize_t n)
 {
   __asm__("cld\n\t"
         "rep\n\t"

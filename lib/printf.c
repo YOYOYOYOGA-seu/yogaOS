@@ -1,13 +1,14 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-04-03 23:02:17
- * @LastEditTime 2020-04-04 02:32:36
+ * @LastEditTime 2020-04-04 08:23:19
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/lib/printf.c
  */
 #include "stdio.h"
 #include "stdarg.h"
+#include "unistd.h"
 /**
  * @brief  
  * @note  
@@ -21,7 +22,7 @@ int printf(const char *format,...)
   char buf[256];
 
   i = vsprintf(buf, (char *)format, arg);
-  //write();
+  write(-1,buf,i);  /* 注意！！！！！这是一个临时的系统调用，后期有文件系统后改为/dev/tty的描述符（指向当前进程的tty） */
   return i;
 }
 

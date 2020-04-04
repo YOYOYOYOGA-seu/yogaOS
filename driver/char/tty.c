@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-03-21 03:50:55
- * @LastEditTime 2020-04-04 04:22:15
+ * @LastEditTime 2020-04-04 07:19:34
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/driver/char/tty.c
@@ -10,7 +10,7 @@
 
 uint32_t keyState;
 tty_t s_tty[SYS_TTY_NUM];
-tty_t * pCurrentActiveTTY;
+tty_t * pCurrentActiveTTY = NULL;
 
 /**
  * @brief  init tty driver and data struct
@@ -29,7 +29,10 @@ void tty_init(void)
     queue_init(TTY_OUTPUT_BUFF_SIZE,sizeof(char),s_tty[i].outputBuff,&s_tty[i].outputQueue);
     s_tty[i].cbCount = 0;
     s_tty[i].type = TTY_TYPE_STD;  // standard tty 
+
     s_tty[i].consoleIndex = console_alloc();
+    s_tty[i].ttyIndex = i;
+
     s_tty[i].readTask = 0;
     s_tty[i].readNum = 0;
     s_tty[i].operateFlag = 0;
@@ -59,7 +62,26 @@ char ascii_CapsTransfer(char c)
     return c;
   
 }
-
+/**
+ * @brief  write char to tty out put
+ * @note  
+ * @param {int} ttyNum : tty index
+ * @param {char *} buf 
+ * @param {int} count 
+ * @retval actually number of item been writen
+ */
+int tty_write(int ttyNum, char *buf, int count)
+{
+  int i;
+  if(ttyNum >= SYS_TTY_NUM)
+    return 0;
+  for(i = 0; i < count; i++)
+  {
+    if(queue_write(*buf++,&s_tty[ttyNum].outputQueue))
+      break;
+  }
+  return i;
+}
 /**
  * @brief  switch current active tty
  * @note  

@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-03-09 01:00:29
- * @LastEditTime 2020-03-09 05:06:54
+ * @LastEditTime 2020-04-04 05:44:03
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/include/libh/unistd.h
@@ -17,4 +17,6 @@ unsigned sleep(unsigned int __seconds);
 unsigned usleep(unsigned int __useconds);
 unsigned msleep(unsigned int __microsecond);
 int execve(const char *__path, char * const __argv[], char * const __envp[] );
+
+ssize_t write (int fd,const void * buf,size_t count);
 #endif

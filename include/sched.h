@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-21 20:25:27
- * @LastEditTime 2020-04-03 20:45:12
+ * @LastEditTime 2020-04-04 07:01:17
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/include/sched.h
@@ -46,6 +46,7 @@ typedef struct{
   uint32_t p_prio; //preempting priority,p_prio 0,1 respect system task (for test when don't have fork() function)
   uint32_t t_prio; //time slice prio, 0 respect highest, have max time slice size.time slice = (TASK_MAX_TIME_SLICE - p_rio)* 10ms
 
+  int tty;         // tty this task belong to
   void *pArchRelvant;
   void *L1PageTbl;
   listItem_t  stateListItem;

@@ -36,7 +36,7 @@ void testTask2(void) //test scheduler
   while(1)
   {
     time++;
-    sprintf(buf,"test:%d %x",time,time);
+    printf("test:%d %x \n\r",time,time);
     sleep(5);
   }
 }
@@ -69,11 +69,12 @@ int main(void){
   initSysMsg();
   initMemManage();
   sched_initScheduler();
+  task_creatNewSysTask(server_tty,512,0,0,"testTask3\0");
   task_creatNewSysTask(init_task,512,1,10,"init_task\0");
   task_creatNewSysTask(idle_task,512,1,10,"idle_task\0");
   task_creatNewSysTask(testTask2,512,0,0,"testTask2\0");
   task_creatNewSysTask(testTask3,512,0,15,"testTask3\0");
-  task_creatNewSysTask(server_tty,512,0,0,"testTask3\0");
+  
 
   sched_startScheduler();
   while(1)

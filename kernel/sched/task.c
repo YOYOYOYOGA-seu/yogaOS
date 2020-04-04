@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-24 22:21:50
- * @LastEditTime 2020-04-03 20:42:44
+ * @LastEditTime 2020-04-04 07:17:16
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/kernel/sched/task.c
@@ -10,7 +10,9 @@
 #include "sched.h"
 #include "errno.h"
 #include "page.h"
+#include "tty.h"
 extern pid_t systemMaxPID;
+extern tty_t * pCurrentActiveTTY;
 /**
  * @brief  
  * @note  
@@ -44,7 +46,7 @@ error_t task_initPCB(PCB_t *pPCB,uint32_t p_prio,uint32_t t_prio ,const char* na
   pPCB->pStackPage = page_allocOne(&pPCB->usingPageList);
   pPCB->retFuncPage = page_allocOne(&pPCB->usingPageList);
   
-  
+  (pCurrentActiveTTY == NULL )? (pPCB->tty = 0):(pPCB->tty = (int)pCurrentActiveTTY->ttyIndex);
   for(i = 0; (i < SCHED_MAX_TASK_NAME_SIZE && name[i] != '\0'); i++)
     pPCB->name[i] = name[i];
   pPCB->name[i] = '\0';

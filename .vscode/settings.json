@@ -18,6 +18,9 @@
     "console.h": "c",
     "keyboard.h": "c",
     "stdio.h": "c",
-    "stdlib.h": "c"
+    "stdlib.h": "c",
+    "cstdio": "c",
+    "type_traits": "c",
+    "typeinfo": "c"
   }
 }

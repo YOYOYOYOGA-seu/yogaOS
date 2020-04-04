@@ -36,8 +36,8 @@ error_t queue_init(unsigned int size, unsigned int unitSize, void * base, queue_
  * @brief  read  item from queue
  * @note  
  * @param {unsigned int} num : numbers want to read
- *        {void *}  buff : receiving buff 
- *        {queue_t *} q : point to the queue_t
+ * @param {void *}  buff : receiving buff 
+ * @param  {queue_t *} q : point to the queue_t
  * @retval numbers of item been readed actually
  */
 unsigned int queue_read(unsigned int num, void *buff, queue_t *q)
@@ -67,9 +67,9 @@ unsigned int queue_read(unsigned int num, void *buff, queue_t *q)
 /**
  * @brief  write one item to queue
  * @note  
- * @param {unsigned long} item : item want write
- *        {queue_t *} q : point to the queue_t
- * @retval error_t
+ * @param {unsigned long} item : item want write 
+ * @param {queue_t *} q : point to the queue_t 
+ * @retval  error_t 
  */
 error_t queue_write(unsigned long item, queue_t *q)
 {

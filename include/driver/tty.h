@@ -44,7 +44,7 @@ typedef struct{
   uint32_t oTail;
   */
   uint32_t consoleIndex;
-  
+  uint32_t ttyIndex;
   
   pid_t readTask;   /* task wait for reading */
   uint32_t readNum; /* the num of char that the task want to read */
@@ -65,4 +65,5 @@ typedef struct{
 void tty_init(void);
 uint32_t tty_decode(tty_t * ptty);
 void tty_process(uint32_t key,tty_t * ptty);
+int tty_write(int ttyNum, char *buf, int count);
 #endif
