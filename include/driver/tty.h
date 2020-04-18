@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-03-21 03:48:55
- * @LastEditTime 2020-04-04 03:46:41
+ * @LastEditTime 2020-04-05 06:04:51
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/include/driver/tty.h
@@ -57,8 +57,11 @@ typedef struct{
 
   uint32_t type;
 
-  uint8_t backColor;
-  uint8_t frontColor;
+  uint8_t backColor;   /* defualt back color */
+  uint8_t frontColor;   /* defualt front color */
+
+  uint8_t backColorTemp;  /* temp back color, would be reset to 0xFF after outputBuff clear */
+  uint8_t frontColorTemp; /* temp front color, would be reset to 0xFF after outputBuff clear */
 }tty_t;
 
 /* --------------------------------- function declear ---------------------------- */
@@ -66,4 +69,5 @@ void tty_init(void);
 uint32_t tty_decode(tty_t * ptty);
 void tty_process(uint32_t key,tty_t * ptty);
 int tty_write(int ttyNum, char *buf, int count);
+void tty_outputData(int ttyNum);
 #endif

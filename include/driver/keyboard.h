@@ -1,10 +1,10 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-03-21 04:14:30
- * @LastEditTime 2020-03-26 04:15:11
+ * @LastEditTime 2020-04-05 04:25:37
  * @LastEditors Shi Zhangkun
  * @Description none
- * @FilePath /project/arch/x86/include/driver/keyboard.h
+ * @FilePath /project/include/driver/keyboard.h
  */
 
 #ifndef __KEYBOARD_H

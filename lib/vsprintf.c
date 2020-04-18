@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-04-03 23:38:31
- * @LastEditTime 2020-04-04 08:28:38
+ * @LastEditTime 2020-04-18 04:34:41
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/lib/vsprintf.c
@@ -53,6 +53,10 @@ int vsprintf(char *string, char *format, va_list param)
       break;
     
     case 's':
+      strcpy(pChar, (char*)(*(unsigned int *)tempParam));
+      while(*pChar)
+        pChar++;
+      tempParam += 4;
       break;
     default:
       break;

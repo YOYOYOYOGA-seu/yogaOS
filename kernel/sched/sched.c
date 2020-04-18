@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-25 00:19:41
- * @LastEditTime 2020-04-04 08:36:24
+ * @LastEditTime 2020-04-18 09:36:59
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/kernel/sched/sched.c
@@ -12,6 +12,7 @@
 #include "page.h"
 #include "kernel.h"
 #include "time.h"
+#include "string.h"
 PCB_t * currentActiveTask = NULL; 
 uint32_t taskLeftTime;
 uint32_t schedRunningTime = 0; 
@@ -21,8 +22,9 @@ list_t  suspendTaskList;
 
 uint32_t volatile topReadyPriority = SCHED_MAX_P_PRIO_NUM; //save the highest task p_prio in ready list
 shcedulerState_t shcedulerState = SCHEDULER_STOP; //scheduler status
-pid_t systemMaxPID = 0; //record the pid have been alloced(now don't recycle pit)
-
+PCB_t* globalTaskMap[SCHED_MAX_TASK_NUM];
+pid_t sysFirstIdlePID = 0; //record the pid have been alloced(now don't recycle pit)
+int taskNumber = 0;
 /**
  * @brief  
  * @note  
@@ -43,7 +45,39 @@ void shced_switchToNextReadyPrio(void)
   painc("No task in ready list!\n\0");
 }
 
-
+/**
+ * @brief  
+ * @note  
+ * @param {type} none
+ * @retval none
+ */
+pid_t sched_serchNextIdlePID(void)
+{
+  int i;
+  for(i = 0; i < SCHED_MAX_TASK_NUM; i++)
+  {
+    if(globalTaskMap[i] == NULL)
+      return (pid_t)i;
+  }
+  return SCHED_MAX_TASK_NUM;
+  
+}
+/**
+ * @brief  
+ * @note  
+ * @param {type} none
+ * @retval none
+ */
+pid_t sched_registerPID(PCB_t * pPCB)
+{
+  if(sysFirstIdlePID >= SCHED_MAX_TASK_NUM)
+    painc("sched:out max task number limit!!!!\n\r");  //should not run to this (before register must check running task quantity)
+  pid_t temp = sysFirstIdlePID;
+  globalTaskMap[sysFirstIdlePID] = pPCB;
+  sysFirstIdlePID = sched_serchNextIdlePID();
+  taskNumber ++;
+  return temp;
+}
 
 /**
  * @brief  
@@ -51,12 +85,13 @@ void shced_switchToNextReadyPrio(void)
  * @param {type} none
  * @retval none
  */
-pid_t sched_registerPID(void)
+void sched_logoutPID(pid_t pid)
 {
-  systemMaxPID ++;
-  return systemMaxPID - 1;
+  globalTaskMap[pid] = NULL;
+  if(pid < sysFirstIdlePID )
+    sysFirstIdlePID = pid;
+  taskNumber --;
 }
-
 /**
  * @brief  
  * @note  
@@ -138,6 +173,7 @@ error_t sched_initScheduler(void)
     
   }
   list_initList(&suspendTaskList, TASK_SUSP_LIST_MAX_VALUE);
+  memset(globalTaskMap,0,sizeof(globalTaskMap));
 }
 
 /**
@@ -214,6 +250,20 @@ error_t sched_wakeTask(void)
   return ENOERR;
 }
 
+/**
+ * @brief  
+ * @note  
+ * @param {type} none
+ * @retval none
+ */
+error_t sched_deleteTask(pid_t pid)
+{
+  if(pid >= SCHED_MAX_TASK_NUM)
+    return E_SCHED_OUT_TSK_NR;
+  PCB_t *pPCB = globalTaskMap[pid];
+  
+
+}
 /**
  * @brief  
  * @note  

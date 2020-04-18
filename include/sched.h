@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-21 20:25:27
- * @LastEditTime 2020-04-04 07:01:17
+ * @LastEditTime 2020-04-18 06:36:43
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/include/sched.h
@@ -13,13 +13,15 @@
 #include "list.h"
 #include "page.h"
 /* -------------------------------- define ---------------------------------- */
+#define SCHED_MAX_TASK_NUM              1024  //max task number system support 
+
 #define SCHED_MAX_P_PRIO_NUM            16
 #define SCHED_MAX_T_PRIO_NUM            19 //max t_prio
 #define SCHED_SYS_TASK_P_PRIO_H        0
 #define SCHED_SYS_TASK_P_PRIO_N        1
 
 #define SCHED_MAX_TASK_NAME_SIZE      15
-
+       
 
 // PCB&ring0  L1 page tbl  L2 page tbl x2  stack
 #define TASK_DEFUALT_T_PRIO           10
@@ -77,7 +79,7 @@ void sched_loadFirstTask(PCB_t *pPCB);
 /* ----------------------- function declaration ------------------------------------ */
 error_t task_creatNewSysTask(void (*taskFunc)(void), uint32_t codeSize, uint32_t p_prio,uint32_t t_prio, const char* name);
 error_t task_initPCB(PCB_t *pPCB,uint32_t p_prio,uint32_t t_prio, const char* name,void (*taskFunc)(void),pageList_t temp);
-pid_t sched_registerPID(void);
+pid_t sched_registerPID(PCB_t * pPCB);
 pid_t sched_getCurrentPID(void);
 error_t sched_initScheduler(void);
 error_t sched_addToList(PCB_t *pPCB);

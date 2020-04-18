@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-24 22:21:50
- * @LastEditTime 2020-04-04 08:36:39
+ * @LastEditTime 2020-04-18 09:35:59
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/kernel/sched/task.c
@@ -11,7 +11,7 @@
 #include "errno.h"
 #include "page.h"
 #include "tty.h"
-extern pid_t systemMaxPID;
+extern pid_t sysFirstIdlePID;
 extern tty_t * pCurrentActiveTTY;
 /**
  * @brief  
@@ -39,7 +39,7 @@ error_t task_initPCB(PCB_t *pPCB,uint32_t p_prio,uint32_t t_prio ,const char* na
   else
     pPCB->t_prio = SCHED_MAX_T_PRIO_NUM;
 
-  pPCB->pid = sched_registerPID();
+  pPCB->pid = sched_registerPID(pPCB);
   pPCB->pidStatic = pPCB->pid;
   pPCB->totalTimeSlice = TASK_MAX_TIME_SLICE - t_prio;
   pPCB->timeLeft = pPCB->totalTimeSlice;
@@ -69,14 +69,18 @@ error_t task_creatNewSysTask(void (*taskFunc)(void), uint32_t codeSize, uint32_t
   if(taskFunc == NULL || p_prio >= SCHED_MAX_P_PRIO_NUM )
     return ENOMEM;
   uint32_t needPageNum = TASK_INIT_NEED_PAGE_NUM;
-  if(systemMaxPID != 0) 
+  
+  if(sysFirstIdlePID != 0) 
   {
 
   }
+  if(sysFirstIdlePID >= SCHED_MAX_TASK_NUM)
+    return E_SCHED_OUT_TSK_NR;
+  if(page_checkIdleMemNum(needPageNum) == ENOSPC)
+    return ENOSPC;
   PCB_t * pNewPCB;
   pageList_t temp = {0,NULL};
-  if(page_checkIdleMemNum(systemMaxPID) == ENOSPC)
-    return ENOSPC;
+  
   pNewPCB = page_allocOne(&temp);
   task_initPCB(pNewPCB, p_prio, t_prio , name, taskFunc,temp);
   task_initTaskPage(pNewPCB);

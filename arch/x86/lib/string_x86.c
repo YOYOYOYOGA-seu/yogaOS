@@ -1,10 +1,10 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-25 02:47:31
- * @LastEditTime 2020-02-26 01:34:15
+ * @LastEditTime 2020-04-18 04:10:38
  * @LastEditors Shi Zhangkun
  * @Description none
- * @FilePath /project/arch/x86/lib/string.c
+ * @FilePath /project/arch/x86/lib/string_x86.c
  */
 #include "string.h"
 /**
@@ -40,3 +40,4 @@ void * memset(void *s, int ch, ssize_t n)
         :"c"(n),"a"(ch),"D"(s)
         );
 }
+

@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-03-26 20:36:31
- * @LastEditTime 2020-04-04 04:55:18
+ * @LastEditTime 2020-04-05 06:19:26
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/arch/x86/driver/x86_console.c
@@ -10,6 +10,7 @@
 #include "vga.h"
 #include "io.h"
 #include "address.h"
+#include "string.h"
 /* ------------------------------------- define --------------------------------------- */
 #define CONSOLE_HIGHT           25
 #define CONSOLE_WIDTH           80
@@ -24,7 +25,7 @@
 static console_t s_console[SYS_MAX_CONSOLE_NUM];
 static uint32_t numOfConsoleUsed = 0;
 extern uint32_t disp_pos;
-
+uint32_t currentConsole = 0;
 /**
  * @brief  
  * @note  
@@ -101,6 +102,7 @@ void console_switch(uint32_t consoleNum)
   IO_outByte((s_console[consoleNum].currentStartAddr/2)&0xff,VGA_CRT_DATA);
   __enableIRQ();
  vga_setCursor(s_console[consoleNum].cursor + s_console[consoleNum].baseAddr);
+ currentConsole = consoleNum;
 
 }
 
@@ -146,13 +148,15 @@ void console_pageMove(uint32_t consoleNum, uint32_t line, uint32_t dir)
     else
       s_console[consoleNum].currentStartAddr = s_console[consoleNum].baseAddr;
   }
-  
-  __disableIRQ();
-  IO_outByte(VGA_START_ADDR_H,VGA_CRT_ADDR);
-  IO_outByte(((s_console[consoleNum].currentStartAddr/2)>>8)&0xff,VGA_CRT_DATA);
-  IO_outByte(VGA_START_ADDR_L,VGA_CRT_ADDR);
-  IO_outByte((s_console[consoleNum].currentStartAddr/2)&0xff,VGA_CRT_DATA);
-  __enableIRQ();
+  if(currentConsole == consoleNum) // only current active console need refresh
+  {
+    __disableIRQ();
+    IO_outByte(VGA_START_ADDR_H,VGA_CRT_ADDR);
+    IO_outByte(((s_console[consoleNum].currentStartAddr/2)>>8)&0xff,VGA_CRT_DATA);
+    IO_outByte(VGA_START_ADDR_L,VGA_CRT_ADDR);
+    IO_outByte((s_console[consoleNum].currentStartAddr/2)&0xff,VGA_CRT_DATA);
+    __enableIRQ();
+  }
 }
 
 void console_moveToCusor(uint32_t consoleNum)
@@ -160,16 +164,23 @@ void console_moveToCusor(uint32_t consoleNum)
 
 }
 /**
- * @brief  
+ * @brief  shift console memory data to get one screen free memory
  * @note  
  * @param {type} none
  * @retval none
  */
 void console_blockShift(uint32_t consoleNum)
 {
-
+  uint32_t destAddr = s_console[consoleNum].baseAddr + VIDEO_MEM_BASE_ADDR;
+  uint32_t srcAddr = s_console[consoleNum].baseAddr + VIDEO_MEM_BASE_ADDR + CONSOLE_SCREEN_SIZE;
+  uint32_t cleanAddr = s_console[consoleNum].baseAddr + s_console[consoleNum].limit + VIDEO_MEM_BASE_ADDR - CONSOLE_SCREEN_SIZE;
+  memcpy((void *)destAddr, (const void *)srcAddr, s_console[consoleNum].limit - CONSOLE_SCREEN_SIZE);
+  memset((void *)cleanAddr, 0, CONSOLE_SCREEN_SIZE);
+  s_console[consoleNum].cursor =  s_console[consoleNum].limit - CONSOLE_SCREEN_SIZE + UNIT_SIZE;
+  console_pageMove(consoleNum,1,2);
+  if(currentConsole == consoleNum)  // only current active console need relocate cursor
+    vga_setCursor(s_console[consoleNum].cursor + s_console[consoleNum].baseAddr);
 }
-
 /**
  * @brief  
  * @note  
@@ -235,7 +246,7 @@ uint32_t console_dispStr(char *pstr, uint32_t num, uint32_t consoleNum, uint8_t 
     }
     if(s_console[consoleNum].cursor > s_console[consoleNum].currentStartAddr + CONSOLE_SCREEN_SIZE -s_console[consoleNum].baseAddr) // out of the screen
     {
-      console_pageMove(consoleNum,1,2); //page down 1 line
+      console_pageMove(consoleNum,1,2); // page down 1 line
     }
     if(pstr[i] >= 32)  // Ensure only printable ascii can be print(like '\r','\n')
     {
@@ -246,6 +257,7 @@ uint32_t console_dispStr(char *pstr, uint32_t num, uint32_t consoleNum, uint8_t 
     }
     
   }
-  vga_setCursor(s_console[consoleNum].cursor + s_console[consoleNum].baseAddr);
+  if(currentConsole == consoleNum)  // only current active console need relocate cursor
+    vga_setCursor(s_console[consoleNum].cursor + s_console[consoleNum].baseAddr);
   return 0;
 }

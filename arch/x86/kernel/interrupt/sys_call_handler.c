@@ -20,6 +20,7 @@
  */
 __attribute__((weak)) int sys_exit(void)
 {
+  
   return 0;
 }
 

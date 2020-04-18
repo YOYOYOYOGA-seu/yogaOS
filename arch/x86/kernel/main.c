@@ -36,7 +36,7 @@ void testTask2(void) //test scheduler
   while(1)
   {
     time++;
-    printf("test:%d %x \n\r",time,time);
+    printf("/033[0;31;44m test:%d %x \n\r",time,time);
     sleep(5);
   }
 }

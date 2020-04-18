@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-22 05:13:44
- * @LastEditTime 2020-03-28 23:04:17
+ * @LastEditTime 2020-04-18 06:05:51
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/kernel/mm/page.c
@@ -53,7 +53,6 @@ void page_initPageManage(void)
  * @retval NULL :fail
  *         linear address of this idle page(= phy addr + sys_base_linear_addr)
  */
-
 void *page_allocOne(pageList_t *usingList)
 {
   uint32_t i;

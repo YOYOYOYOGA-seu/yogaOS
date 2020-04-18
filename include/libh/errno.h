@@ -155,4 +155,5 @@ typedef enum{
 #define E_SCHED_NOT_SPT_STATE   1021
 #define E_SUSPEND               1022
 #define E_SCHED_NOT_RUN         1023
+#define E_SCHED_OUT_TSK_NR      1024
 #endif
