@@ -156,4 +156,9 @@ typedef enum{
 #define E_SUSPEND               1022
 #define E_SCHED_NOT_RUN         1023
 #define E_SCHED_OUT_TSK_NR      1024
+
+//request
+#define E_REQ_IVD               1051
+#define E_REQ_NO_USER            1052  //can't find user task which send the request
+#define E_REQ_NO_SERV           1053  //can't find server task
 #endif

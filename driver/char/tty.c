@@ -1,13 +1,13 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-03-21 03:50:55
- * @LastEditTime 2020-04-18 04:19:48
+ * @LastEditTime 2020-06-27 02:09:05
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/driver/char/tty.c
  */
 #include "tty.h"
-#include "kernel.h"
+#include "stdio.h"
 uint32_t keyState;
 tty_t s_tty[SYS_TTY_NUM];
 tty_t * pCurrentActiveTTY = NULL;
@@ -435,7 +435,7 @@ void tty_process(uint32_t key,tty_t * ptty)
       break;
       
     case BACKSPACE:
-     //backspace can delete all character or backspace can only delete char sent to user task(in charBuff)
+     //backspace can delete all character or backspace can only delete char send to user task(in charBuff)
       if(ptty->flag & TTY_FLAG_BS_GLOBAL ||  ptty->cbCount > 0) 
       {
         queue_write(8,&ptty->outputQueue);
@@ -443,26 +443,22 @@ void tty_process(uint32_t key,tty_t * ptty)
       if( ptty->cbCount > 0)  //
         ptty->cbCount --;    
       break;
+      
     case PRINTSCREEN:
       if(ptty->type == TTY_TYPE_STD)
       {
+        char temp_buf[30];
+        int len;
         pCurrentActiveTTY->frontColorTemp = GREEN;
-        printk(" -This is Console: %d- ",pCurrentActiveTTY->consoleIndex);
+        len = sprintf(temp_buf," -This is Console: %d- ",pCurrentActiveTTY->consoleIndex);
+        tty_write(pCurrentActiveTTY->ttyIndex,temp_buf,len);
       }
       else
       {
         /* stty code */
       }
-      
       break;
-    default:
-      break;
-    }
-  }
-  else if(key&(FLAG_ALT_L|FLAG_ALT_R))   //compound key: Alt + xxx
-  {
-    switch (key&((FLAG_EXT<<1)-1))
-    {
+
     case PAGEUP:
        if(ptty->type == TTY_TYPE_STD)
         console_pageMove(ptty->consoleIndex,10,0);
@@ -471,9 +467,35 @@ void tty_process(uint32_t key,tty_t * ptty)
         /* stty code */
       }
       break;
+
     case PAGEDOWN:
       if(ptty->type == TTY_TYPE_STD)
         console_pageMove(ptty->consoleIndex,10,1);
+      else
+      {
+        /* stty code */
+      }
+      break;
+
+    default:
+      break;
+    }
+  }
+  else if(key&(FLAG_ALT_L|FLAG_ALT_R))   //compound key: Alt + xxx
+  {
+    switch (key&((FLAG_EXT<<1)-1))
+    {
+    case UP:
+       if(ptty->type == TTY_TYPE_STD)
+        console_pageMove(ptty->consoleIndex,1,0);
+      else
+      {
+        /* stty code */
+      }
+      break;
+    case DOWN:
+      if(ptty->type == TTY_TYPE_STD)
+        console_pageMove(ptty->consoleIndex,1,1);
       else
       {
         /* stty code */

@@ -1,23 +1,49 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-03-07 22:35:04
- * @LastEditTime 2020-04-04 07:16:43
+ * @LastEditTime 2020-06-27 07:19:33
  * @LastEditors Shi Zhangkun
  * @Description none
- * @FilePath /project/arch/x86/kernel/interrupt/sys_call_handler.c
+ * @FilePath /project/kernel/syscall.c
  */
 
 #include "sys.h"
 #include "time.h"
 #include "sched.h"
 #include "tty.h"
-
+#include "request.h"
+#include "kernel.h"
 /**
  * @brief  
  * @note  
  * @param {type} none
  * @retval none
  */
+
+int sys_request(int mode, request_t * req, pid_t servPid)
+{
+  switch (mode)
+  {
+  case 0:    //send a request
+    return req_send(req,servPid);
+    break;
+  case 1:    //get a request tesult
+    return req_result(req);
+    break;
+  case 2:    //wait a request
+    return req_wait(req);
+    break;
+  case 3:
+    return req_anwser(req);
+    break;
+  case 4:
+    return req_transpond(req,servPid);
+    break;
+  default:
+    painc("iligal request system call mode !!!");
+    return 0;
+  }
+}
 __attribute__((weak)) int sys_exit(void)
 {
   
@@ -42,7 +68,10 @@ __attribute__((weak)) int sys_fork(void)
  */
 __attribute__((weak)) int sys_sleep(int ms)
 {
-  sched_suspendTask(NULL, ms/SYSTEM_TICK);
+  if(ms == 0xFFFFFFFF) //always suspend 
+    sched_suspendTask(NULL, 0xFFFFFFFF);
+  else
+    sched_suspendTask(NULL, ms/SYSTEM_TICK);
   return 0;
 }
 

@@ -8,7 +8,7 @@
  */
 #ifndef __MM_PAGE_H
 #define __MM_PAGE_H
-#include "type.h"
+#include "types.h"
 #include "list.h"
 #include "errno.h"
 

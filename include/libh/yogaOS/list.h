@@ -9,7 +9,7 @@
 #ifndef __LIST_H
 #define __LIST_H
 
-#include "type.h"
+#include "types.h"
 /* ------------------------ type define --------------------------- */
 /* double linked  list */
 typedef struct listItem{

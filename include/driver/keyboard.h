@@ -9,7 +9,7 @@
 
 #ifndef __KEYBOARD_H
 #define __KEYBOARD_H
-#include "type.h"
+#include "types.h"
 /* ------------------------ key board buff typedef --------------------------- */
 #define KB_BUFF_SIZE      64
 

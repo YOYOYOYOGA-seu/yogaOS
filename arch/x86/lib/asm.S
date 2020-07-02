@@ -18,5 +18,5 @@ enterSystemCall:
   pop %edx
   pop %ecx
   pop %ebx
-  pop %eax
+  add $4, %esp
   ret

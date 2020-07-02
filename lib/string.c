@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-04-18 04:10:44
- * @LastEditTime 2020-04-18 04:11:45
+ * @LastEditTime 2020-05-19 00:36:45
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/lib/string.c
@@ -29,9 +29,9 @@ __attribute__((weak)) char *strcpy(char* dest, const char *src)
 
 /**
  * @brief  string compare
- * @note  
+ * @note  compare two string
  * @param {type} none
- * @retval none
+ * @retval 0: equal  num: first different char's different value
  */
 __attribute__((weak)) int strcmp(const char* str1, const char *str2)
 {

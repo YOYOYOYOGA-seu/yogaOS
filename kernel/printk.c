@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-04-05 05:06:33
- * @LastEditTime 2020-04-18 04:48:39
+ * @LastEditTime 2020-06-27 04:51:43
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/kernel/printk.c
@@ -28,6 +28,7 @@ int printk(const char *format,...)
   if(pCurrentActiveTTY != NULL)
     tty_write(pCurrentActiveTTY->ttyIndex,buf,i);  /* 注意！！！！！这是一个临时的系统调用，后期有文件系统后改为/dev/tty的描述符（指向当前进程的tty） */
                                                     /* 同时也需要注意，无论是内核还是系统服务进程，其都是没有对应的tty的，应该设法打印到当前活动的tty */
+    tty_outputData(pCurrentActiveTTY->ttyIndex);
   return i;
 
 }

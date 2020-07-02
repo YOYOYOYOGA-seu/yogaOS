@@ -1,14 +1,14 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-22 22:42:24
- * @LastEditTime 2020-04-04 08:37:07
+ * @LastEditTime 2020-06-27 08:05:33
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/lib/list.c
  */
 
 #include "list.h"
-#include "type.h"
+#include "types.h"
 #include "errno.h"
 /**
  * @brief  add a list item to list, ranged by item.value
@@ -23,6 +23,8 @@ error_t list_insertList(list_t *list, listItem_t *item)
   listItem_t *p = list->pFirstItem;
   if(item->value > list->listValueLimit)
     return E_OUT_LIST_VALUE;
+  if(item->pOwnList == list)   //already in this list
+    return ENOERR;
   if(p == NULL)
   {
     list->pFirstItem = item;
@@ -145,7 +147,7 @@ error_t list_removeformList(listItem_t *item)
   }
   item->pNext = NULL;
   item->pPrevious = NULL;
-
+  item->pOwnList = NULL;
   return ENOERR;
 }
 

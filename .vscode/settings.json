@@ -6,7 +6,7 @@
     "sched_x86.h": "c",
     "page_x86.h": "c",
     "page.h": "c",
-    "type.h": "c",
+    "types.h": "c",
     "string.h": "c",
     "sched.h": "c",
     "address.h": "c",
@@ -21,6 +21,7 @@
     "stdlib.h": "c",
     "cstdio": "c",
     "type_traits": "c",
-    "typeinfo": "c"
+    "typeinfo": "c",
+    "limits": "cpp"
   }
 }

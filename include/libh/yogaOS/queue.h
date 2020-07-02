@@ -8,7 +8,7 @@
  */
 #ifndef __QUEUE_H
 #define __QUEUE_H
-#include "type.h"
+#include "types.h"
 typedef struct
 {
   void *queue;    /* point to the queue buff */

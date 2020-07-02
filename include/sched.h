@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-21 20:25:27
- * @LastEditTime 2020-04-18 06:36:43
+ * @LastEditTime 2020-06-27 03:45:33
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/include/sched.h
@@ -9,9 +9,10 @@
 #ifndef __SCHED_H
 #define __SCHED_H
 
-#include "type.h"
+#include "types.h"
 #include "list.h"
 #include "page.h"
+#include "request.h"
 /* -------------------------------- define ---------------------------------- */
 #define SCHED_MAX_TASK_NUM              1024  //max task number system support 
 
@@ -33,6 +34,8 @@
 #define TASK_READY_LIST_MAX_VALUE     0xFFFFFFFF
 #define TASK_SUSP_LIST_MAX_VALUE     0xFFFFFFFF
 
+#define __enter_critical()               sched_changeState(SCHEDULER_PENDING)
+#define __exit_critical()                sched_changeState(SCHEDULER_RUN)
 /* ---------------------------- type define -------------------------------- */
 typedef struct{
   volatile uint32_t status;
@@ -55,6 +58,11 @@ typedef struct{
   listItem_t  eventListItem;
   pageList_t  usingPageList;  //task using page memory manage list
 
+  /* request about */
+  request_t request;    //request struct for send request
+  list_t reqWaitList;     //waiting list, for receive request(server task)
+  reqState_t reqState;    //request handling state, only used by task can receive request()
+
 }PCB_t;
 
 typedef enum{
@@ -71,7 +79,12 @@ typedef enum{
   SCHEDULER_STOP
 }shcedulerState_t;
 extern PCB_t * currentActiveTask;
-/* ------- Arch relevant function (defined in arch/xxx/xxx/xxx.c) ----------------- */
+
+/* defined in arch/xxx/kernel/sched/sched_xxx.h, ralevant to the distribution of virtual 
+   address space */
+extern  PCB_t * const pLocalPCB;  
+
+/* ------- Arch relevant function (defined in arch/xxx/kenel/sched/xxx.c) ----------------- */
 error_t task_initPCBArchRelevant(PCB_t *pPCB, void (*taskFunc)(void));
 error_t task_initTaskPage(PCB_t * pPCB);
 void sched_loadFirstTask(PCB_t *pPCB);
@@ -79,6 +92,8 @@ void sched_loadFirstTask(PCB_t *pPCB);
 /* ----------------------- function declaration ------------------------------------ */
 error_t task_creatNewSysTask(void (*taskFunc)(void), uint32_t codeSize, uint32_t p_prio,uint32_t t_prio, const char* name);
 error_t task_initPCB(PCB_t *pPCB,uint32_t p_prio,uint32_t t_prio, const char* name,void (*taskFunc)(void),pageList_t temp);
+void sched_changeState(shcedulerState_t state);
+PCB_t* sched_serchTask(pid_t pid, const char* name_chk);
 pid_t sched_registerPID(PCB_t * pPCB);
 pid_t sched_getCurrentPID(void);
 error_t sched_initScheduler(void);

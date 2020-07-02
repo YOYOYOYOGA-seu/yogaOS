@@ -8,9 +8,9 @@
  */
 #ifndef __UNISTD_H
 #define __UNISTD_H
-#include "type.h"
+#include "types.h"
 
-void exit(int __status);  //__status :message sent to it's father proccess
+void exit(int __status);  //__status :message send to it's father proccess
 pid_t fork(void);
 pid_t getpid(void);
 unsigned sleep(unsigned int __seconds);

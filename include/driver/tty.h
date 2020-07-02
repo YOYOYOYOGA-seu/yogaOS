@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-03-21 03:48:55
- * @LastEditTime 2020-04-05 06:04:51
+ * @LastEditTime 2020-06-25 06:06:32
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/include/driver/tty.h
@@ -9,11 +9,11 @@
 #ifndef __TTY_H
 #define __TTY_H
 
-#include "type.h"
+#include "types.h"
 #include "keyboard.h"
 #include "queue.h"
 #include "console.h"
-#include "sched.h"
+
 /* ------------------------------------- define --------------------------------------- */
 #define SYS_TTY_NUM              3
 #define TTY_CHAR_BUFF_SIZE       64

@@ -10,7 +10,7 @@
 #define __PAGE_X86_H
 
 #include "address.h"
-#include "type.h"
+#include "types.h"
 #include "errno.h"
 
 typedef uint32_t pageTblItem_t;

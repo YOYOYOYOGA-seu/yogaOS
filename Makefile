@@ -22,6 +22,7 @@ ARCH_DIR := arch/$(ARCH)
 OUTPUT_DIR := $(ARCH_DIR)/output
 GLOBAL_INC_DIR := include \
 									include/libh \
+									include/libh/yogaOS \
 									include/driver 
 
 

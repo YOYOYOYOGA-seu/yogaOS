@@ -1,12 +1,12 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-24 22:21:50
- * @LastEditTime 2020-04-18 09:35:59
+ * @LastEditTime 2020-06-27 03:50:16
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/kernel/sched/task.c
  */
-#include "type.h"
+#include "types.h"
 #include "sched.h"
 #include "errno.h"
 #include "page.h"
@@ -50,6 +50,11 @@ error_t task_initPCB(PCB_t *pPCB,uint32_t p_prio,uint32_t t_prio ,const char* na
   for(i = 0; (i < SCHED_MAX_TASK_NAME_SIZE && name[i] != '\0'); i++)
     pPCB->name[i] = name[i];
   pPCB->name[i] = '\0';
+
+  req_init(&pPCB->request, pPCB->pid); //deinit request struct
+  list_initList(&pPCB->reqWaitList, REQ_MAX_WAIT_TASK);
+  pPCB->reqState = REQ_INVALID;
+
   task_initPCBArchRelevant(pPCB,taskFunc);
 }
 

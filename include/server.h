@@ -10,6 +10,7 @@
 #define __SERVER_H
 
 /* ------------------------------------- server process func --------------------------------------- */
+void server_test(void);
 void server_tty(void);
 void server_fileSystem(void);
 void server_VFS(void);

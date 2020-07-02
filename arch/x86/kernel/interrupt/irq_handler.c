@@ -7,7 +7,7 @@
  * @FilePath /project/arch/x86/kernel/interrupt/irq_handler.c
  */
 #include "address.h"
-#include "type.h"
+#include "types.h"
 #include "sched.h"
 #include "time.h"
 #include "irq.h"

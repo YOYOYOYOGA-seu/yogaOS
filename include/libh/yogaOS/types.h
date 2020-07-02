@@ -1,10 +1,10 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-17 22:12:51
- * @LastEditTime 2020-04-04 05:53:42
+ * @LastEditTime 2020-06-27 04:09:51
  * @LastEditors Shi Zhangkun
  * @Description none
- * @FilePath /project/include/libh/type.h
+ * @FilePath /project/include/libh/yogaOS/types.h
  */
 #ifndef __TYPE_H
 #define __TYPE_H
@@ -24,7 +24,8 @@ typedef int ssize_t;
 typedef unsigned int size_t;
 
 typedef enum{
-  SYS_EXIT_VECTOR = 0,
+  SYS_REQUEST = 0,
+  SYS_EXIT_VECTOR,
   SYS_FORK_VECTOR,
   SYS_SLEEP_VECTOR,
   SYS_WAIT_VECTOR,
@@ -37,6 +38,19 @@ typedef enum{
   SYS_READ_VECTOR,
   SYS_OPEN_VECTOR
 }syscall_vector_t;
+
+
+
+typedef struct 
+{
+  /* data */
+    pid_t ownerPid;   
+    uint32_t type;
+    uint32_t length;  //length of data in pMesg, uint is byte
+    void *pMesg;      //！！！！！由于没有写共享内存空间或文件系统，这个版本不能使用，尽量用type实现信息传输,或使用result[]回复小量信息
+ 
+  
+}request_t;
 
 #define NULL (void *)0
 #endif

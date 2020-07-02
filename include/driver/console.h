@@ -8,7 +8,7 @@
  */
 #ifndef __CONSOLE_H
 #define __CONSOLE_H
-#include "type.h"
+#include "types.h"
 
 typedef struct{
   uint32_t currentStartAddr; /* current screen start base of this console in video mem */

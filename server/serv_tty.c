@@ -1,13 +1,12 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-03-26 20:09:53
- * @LastEditTime 2020-04-18 04:20:09
+ * @LastEditTime 2020-06-25 05:51:33
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/server/serv_tty.c
  */
-#include "kernel.h"
-#include "type.h"
+#include "types.h"
 #include "server.h"
 #include "unistd.h"
 #include "tty.h"
@@ -25,7 +24,6 @@ void server_tty(void)
   int i,count;
   
   tty_init();
-  assert(1);
   while(1)
   {
     msleep(50); //注意！！！！！！后面开发完成IPC换成等待消息队列

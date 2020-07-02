@@ -1,12 +1,12 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-25 00:19:41
- * @LastEditTime 2020-04-18 09:36:59
+ * @LastEditTime 2020-06-25 02:24:40
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/kernel/sched/sched.c
  */
-#include "type.h"
+#include "types.h"
 #include "sched.h"
 #include "errno.h"
 #include "page.h"
@@ -14,24 +14,24 @@
 #include "time.h"
 #include "string.h"
 PCB_t * currentActiveTask = NULL; 
-uint32_t taskLeftTime;
-uint32_t schedRunningTime = 0; 
-uint32_t nextTaskwakeTime = 0;
-list_t  readyTaskList[SCHED_MAX_P_PRIO_NUM];  //Ready task list
-list_t  suspendTaskList;
+static uint32_t taskLeftTime;
+static uint32_t schedRunningTime = 0; 
+static uint32_t nextTaskwakeTime = 0;
+static list_t  readyTaskList[SCHED_MAX_P_PRIO_NUM];  //Ready task list
+static list_t  suspendTaskList;
 
-uint32_t volatile topReadyPriority = SCHED_MAX_P_PRIO_NUM; //save the highest task p_prio in ready list
-shcedulerState_t shcedulerState = SCHEDULER_STOP; //scheduler status
-PCB_t* globalTaskMap[SCHED_MAX_TASK_NUM];
+static uint32_t volatile topReadyPriority = SCHED_MAX_P_PRIO_NUM; //save the highest task p_prio in ready list
+static shcedulerState_t shcedulerState = SCHEDULER_STOP; //scheduler status
+static PCB_t* globalTaskMap[SCHED_MAX_TASK_NUM];
 pid_t sysFirstIdlePID = 0; //record the pid have been alloced(now don't recycle pit)
-int taskNumber = 0;
+static int taskNumber = 0;
 /**
  * @brief  
  * @note  
  * @param {type} none
  * @retval none
  */
-void shced_switchToNextReadyPrio(void)
+void sched_switchToNextReadyPrio(void)
 {
   uint32_t i;
   for(i = topReadyPriority; i < SCHED_MAX_P_PRIO_NUM; i++)
@@ -44,7 +44,39 @@ void shced_switchToNextReadyPrio(void)
   }
   painc("No task in ready list!\n\0");
 }
+/**
+ * @brief  
+ * @note  
+ * @param {type} none
+ * @retval none
+ */
 
+void sched_changeState(shcedulerState_t state)
+{
+  shcedulerState = state;
+}
+/**
+ * @brief  serch a task in global task map, can choose if use task name for check
+ * @note  
+ * @param {pid_t} pid:
+ * @param {const char*} name_chk: task name for check, use NULL if don't need check 
+ * @retval PCB_t*
+ */
+PCB_t* sched_serchTask(pid_t pid, const char* name_chk)
+{
+  if(pid >= SCHED_MAX_TASK_NUM)
+    return NULL;
+  if(name_chk == NULL)
+  {
+    return globalTaskMap[pid];
+  }
+  else if(globalTaskMap[pid] != NULL)
+  {
+    if(!strcmp((const char*)globalTaskMap[pid]->name,name_chk))
+      return globalTaskMap[pid];
+  }
+  return NULL;
+}
 /**
  * @brief  
  * @note  
@@ -62,6 +94,7 @@ pid_t sched_serchNextIdlePID(void)
   return SCHED_MAX_TASK_NUM;
   
 }
+
 /**
  * @brief  
  * @note  
@@ -106,6 +139,7 @@ pid_t sched_getCurrentPID(void)
     return 0;
   
 }
+
 /**
  * @brief  add a PCB to a task list according to it's status
  * @note  
@@ -150,7 +184,7 @@ error_t removeFromStateList(PCB_t *pPCB)
   
   if (flag && pPCB->p_prio <= topReadyPriority)  // if this is a task in ready list ,we should check topReadyPrio
   {
-   shced_switchToNextReadyPrio();
+   sched_switchToNextReadyPrio();
   }
   
   return ENOERR;
@@ -224,7 +258,7 @@ error_t sched_suspendTask(PCB_t *pPCB, uint32_t time)
 
 /**
  * @brief  wake task which suspend time is over
- * @note  
+ * @note  warning !!!!!!!! not to wake some specific task but a period wake action
  * @param {PCB_t *} pPCB
  * @param {uint32_t} time
  * @retval error_t

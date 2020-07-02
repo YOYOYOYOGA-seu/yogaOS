@@ -10,7 +10,7 @@
 #define __SYSTEM_X86_H
 
 #include "address.h"
-#include "type.h"
+#include "types.h"
 typedef struct{
   uint32_t memSize;
 

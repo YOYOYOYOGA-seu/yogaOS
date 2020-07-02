@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-03-09 02:17:29
- * @LastEditTime 2020-03-28 05:08:31
+ * @LastEditTime 2020-06-25 01:44:33
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/lib/process.c
@@ -35,7 +35,15 @@ pid_t fork(void)
  */
 unsigned sleep(unsigned int __seconds)
 {
-  return (unsigned)enterSystemCall(SYS_SLEEP_VECTOR, 1000*__seconds, 0, 0);
+  unsigned int __microsecond;
+  if(__seconds == 0xFFFFFFFF)  //0xFFFFFFFF respect suspend  always
+    __microsecond = 0xFFFFFFFF;   
+  else if(__seconds >= 0xFFFFFFFF/1000)
+    __microsecond = 0xFFFFFFFE;    //max delay time 
+  else
+    __microsecond = 1000*__seconds;
+  
+  return (unsigned)enterSystemCall(SYS_SLEEP_VECTOR, __microsecond, 0, 0);
 }
 
 /**

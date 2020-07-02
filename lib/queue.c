@@ -8,7 +8,7 @@
  */
 #include "queue.h"
 #include "errno.h"
-#include "type.h"
+#include "types.h"
 
 /**
  * @brief  init a queue

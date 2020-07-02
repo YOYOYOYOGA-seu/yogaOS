@@ -8,7 +8,7 @@
  */
 
 #include "page.h"
-#include "type.h"
+#include "types.h"
 #include "errno.h"
 /* ------------------------ varible declare --------------------------- */
 static pageList_t idlePageList; 
