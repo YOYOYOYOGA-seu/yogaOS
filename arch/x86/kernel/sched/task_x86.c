@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-22 02:59:19
- * @LastEditTime 2020-06-27 08:41:56
+ * @LastEditTime 2020-07-15 07:52:57
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/arch/x86/kernel/sched/task_x86.c
@@ -9,7 +9,7 @@
 #include "sched_x86.h"
 #include "page_x86.h"
 #include "sched.h"
-#include "types.h"
+#include "yogaOS/types.h"
 #include "errno.h"
 #include "segment.h"
 #include "page.h"
@@ -97,7 +97,7 @@ error_t task_initTaskPage(PCB_t * pPCB)
 {
   pageTblItem_t *pL1;
   pageTblItem_t *pL2;
-  pageTblItem_t *pL3;
+  
   pL1 = pPCB->L1PageTbl;
   
   memcpy((void *)pL1,(const void *)SYS_PAGE_DIR_BASE_ADDR, PAGE_SIZE);  //copy system use L1 page table

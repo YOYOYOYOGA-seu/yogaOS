@@ -1,12 +1,12 @@
-#include "types.h"
+#include "yogaOS/types.h"
 #include "init.h"
 #include "sched.h"
 #include "server.h"
 
-#include "queue.h"
+#include "yogaOS/queue.h"
 #include "unistd.h"
 #include "stdio.h"
-#include "req.h"
+#include "yogaOS/req.h"
 extern void initInterrupt(void);
 int a = 1;
 int b = 1;

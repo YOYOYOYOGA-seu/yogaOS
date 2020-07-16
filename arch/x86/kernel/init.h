@@ -9,7 +9,7 @@
 #ifndef __INIT_H
 #define __INIT_H
 #include "errno.h"
-#include "types.h"
+#include "yogaOS/types.h"
 
 #define TIMER_FREQ   1193182
 

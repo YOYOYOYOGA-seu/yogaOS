@@ -134,7 +134,7 @@ __loop1:
   mov $0xe820, %eax
   mov $20, %cx
   mov $0x0534d4150, %edx
-  int $0x15
+  int $0x15    // call int 0x15 (BIOS) to get mem mesg
   jc  dead_loop16
   incl memChkNumber
   mov $1, %eax
@@ -164,7 +164,7 @@ __checkMemSize:
   jb __memNotEnough
 
 
-init8259A:
+init8259A:   //int external interruption controller 8259A
   mov $strInit8259A, %di
   mov $strInit8259ALen, %cx
   call DispString

@@ -9,9 +9,9 @@
 #ifndef __TTY_H
 #define __TTY_H
 
-#include "types.h"
+#include "yogaOS/types.h"
 #include "keyboard.h"
-#include "queue.h"
+#include "yogaOS/queue.h"
 #include "console.h"
 
 /* ------------------------------------- define --------------------------------------- */

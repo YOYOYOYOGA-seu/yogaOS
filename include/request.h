@@ -8,9 +8,9 @@
  */
 #ifndef __REQUEST_H
 #define __REQUEST_H
-#include "types.h"
-#include "list.h"
-#include "req.h"
+#include "yogaOS/types.h"
+#include "yogaOS/list.h"
+#include "yogaOS/req.h"
 #define REQ_MAX_WAIT_TASK 0xFFFFFFFF   // max quantity of tasks waiting in the same time
 
 typedef enum{

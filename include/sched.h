@@ -9,8 +9,8 @@
 #ifndef __SCHED_H
 #define __SCHED_H
 
-#include "types.h"
-#include "list.h"
+#include "yogaOS/types.h"
+#include "yogaOS/list.h"
 #include "page.h"
 #include "request.h"
 /* -------------------------------- define ---------------------------------- */

@@ -1,21 +1,22 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-22 05:14:13
- * @LastEditTime 2020-03-28 05:02:55
+ * @LastEditTime 2020-07-15 19:25:25
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/include/page.h
  */
-#ifndef __MM_PAGE_H
-#define __MM_PAGE_H
-#include "types.h"
-#include "list.h"
+#ifndef __PAGE_H
+#define __PAGE_H
+#include "yogaOS/types.h"
+#include "yogaOS/list.h"
 #include "errno.h"
 
 /* ------------------------------- type define ------------------------------------- */
 typedef miniListItem_t page_t;  //page manage list item, storing the page base phy addr, owner ...
 
 typedef miniList_t     pageList_t; //page manage list
+
 
 /* ---------------------------------- define ------------------------------------ */
 

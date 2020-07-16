@@ -10,7 +10,7 @@
 #define __SYSTEM_X86_H
 
 #include "address.h"
-#include "types.h"
+#include "yogaOS/types.h"
 typedef struct{
   uint32_t memSize;
 

@@ -7,10 +7,10 @@
  * @FilePath /project/server/serv_test.c
  */ 
 
-#include "types.h"
+#include "yogaOS/types.h"
 #include "server.h"
 #include "unistd.h"
-#include "req.h"
+#include "yogaOS/req.h"
 
 
 /**

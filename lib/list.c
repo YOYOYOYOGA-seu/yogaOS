@@ -7,8 +7,8 @@
  * @FilePath /project/lib/list.c
  */
 
-#include "list.h"
-#include "types.h"
+#include "yogaOS/list.h"
+#include "yogaOS/types.h"
 #include "errno.h"
 /**
  * @brief  add a list item to list, ranged by item.value

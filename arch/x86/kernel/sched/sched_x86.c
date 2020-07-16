@@ -7,7 +7,7 @@
  * @FilePath /project/arch/x86/kernel/sched/sched_x86.c
  */
 
-#include "types.h"
+#include "yogaOS/types.h"
 #include "errno.h"
 #include "sched.h"
 #include "page_x86.h"

@@ -9,7 +9,7 @@
 #ifndef __SCHED_X86_H
 #define __SCHED_X86_H
 
-#include "types.h"
+#include "yogaOS/types.h"
 #include "segment.h"
 #include "sched.h"
 #include "errno.h"

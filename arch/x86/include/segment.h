@@ -10,7 +10,7 @@
 #define __SEGMENT_H
 
 #include "address.h"
-#include "types.h"
+#include "yogaOS/types.h"
 #include "errno.h"
 /* ------------------------ type define --------------------------- */
 typedef uint16_t selector_t;

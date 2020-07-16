@@ -4,11 +4,11 @@
  * @LastEditTime 2020-03-27 09:26:36
  * @LastEditors Shi Zhangkun
  * @Description none
- * @FilePath /project/include/libh/queue.h
+ * @FilePath /project/include/libh/yogaOS/queue.h
  */
 #ifndef __QUEUE_H
 #define __QUEUE_H
-#include "types.h"
+#include "yogaOS/types.h"
 typedef struct
 {
   void *queue;    /* point to the queue buff */

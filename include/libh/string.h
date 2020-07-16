@@ -8,7 +8,7 @@
  */
 #ifndef __STRING_H
 #define __STRING_H
-#include "types.h"
+#include "yogaOS/types.h"
 
 void * memcpy(void * dest, const void *src, int n);
 

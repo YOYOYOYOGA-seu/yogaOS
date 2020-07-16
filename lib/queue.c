@@ -6,9 +6,9 @@
  * @Description none
  * @FilePath /project/lib/queue.c
  */
-#include "queue.h"
+#include "yogaOS/queue.h"
 #include "errno.h"
-#include "types.h"
+#include "yogaOS/types.h"
 
 /**
  * @brief  init a queue

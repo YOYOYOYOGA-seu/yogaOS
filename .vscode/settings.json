@@ -6,7 +6,7 @@
     "sched_x86.h": "c",
     "page_x86.h": "c",
     "page.h": "c",
-    "types.h": "c",
+    "yogaOS/types.h": "c",
     "string.h": "c",
     "sched.h": "c",
     "address.h": "c",

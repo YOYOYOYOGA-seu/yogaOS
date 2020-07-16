@@ -9,7 +9,7 @@
 
 #ifndef __KEYBOARD_H
 #define __KEYBOARD_H
-#include "types.h"
+#include "yogaOS/types.h"
 /* ------------------------ key board buff typedef --------------------------- */
 #define KB_BUFF_SIZE      64
 

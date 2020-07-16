@@ -6,7 +6,7 @@
  * @Description none
  * @FilePath /project/server/serv_tty.c
  */
-#include "types.h"
+#include "yogaOS/types.h"
 #include "server.h"
 #include "unistd.h"
 #include "tty.h"

@@ -24,7 +24,7 @@ extern int sys_write();        //9
 extern int sys_read();             
 extern int sys_open();             
 
-/* *****you must correspond system call number in header file include/libh/types.h !!!***** */
+/* *****you must correspond system call number in header file include/libh/yogaOS/types.h !!!***** */
 
 /* ------------------------------------- system call handler func vector --------------------------------------- */
 void * sys_call_table[]={sys_request,sys_exit,sys_fork,sys_sleep,sys_wait,sys_kill,sys_excve,sys_getPID, sys_getTime,sys_write,sys_read,sys_open};

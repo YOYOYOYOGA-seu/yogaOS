@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-17 22:12:51
- * @LastEditTime 2020-06-27 04:09:51
+ * @LastEditTime 2020-07-15 19:38:07
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/include/libh/yogaOS/types.h
@@ -41,8 +41,7 @@ typedef enum{
 
 
 
-typedef struct 
-{
+typedef struct {
   /* data */
     pid_t ownerPid;   
     uint32_t type;

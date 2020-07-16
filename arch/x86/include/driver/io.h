@@ -8,7 +8,7 @@
  */
 #ifndef __IO_H
 #define __IO_H
-#include "types.h"
+#include "yogaOS/types.h"
 inline void  __enableIRQ(void){__asm__("sti"::);}
 inline void  __disableIRQ(void){__asm__("cli"::);}
 

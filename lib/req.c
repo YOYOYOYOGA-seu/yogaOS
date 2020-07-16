@@ -6,8 +6,8 @@
  * @Description none
  * @FilePath /project/lib/req.c
  */ 
-#include "req.h"
-#include "types.h"
+#include "yogaOS/req.h"
+#include "yogaOS/types.h"
 #include "errno.h"
 
 extern int enterSystemCall(int vector,int arg_1, int arg_2, int arg_3);

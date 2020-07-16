@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-15 22:02:03
- * @LastEditTime 2020-03-29 00:58:03
+ * @LastEditTime 2020-07-15 19:06:13
  * @LastEditors Shi Zhangkun
  * @Description 
  * 
@@ -43,9 +43,9 @@
  * 
  *    |       haven't use       |
  *    |_________________________| 0x8000 0000
- *    |                         |
- *    |  idle physical memory   |
- *    |                         |
+ *    |                         |    
+ *    |  idle physical memory   |            //linear map of all idle mem, max size = 1GB(limit by system page table)
+ *    |                         |            
  *    |_________________________| 0x40c0 0000 ------------- physical memory map -------------
  *    |                         |
  *    |     disk R/W buffer     |
@@ -53,7 +53,7 @@
  *    |                         |
  *    |    page manage list     |
  *    |_________________________| 0x4020 0000
- *    |     system page table   |               //describe the system address higher than 1G
+ *    |     system page table   |               //L2 table describe the system address higher than 1G
  *    |_________________________| 0x4010 1000
  *    |      init page dir      |
  *    |_________________________| 0x4010 0000
@@ -76,19 +76,21 @@
  *    |_________________________| 0x4000 0000 ---------- system reserve area --------------
  *    |       haven't use       |
  *    |_________________________| 0x3FE0 0000
- *    |                         |             //describe the low 1G linear address,Now haven't use
+ *    |                         |             //L2 describe the low 1G linear address,Now haven't use
  *    |  task page tbl (code)   |             //because page table describle page table memory is too complex
  *    |_________________________| 0x3FD0 0000
  *    |       haven't use       |
  *    |_________________________| 0x3FC0 2000
- *    |      task page dir      |             //L1 page
+ *    |      task page dir      |             //L1 page (the L2 table of task not mapped in linear addr space)
  *    |_________________________| 0x3FC0 1000
  *    |   PCB & ring 0 stack    |
  *    |_________________________| 0x3FC0 0000 ---------------- task data -----------------
+ *    |        task heap        |
+ *    |_________________________| 0x3F40 0000
  *    |                         |
  *    |                         |
+ *    |     task code, data     |             //user code, data area, size: 1GB
  *    |                         |
- *    |     task code, data     |
  *    |_________________________| 0x0040 0000
  *    |        task stack       |             // stack growing down
  *    |_________________________| 0x0000 1000
@@ -104,7 +106,7 @@
  *    2. Opreate page about strcuts, regisiters, such as PDE, PTE and cr3(save page dir phy base addr)
  * 
  *   And in all C files, the physical address will be declared as uint32_t, in those files:
- *    1. page_x86.h, the page manage list item (prototype is miniListItem_t in list.h),the
+ *    1. page_x86.h, the page manage list item (prototype is miniListItem_t in yogaOS/list.h),the
  *       item.value saves the base physical address of the phy page which be maanged.
  *    ....
  *   Linear address usually be used as pointers, because it is convenient for read or write.
@@ -174,7 +176,8 @@
 #define TASK_RETURN_HANDLER_ADDR        0x00000002             
 #define TASK_STACK_TOP                  0x00001000
 #define TASK_STACK_BASE                 0x00400000   // stack growing down
-#define TASK_CODE_START_ADDR            0x00400000
+#define TASK_CODE_START_ADDR            0x00400000   
+#define TASK_HEAP_START_ADDR            0x3f400000
 #define PCB_BASE_ADDR                   0x3fc00000
 #define TASK_RING_0_STACK_TOP           0x3fc00400
 #define TASK_RING_0_STACK_BASE          0x3fc01000           
