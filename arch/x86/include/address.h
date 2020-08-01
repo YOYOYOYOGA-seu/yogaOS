@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-15 22:02:03
- * @LastEditTime 2020-07-15 19:06:13
+ * @LastEditTime 2020-07-16 08:38:56
  * @LastEditors Shi Zhangkun
  * @Description 
  * 
@@ -44,11 +44,11 @@
  *    |       haven't use       |
  *    |_________________________| 0x8000 0000
  *    |                         |    
- *    |  idle physical memory   |            //linear map of all idle mem, max size = 1GB(limit by system page table)
+ *    |  idle physical memory   |            //linear map of all idle mem, max size = 1GB(idle mem area + sys reserve area)
  *    |                         |            
  *    |_________________________| 0x40c0 0000 ------------- physical memory map -------------
  *    |                         |
- *    |     disk R/W buffer     |
+ *    |     disk R/W buffer     |              //save the FS index on the disk
  *    |_________________________| 0x4060 0000
  *    |                         |
  *    |    page manage list     |
@@ -85,11 +85,11 @@
  *    |_________________________| 0x3FC0 1000
  *    |   PCB & ring 0 stack    |
  *    |_________________________| 0x3FC0 0000 ---------------- task data -----------------
- *    |        task heap        |
- *    |_________________________| 0x3F40 0000
+ *    |        task heap        |             //user task can apply almost 500MB mem at most
+ *    |_________________________| 0x2040 0000
  *    |                         |
  *    |                         |
- *    |     task code, data     |             //user code, data area, size: 1GB
+ *    |     task code, data     |             //user code, data area,(.bss,.data,.text) size: 512MB
  *    |                         |
  *    |_________________________| 0x0040 0000
  *    |        task stack       |             // stack growing down
@@ -106,7 +106,7 @@
  *    2. Opreate page about strcuts, regisiters, such as PDE, PTE and cr3(save page dir phy base addr)
  * 
  *   And in all C files, the physical address will be declared as uint32_t, in those files:
- *    1. page_x86.h, the page manage list item (prototype is miniListItem_t in yogaOS/list.h),the
+ *    1. page_x86.h, the page manage list item (prototype is sigListItem_t_t in yogaOS/list.h),the
  *       item.value saves the base physical address of the phy page which be maanged.
  *    ....
  *   Linear address usually be used as pointers, because it is convenient for read or write.
@@ -165,7 +165,9 @@
 
 
 /* -------------------------- mssege and area size -------------------------- */
-#define PAGE_SIZE                 0x1000
+#define PAGE_SIZE                 0x1000   // 4K
+
+
 #define PTE_SIZE                  0x0004
 
 #define MAX_SUPPRT_MEM_SIZE       ((SYS_PAGE_TBL_SIZE)/4)*PAGE_SIZE
@@ -177,7 +179,7 @@
 #define TASK_STACK_TOP                  0x00001000
 #define TASK_STACK_BASE                 0x00400000   // stack growing down
 #define TASK_CODE_START_ADDR            0x00400000   
-#define TASK_HEAP_START_ADDR            0x3f400000
+#define TASK_HEAP_START_ADDR            0x20400000
 #define PCB_BASE_ADDR                   0x3fc00000
 #define TASK_RING_0_STACK_TOP           0x3fc00400
 #define TASK_RING_0_STACK_BASE          0x3fc01000           
@@ -200,8 +202,10 @@
 #define PAGE_MM_LIST_BASE_ADDR          (SYS_BASE_LINEAR_ADDR + PHY_PAGE_MM_LIST_BASE_ADDR)
 #define FILE_BUFF_BASE_ADDR             (SYS_BASE_LINEAR_ADDR + PHY_FILE_BUFF_BASE_ADDR)
 #define IDLE_MEM_BASE_ADDR              (SYS_BASE_LINEAR_ADDR + PHY_IDLE_MEM_BASE_ADDR)
+#define RESERVE_AREA_ADDR               0x80000000
 /* -------------------------- Linear address area size ------------------------- */
 #define TASK_STACK_SIZE                 SYS_STACK_SIZE
 #define TASK_RING_0_STACK_SIZE          (TASK_RING_0_STACK_BASE - TASK_RING_0_STACK_TOP)
+#define SUPT_MAX_PHY_MEM_SIZE           (RESERVE_AREA_ADDR - SYS_BASE_LINEAR_ADDR)    
 
 #endif

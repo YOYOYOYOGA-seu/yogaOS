@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-22 05:14:13
- * @LastEditTime 2020-07-15 19:25:25
+ * @LastEditTime 2020-07-16 01:38:30
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/include/page.h
@@ -11,12 +11,6 @@
 #include "yogaOS/types.h"
 #include "yogaOS/list.h"
 #include "errno.h"
-
-/* ------------------------------- type define ------------------------------------- */
-typedef miniListItem_t page_t;  //page manage list item, storing the page base phy addr, owner ...
-
-typedef miniList_t     pageList_t; //page manage list
-
 
 /* ---------------------------------- define ------------------------------------ */
 
@@ -35,7 +29,7 @@ page_t *page_locateList(uint32_t *size, uint32_t *phyrBase, uint32_t * linearBas
 /* ------------------------------function declaration ----------------------------- */
 void *page_allocOne(pageList_t *usingList);
 error_t page_checkIdleMemNum(uint32_t allocNum);
-void page_initPageManage(void);
+void page_initPageDesc(void);
 
 
 #endif

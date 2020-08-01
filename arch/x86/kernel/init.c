@@ -111,7 +111,7 @@ void initSysMsg(void)
  */
 void initMemManage(void)
 {
-  page_initPageManage();
+  page_initPageDesc();
   disp_string32("Page manager init success!!!\n\0");
 }
 

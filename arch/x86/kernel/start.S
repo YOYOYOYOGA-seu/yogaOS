@@ -74,13 +74,17 @@ relocate_stack:
  * @retval none
  */
 initKrnelPage:
+  cmp $SUPT_MAX_PHY_MEM_SIZE, sysMemSize  //check max mem size support  
+  jl __mem_less_2G
+  mov $SUPT_MAX_PHY_MEM_SIZE, sysMemSize  
+__mem_less_2G:
   movl sysMemSize, %eax
   //Judge if the sysMemSize the multiple of 4M
   and $0xffc00000,%eax    
   cmp sysMemSize, %eax  
-  je __align_4M
+  je __aligned_4M
   add $1<<22, %eax  //if not, make it 4M align 
-__align_4M: 
+__aligned_4M: 
  //L1 table :relocate system area
   shr $22, %eax
   mov %eax, %ecx
