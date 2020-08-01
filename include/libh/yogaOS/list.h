@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-21 20:59:03
- * @LastEditTime 2020-07-15 19:37:54
+ * @LastEditTime 2020-08-01 08:16:06
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/include/libh/yogaOS/list.h
@@ -12,7 +12,7 @@
 #include "yogaOS/types.h"
 /* ------------------------ type define --------------------------- */
 /* double linked  list */
-typedef struct {
+typedef struct listItem{
   unsigned int value;
   struct listItem * pNext;
   struct listItem * pPrevious;
@@ -28,7 +28,7 @@ typedef struct {
 }list_t; 
 /*simple single linked list */
 
-typedef struct {
+typedef struct miniListItem{
   unsigned int value;
   struct miniListItem * pNext;
   void * pOwner;
