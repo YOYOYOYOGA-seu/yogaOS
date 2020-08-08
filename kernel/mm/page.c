@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-22 05:13:44
- * @LastEditTime 2020-08-01 08:06:26
+ * @LastEditTime 2020-08-08 07:25:48
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/kernel/mm/page.c
@@ -13,7 +13,6 @@
 /* ------------------------ varible declare --------------------------- */
 extern zone_t sysMemZone[SYSTEM_ZONE_NUM];
 
-static uint32_t pageListSize;
 
 /**
  * @brief  
@@ -21,7 +20,7 @@ static uint32_t pageListSize;
  * @param {type} none
  * @retval none
  */
-void page_initPageDesc(void)
+void page_initPageDesc(zoneIndex_t index)
 {
   uint32_t i;
   int tempIndex;
@@ -33,18 +32,19 @@ void page_initPageDesc(void)
   uint32_t order;
 
   
-  p = sysMemZone[IDLE_AREA].pPageDescArray;
-  start = sysMemZone[IDLE_AREA].phyBase>>12;
-  end = start + sysMemZone[IDLE_AREA].totalPages;
+  p = sysMemZone[index].pPageDescArray;
+  start = sysMemZone[index].phyBase>>12;
+  end = start + sysMemZone[index].totalPages;
   value = start;
   //value = (1 << BUDDY_MAX_ORDER) - (start & ((1 << BUDDY_MAX_ORDER) - 1));
   /* init page mm desc structs in page desc array*/
-  for (i = 0; i < pageListSize; i++)
+  for (i = 0; i < sysMemZone[index].totalPages; i++)
   {
-    p->index = i; //the value stored physical addr of the page be managed
-    p->bOrder = 0;
-    p->lru.pNext = NULL;
-    p->lru.pPrevious = NULL;
+    p[i].index = i; //the value stored physical addr of the page be managed
+    p[i].bOrder = 0;
+    p[i].lru.pNext = NULL;
+    p[i].lru.pPrevious = NULL;
+
   }
   /*determine max order */
   for(order = BUDDY_MAX_ORDER; order > 0; order-- )
@@ -52,34 +52,36 @@ void page_initPageDesc(void)
     if((start + (1<<order)) <= end)
       break;
   }
-  sysMemZone[IDLE_AREA].maxFreeOrder = order;
+  sysMemZone[index].maxFreeOrder = order;
   
-  if(value > value >> order)
+  if(value & ((1<<order) - 1) != 0)
     value += 1<<order - (start &((1<<order) - 1));
 
   tempIndex = value - start;
   
    /* load the max order block */
   
-  for (; tempIndex <= sysMemZone[IDLE_AREA].totalPages - (1 << order); tempIndex += (1 << order) )
+  for (; tempIndex <= sysMemZone[index].totalPages - (1 << order); tempIndex += (1 << order) )
   {
-    miniList_insertTail(sysMemZone[IDLE_AREA].freeBlock[order],&p[tempIndex],lru);
+    miniList_insertTail(&sysMemZone[index].freeBlock[order],&p[tempIndex],lru);
+    p[tempIndex].bOrder = order;
   }
   /* load the orphan block(with out a buddy) in the tail*/
   while (order > 0)
   {
-    if(tempIndex >= sysMemZone[IDLE_AREA].totalPages)
+    if(tempIndex >= sysMemZone[index].totalPages)
       break;
     order--;
-    if(tempIndex + (1<<order) <= sysMemZone[IDLE_AREA].totalPages)
+    if(tempIndex + (1<<order) <= sysMemZone[index].totalPages)
     {
-       miniList_insertTail(sysMemZone[IDLE_AREA].freeBlock[order], &p[tempIndex],lru);
+      miniList_insertTail(&sysMemZone[index].freeBlock[order], &p[tempIndex],lru);
+      p[tempIndex].bOrder = order;
       tempIndex += 1<<order;
     }
   }
   /* load the orphan block(with out a buddy) in the tail*/
   tempIndex = value - start;
-  order =  sysMemZone[IDLE_AREA].maxFreeOrder;
+  order =  sysMemZone[index].maxFreeOrder;
   while (order > 0)
   {
     if(tempIndex <= 0)
@@ -88,22 +90,12 @@ void page_initPageDesc(void)
     if(tempIndex >= 1 << order )
     {
       tempIndex -= 1<<order;
-      miniList_insertTail(sysMemZone[IDLE_AREA].freeBlock[order], &p[tempIndex],lru);
+      miniList_insertTail(&sysMemZone[index].freeBlock[order], &p[tempIndex],lru);
+      p[tempIndex].bOrder = order;
     }
   }
   /* 进度 ------------------- 2020/8/1 --------------------------- */ 
  /* load the orphan block(with out a buddy) */
-  
-  start = value >> BUDDY_MAX_ORDER;
-  if (start != 0)
-  {
-    sysMemZone[IDLE_AREA].freeBlock[BUDDY_MAX_ORDER].firstItem = &p[1<<BUDDY_MAX_ORDER];
-    for (i = 0; i < start; i++)
-    {
-      p[1<<BUDDY_MAX_ORDER];
-    }
-      
-  }
 }
 
 /**
@@ -111,34 +103,42 @@ void page_initPageDesc(void)
  * @note  
  * @param {pageList_t *} usingList :caller provide 
  * @retval NULL :fail
- *         linear address of this idle page(= phy addr + sys_base_linear_addr)
+ *         linear address of this idle page in linear relocate area(= phy addr + sys_base_linear_addr)
  */
-void *page_allocOne(pageList_t *usingList)
-{
-  uint32_t i;
-  page_t *p = idlePageList.pFirstItem;
-
-  if (p != NULL)
+void *page_allocByOrder(pageList_t *usingList, zoneIndex_t index, int order)
+{ 
+  if(order > BUDDY_MAX_ORDER) return NULL;
+  int i;
+  int tempIndex;
+  page_t *p;
+  for(i = order; i < BUDDY_MAX_ORDER + 1; i++)
   {
-    idlePageList.pFirstItem = p->pNext;
-    p->pNext = usingList->pFirstItem;
-    usingList->pFirstItem = p;
-
-    usingList->numberOfItem++;
-    idlePageList.numberOfItem--;
-    return (void *)(p->value + idleMemLinearBase - idleMemPhyrBase);
-    //return the pointer to the space of the physical map
+    if(sysMemZone[index].freeBlock[i].value > 0)
+      break;
+    if(i == BUDDY_MAX_ORDER)   //not found a bock can be alloced
+      return NULL;
   }
-  return NULL;
+  p = miniList_PopHead(&sysMemZone[index].freeBlock[i],lru);
+  tempIndex = p->index;
+  p->bOrder = order;
+  while(i > order)  //divide specify order bock form a high order block
+  {
+    i--;
+    miniList_insertHead(&sysMemZone[index].freeBlock[i],&sysMemZone[index].pPageDescArray[tempIndex + (1<<i)],lru);
+    sysMemZone[index].pPageDescArray[tempIndex + (1<<i)].bOrder = i;
+  }
+  sysMemZone[index].freePages-= 1<<order;
+  miniList_insertHead(usingList,p,lru);
+  return (void*)((p->index<<12) + sysMemZone[index].linearBase);
 }
 
 /**
  * @brief  judge if the are enough idle page to alloc
- * @note  
+ * @note  only means when alloc page one by one(such as create a task)
  * @param {uint32_t} allocNum : num of applying page
  * @retval error_t
  */
-error_t page_checkIdleMemNum(uint32_t allocNum)
+error_t page_checkIdleMemNum(uint32_t allocNum,zoneIndex_t index)
 {
-  return (allocNum <= idlePageList.numberOfItem ? ENOERR : ENOSPC);
+  return (allocNum <= sysMemZone[index].freePages ? ENOERR : ENOSPC);
 }

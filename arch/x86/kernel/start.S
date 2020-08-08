@@ -74,9 +74,10 @@ relocate_stack:
  * @retval none
  */
 initKrnelPage:
-  cmp $SUPT_MAX_PHY_MEM_SIZE, sysMemSize  //check max mem size support  
+  mov $SUPT_MAX_PHY_MEM_SIZE,%eax
+  cmp %eax, sysMemSize  //check max mem size support  
   jl __mem_less_2G
-  mov $SUPT_MAX_PHY_MEM_SIZE, sysMemSize  
+  mov %eax, sysMemSize  
 __mem_less_2G:
   movl sysMemSize, %eax
   //Judge if the sysMemSize the multiple of 4M

@@ -24,7 +24,7 @@
       ],
       "preLaunchTask": "build-debug",
       "miDebuggerPath": "/usr/bin/gdb",
-      "miDebuggerServerAddress": "192.168.80.128:1234"
+      "miDebuggerServerAddress": "192.168.37.128:1234"
     }
   ]
 }

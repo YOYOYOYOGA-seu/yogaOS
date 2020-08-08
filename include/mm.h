@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-07-15 19:22:17
- * @LastEditTime 2020-08-01 07:59:43
+ * @LastEditTime 2020-08-08 06:09:15
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/include/mm.h
@@ -58,5 +58,8 @@ typedef struct zone{
 }zone_t;
 
 /* ------- Arch relevant function (defined in arch/xxx/xxx/xxx.c) ----------------- */
+
 void zone_sysZoneInit(void);
+/* ------------------------------function declaration ----------------------------- */
+void zone_init(void);
 #endif

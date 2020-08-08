@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-17 21:58:27
- * @LastEditTime 2020-07-17 00:08:08
+ * @LastEditTime 2020-08-08 07:27:07
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/arch/x86/kernel/mm/mm_x86.c
@@ -13,7 +13,7 @@
 
 extern zone_t sysMemZone[SYSTEM_ZONE_NUM];
 /**
- * @brief  locate the page manage list address
+ * @brief  locate the page manage list address(old vision use,now abandon)
  * @note   arch relevant 
  * @param {uint32_t *} size     :retval list size
  * @param {uint32_t *} phyrBase :retaval managing idle memory base physical address

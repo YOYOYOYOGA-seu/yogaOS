@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-21 20:59:03
- * @LastEditTime 2020-08-01 07:48:38
+ * @LastEditTime 2020-08-08 05:58:16
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/include/libh/yogaOS/list.h
@@ -28,7 +28,7 @@ typedef struct {
 
 }list_t; 
 
-/*simple single linked list */
+/*simple single linked list(haven't carried out) */
 
 typedef struct sigListItem_t{
   union {
@@ -64,108 +64,179 @@ typedef struct {
 /**
  * @brief  
  * @note  
- * @param {miniList_t} head : : list head
+ * @param {miniList_t *} pHead : : list pHead
  * @retval none
  */
-#define miniList_init(head){ \
-          head.firstItem = 0; \
-          head.value = 0; \
+#define miniList_init(pHead){ \
+          (pHead)->firstItem = 0; \
+          (pHead)->value = 0; \
         }
 /**
+ * @brief  
+ * @note  
+ * @param {miniList_t *} pHead : : list pHead
+ * @retval number of items in this list 
+ */
+#define miniList_size(pHead) (pHead)->value;
+
+/**
+ * @brief  templete func of match a item in list
+ * @note  
+ * @param 
+ * @retval 
+ */
+#define miniList_matchTemplate(pHead,pItem,__expl,__operator,__expr,__listItemObjName) {  \
+  if((pHead)->firstItem != 0&&(pHead)->value > 0){ \
+    void *pTempHead = (pHead)->firstItem; \
+    while(!(__expl __operator __expr)) \
+    { \
+      (pHead)->firstItem = (pHead)->firstItem->__listItemObjName.pNext; \
+      if((pHead)->firstItem == pTempHead) \
+      { \
+        (pHead)->firstItem = 0; \
+        break; \
+      } \
+    } \
+    pItem = (pHead)->firstItem; \
+    (pHead)->firstItem = pTempHead; \
+  }else{ \
+    pItem = 0; \
+  } \
+}
+/**
+ * @brief match a item in list, search condition is the relationship between item member and a value
+ * @note  
+ * @param {miniList_t *} pHead : list pHead 
+ * @param {<type*>} pItem : return the match result in this point 
+ * @param {} __expl :  expression left, must be the member of list item 
+ * @param {} __operator : operator, like == , < , >
+ * @param {} __expr : expression left, must be a value 
+ * @param {} __listItemObjName : the name of the miniListItem object 
+ * @retval 
+ */
+#define miniList_matchMtoV(pHead,pItem,__expl,__operator,__expr,__listItemObjName) \
+          miniList_matchTemplate(pHead,pItem,(pHead)->firstItem->__expl,__operator,__expr,__listItemObjName)
+/**
+ * @brief match a item in list, search condition is the relationship between item member and item member
+ * @note  
+ * @param {miniList_t *} pHead : list pHead 
+ * @param {<type*>} pItem : return the match result in this point 
+ * @param {} __expl :  expression left, must be the member of list item 
+ * @param {} __operator : operator, like == , < , >
+ * @param {} __expr : expression left, must be the member of list item
+ * @param {} __listItemObjName : the name of the miniListItem object 
+ * @retval 
+ */
+#define miniList_matchMtoM(pHead,pItem,__expl,__operator,__expr,__listItemObjName) \
+          miniList_matchTemplate(pHead,pItem,(pHead)->firstItem->__expl,__operator,(pHead)->firstItem->__expr,__listItemObjName)
+ 
+/**
  * @brief  insert a item to a mini list
- * @note  don't support circle, it mean's the firstItem.pPrevious and lastItem.pNext are both NULL
- * @param {miniList_t} head : list head 
+ * @note  don't support circle, it mean's the firstItem.pPrevious and lastItem.pNext are both 0
+ * @param {miniList_t *} pHead : list pHead 
  * @param {<type>} pItem : point to the item waitting to insert
  * @param {} __listItemObjName : the name of the miniListItem object
  * @retval none
  */
-#define miniList_insertHead(head,pItem,__listItemObjName) {   \
-          if(head.firstItem != 0){   \
-            (pItem)->__listItemObjName.pNext = head.firstItem;  \
-            (pItem)->__listItemObjName.pPrevious = head.firstItem->__listItemObjName.pPrevious; \
-            head.firstItem->__listItemObjName.pPrevious->__listItemObjName.pNext = (pItem);  \
-            head.firstItem->__listItemObjName.pPrevious = (pItem);  \
+#define miniList_insertHead(pHead,pItem,__listItemObjName) {   \
+          if((pHead)->firstItem != 0){   \
+            (pItem)->__listItemObjName.pNext = (pHead)->firstItem;  \
+            (pItem)->__listItemObjName.pPrevious = (pHead)->firstItem->__listItemObjName.pPrevious; \
+            (pHead)->firstItem->__listItemObjName.pPrevious->__listItemObjName.pNext = (pItem);  \
+            (pHead)->firstItem->__listItemObjName.pPrevious = (pItem);  \
           }else{ \
             (pItem)->__listItemObjName.pNext = (pItem);  \
             (pItem)->__listItemObjName.pPrevious = (pItem); \
           } \
-          head.firstItem = pItem; \
-          head.value++;   \
+          (pHead)->firstItem = pItem; \
+          (pHead)->value++;   \
         }
 /**
  * @brief  insert a item to a mini list
- * @note  don't support circle, it mean's the firstItem.pPrevious and lastItem.pNext are both NULL
- * @param {miniList_t} head : list head 
+ * @note  don't support circle, it mean's the firstItem.pPrevious and lastItem.pNext are both 0
+ * @param {miniList_t *} pHead : list pHead 
  * @param {<type>} pItem : point to the item waitting to insert
  * @param {} __listItemObjName : the name of the miniListItem object
  * @retval none
  */
-#define miniList_insertTail(head,pItem,__listItemObjName) {   \
-          if(head.firstItem != 0){   \
-            (pItem)->__listItemObjName.pNext = head.firstItem;  \
-            (pItem)->__listItemObjName.pPrevious = head.firstItem->__listItemObjName.pPrevious; \
-            head.firstItem->__listItemObjName.pPrevious->__listItemObjName.pNext = (pItem);  \
-            head.firstItem->__listItemObjName.pPrevious = (pItem);  \
+#define miniList_insertTail(pHead,pItem,__listItemObjName) {   \
+          if((pHead)->firstItem != 0){   \
+            (pItem)->__listItemObjName.pNext = (pHead)->firstItem;  \
+            (pItem)->__listItemObjName.pPrevious = (pHead)->firstItem->__listItemObjName.pPrevious; \
+            (pHead)->firstItem->__listItemObjName.pPrevious->__listItemObjName.pNext = (pItem);  \
+            (pHead)->firstItem->__listItemObjName.pPrevious = (pItem);  \
           }else{ \
             (pItem)->__listItemObjName.pNext = (pItem);  \
             (pItem)->__listItemObjName.pPrevious = (pItem); \
-             head.firstItem = pItem; \
+             (pHead)->firstItem = pItem; \
           } \
-          head.value++;   \
+          (pHead)->value++;   \
         }
 /**
  * @brief  pop the first item in this list
  * @note  
- * @param {miniList_t} head : list head 
+ * @param {miniList_t *} pHead : list pHead 
  * @param {} __listItemObjName : the name of the miniListItem object
  * @retval <type> * : the point to the item be poped
  */
-#define miniList_PopHead(head, __listItemObjName) head.firstItem;  \
+#define miniList_PopHead(pHead, __listItemObjName) (pHead)->firstItem;  \
         {   \
-          if(head.value == 0||head.firstItem == 0) \
-            goto POP_END; \
-          head.value--; \
-          if(head.value == 0){   \
-            head.firstItem->__listItemObjName.pNext = 0;  \
-            head.firstItem->__listItemObjName.pPrevious = 0;  \
-            head.firstItem = 0; \
-          }else{ \
-            head.firstItem->__listItemObjName.pNext->__listItemObjName.pPrevious =  head.firstItem->__listItemObjName.pPrevious;  \
-            head.firstItem->__listItemObjName.pPrevious->__listItemObjName.pNext = head.firstItem->__listItemObjName.pNext; \
-            void* p =  head.firstItem->__listItemObjName.pNext; \
-            head.firstItem->__listItemObjName.pNext = 0;  \
-            head.firstItem->__listItemObjName.pPrevious = 0;  \
-            head.firstItem = p; \
+          if((pHead)->firstItem != 0&&(pHead)->value != 0) \
+          { \
+            (pHead)->value--; \
+            if((pHead)->value == 0){   \
+              (pHead)->firstItem->__listItemObjName.pNext = 0;  \
+              (pHead)->firstItem->__listItemObjName.pPrevious = 0;  \
+              (pHead)->firstItem = 0; \
+            }else{ \
+              (pHead)->firstItem->__listItemObjName.pNext->__listItemObjName.pPrevious =  (pHead)->firstItem->__listItemObjName.pPrevious;  \
+              (pHead)->firstItem->__listItemObjName.pPrevious->__listItemObjName.pNext = (pHead)->firstItem->__listItemObjName.pNext; \
+              void* p =  (pHead)->firstItem->__listItemObjName.pNext; \
+              (pHead)->firstItem->__listItemObjName.pNext = 0;  \
+              (pHead)->firstItem->__listItemObjName.pPrevious = 0;  \
+              (pHead)->firstItem = p; \
+            } \
           } \
-          POP_END: \
         }
 /**
  * @brief  pop the last item in this list
  * @note  
- * @param {miniList_t} head : list head 
+ * @param {miniList_t *} pHead : list pHead 
  * @param {} __listItemObjName : the name of the miniListItem object
  * @retval <type> * : the point to the item be poped
  */
-#define miniList_PopTail(head, __listItemObjName) \
-        (head.firstItem==0)?0:(head.firstItem->__listItemObjName.pPrevious);  \
+#define miniList_PopTail(pHead, __listItemObjName) \
+        ((pHead)->firstItem==0)?0:((pHead)->firstItem->__listItemObjName.pPrevious);  \
         {   \
-          if(head.firstItem != 0&&head.value != 0) \
+          if((pHead)->firstItem != 0) \
           { \
-            head.firstItem = head.firstItem->__listItemObjName.pPrevious; \
-            head.value--; \
-            if(head.value == 0){   \
-              head.firstItem->__listItemObjName.pNext = 0;  \
-              head.firstItem->__listItemObjName.pPrevious = 0;  \
-              head.firstItem = 0; \
+            (pHead)->firstItem = (pHead)->firstItem->__listItemObjName.pPrevious; \
+            miniList_PopHead(pHead,__listItemObjName) \
+          } \
+        }
+        
+/**
+ * @brief  remove item from a list
+ * @note  
+ * @param {miniList_t *} pHead : list pHead 
+ * @param {<type*>} pHead : pItem
+ * @param {} __listItemObjName : the name of the miniListItem object
+ * @retval none
+ */
+#define miniList_remove(pHead,pItem,__listItemObjName)  \
+        { \
+          if((pHead)->firstItem != 0&&(pHead)->value != 0) \
+          { \
+            if((pHead)->firstItem == pItem){ \
+              miniList_PopHead(pHead,__listItemObjName); \
             }else{ \
-              head.firstItem->__listItemObjName.pNext->__listItemObjName.pPrevious =  head.firstItem->__listItemObjName.pPrevious;  \
-              head.firstItem->__listItemObjName.pPrevious->__listItemObjName.pNext = head.firstItem->__listItemObjName.pNext; \
-              void* pNewFirst =  head.firstItem->__listItemObjName.pNext; \
-              head.firstItem->__listItemObjName.pNext = 0;  \
-              head.firstItem->__listItemObjName.pPrevious = 0;  \
-              head.firstItem = pNewFirst; \
+              pItem->__listItemObjName.pNext->__listItemObjName.pPrevious = pItem->__listItemObjName.pPrevious; \
+              pItem->__listItemObjName.pPrevious->__listItemObjName.pNext = pItem->__listItemObjName.pNext; \
+              pItem->__listItemObjName.pPrevious = 0; \
+              pItem->__listItemObjName.pNext = 0; \
+              (pHead)->value--; \
             } \
-          }\
+          } \
         }
         
 void list_initList(list_t *list, uint32_t listMaxValue);

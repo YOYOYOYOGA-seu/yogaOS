@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-22 02:59:19
- * @LastEditTime 2020-07-15 07:52:57
+ * @LastEditTime 2020-08-08 06:10:09
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/arch/x86/kernel/sched/task_x86.c
@@ -102,13 +102,13 @@ error_t task_initTaskPage(PCB_t * pPCB)
   
   memcpy((void *)pL1,(const void *)SYS_PAGE_DIR_BASE_ADDR, PAGE_SIZE);  //copy system use L1 page table
   //alloc phy mem for PCB ring0 stack, page dir, task use page table 
-  pL2 = page_allocOne(&pPCB->usingPageList);
+  pL2 = page_allocOne(&pPCB->usingPageList,IDLE_AREA);
   pL2[0] = pToPhy(pPCB)|PTE_P|PTE_RW;     // pcb, user task can't visit
   pL2[1] = pToPhy(pL1)|PTE_P|PTE_RW;      // page dir (L1 page table), user task can't visit
   pL1[PCB_BASE_ADDR>>22] = pToPhy(pL2)|PDE_P|PDE_RW|PDE_US;  //page table(L2 table), user task can't visit, but L1 page tabe don't restrict dpl
 
   //alloc phy mem for page table which describe the task stack space
-  pL2 = page_allocOne(&pPCB->usingPageList);
+  pL2 = page_allocOne(&pPCB->usingPageList,IDLE_AREA);
   pL2[0] = pToPhy(pPCB->retFuncPage)|PTE_P|PTE_RW|PTE_US; //task return page, user task can visit
   pL2[PAGE_SIZE/sizeof(pageTblItem_t) - 1] = pToPhy(pPCB->pStackPage)|PTE_P|PTE_RW|PTE_US; //user stack, user task can visit
   pL1[0] = pToPhy(pL2)|PDE_P|PDE_RW|PDE_US; //L1 page tabe don't restrict dpl

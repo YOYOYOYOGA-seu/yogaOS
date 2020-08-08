@@ -1,13 +1,13 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-07-15 23:06:47
- * @LastEditTime 2020-08-01 07:52:13
+ * @LastEditTime 2020-08-08 06:20:22
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/kernel/mm/zone.c
  */ 
 #include "mm.h"
-#include "list.h"
+#include "yogaOS/list.h"
 #include "yogaOS/types.h"
 #include "errno.h"
 #include "page.h"
@@ -20,8 +20,9 @@ void zone_init(void)
   for(int i=0; i<SYSTEM_ZONE_NUM; i ++)
   {
     for(int j=0; j<=SYSTEM_ZONE_NUM; j ++)
-      miniList_init(sysMemZone[i].freeBlock[j]);
+      miniList_init(&sysMemZone[i].freeBlock[j]);
   }
   zone_sysZoneInit();
+  page_initPageDesc(IDLE_AREA);
   
 }
