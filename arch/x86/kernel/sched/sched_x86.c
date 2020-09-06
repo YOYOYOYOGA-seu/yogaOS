@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-28 04:20:43
- * @LastEditTime 2020-06-27 04:43:00
+ * @LastEditTime 2020-09-06 05:03:09
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/arch/x86/kernel/sched/sched_x86.c
@@ -13,7 +13,7 @@
 #include "page_x86.h"
 #include "sched_x86.h"
 #include "address.h"
- PCB_t* const pLocalPCB = (void *)PCB_BASE_ADDR;  
+
 
 void sched_loadFirstTask(PCB_t *pPCB)
 {

@@ -82,7 +82,7 @@ extern PCB_t * currentActiveTask;
 
 /* defined in arch/xxx/kernel/sched/sched_xxx.h, ralevant to the distribution of virtual 
    address space */
-extern  PCB_t * const pLocalPCB;  
+ 
 
 /* ------- Arch relevant function (defined in arch/xxx/kenel/sched/xxx.c) ----------------- */
 error_t task_initPCBArchRelevant(PCB_t *pPCB, void (*taskFunc)(void));

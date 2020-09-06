@@ -61,22 +61,22 @@ error_t req_wait(request_t* req)
   
 
   // the list should be ranged by prio, so the first item are always the highest prio to handler
-  if(pLocalPCB->reqWaitList.numberOfItem >= 1)   
+  if(currentActiveTask->reqWaitList.numberOfItem >= 1)   
   {
-    pLocalPCB->reqState = REQ_BUSY;
-    pReqS = &((PCB_t *)pLocalPCB->reqWaitList.pFirstItem->pOwner)->request;
+    currentActiveTask->reqState = REQ_BUSY;
+    pReqS = &((PCB_t *)currentActiveTask->reqWaitList.pFirstItem->pOwner)->request;
 
     req->type = pReqS->type;
     req->length = pReqS->length;
     req->pMesg = pReqS->pMesg;
     req->ownerPid = pReqS->ownerPid;
 
-    list_removeformList(pLocalPCB->reqWaitList.pFirstItem);  //remove from waiting list
+    list_removeformList(currentActiveTask->reqWaitList.pFirstItem);  //remove from waiting list
     
   }
   else  //no request in waiting list
   {   
-    pLocalPCB->reqState = REQ_READY;
+    currentActiveTask->reqState = REQ_READY;
     sched_suspendTask(NULL, 0xFFFFFFFF);  //suspend task
     return E_REQ_NO_USER;
   }
@@ -93,9 +93,9 @@ error_t req_wait(request_t* req)
  */
 error_t req_result(request_t* req)
 {
-  req->type = pLocalPCB->request.type;
-  req->length = pLocalPCB->request.length;
-  req->pMesg = pLocalPCB->request.pMesg;
+  req->type = currentActiveTask->request.type;
+  req->length = currentActiveTask->request.length;
+  req->pMesg = currentActiveTask->request.pMesg;
 
   return ENOERR;
 }
@@ -119,9 +119,9 @@ error_t req_send(request_t* pReqS, pid_t servPid)
     return E_REQ_NO_SERV;
 
 
-  pLocalPCB->request.type = pReqS->type;
-  pLocalPCB->request.length = pReqS->length;
-  pLocalPCB->request.pMesg = pReqS->pMesg;
+  currentActiveTask->request.type = pReqS->type;
+  currentActiveTask->request.length = pReqS->length;
+  currentActiveTask->request.pMesg = pReqS->pMesg;
   
   switch (pPCB_R->reqState)
   {
@@ -139,8 +139,8 @@ error_t req_send(request_t* pReqS, pid_t servPid)
     break;
   }
 
-  pLocalPCB->eventListItem.value = pLocalPCB->p_prio; //value = prio, ranged by prio
-    list_insertList(&pPCB_R->reqWaitList ,&(sched_serchTask(pLocalPCB->pid,NULL))->eventListItem);
+  currentActiveTask->eventListItem.value = currentActiveTask->p_prio; //value = prio, ranged by prio
+    list_insertList(&pPCB_R->reqWaitList ,&(sched_serchTask(currentActiveTask->pid,NULL))->eventListItem);
   
   if(pPCB_R->status != TASK_READY)   //wake server task
   {
@@ -189,9 +189,9 @@ error_t req_transpond(request_t* pReqS, pid_t servPid)
     return E_REQ_IVD;
     break;
   }
-    pPCB_S->eventListItem.value = pLocalPCB->p_prio; //value = prio, ranged by prio
-    list_removeformList(&pLocalPCB->eventListItem);
-    list_insertList(&pPCB_R->reqWaitList ,&pLocalPCB->eventListItem);
+    pPCB_S->eventListItem.value = currentActiveTask->p_prio; //value = prio, ranged by prio
+    list_removeformList(&currentActiveTask->eventListItem);
+    list_insertList(&pPCB_R->reqWaitList ,&currentActiveTask->eventListItem);
   if(pPCB_R->status != TASK_READY)   //wake server task
   {
     removeFromStateList(pPCB_R);
