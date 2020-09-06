@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-22 05:14:13
- * @LastEditTime 2020-08-09 01:33:39
+ * @LastEditTime 2020-09-05 22:41:05
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/include/page.h
@@ -25,13 +25,14 @@ typedef miniList_t(page_t) pageList_t;
 /* ------- Arch relevant function (defined in arch/xxx/xxx/xxx.c) ----------------- */
 
 page_t *page_locateList(uint32_t *size, uint32_t *phyrBase, uint32_t * linearBase); //old vision use,now abandon
-
+void page_missing(uint32_t addr);
 /* ------------------------------function define ----------------------------- */
 #define page_allocOne(pUsingList,index)  page_allocByOrder(pUsingList,index,0)
 /* ------------------------------function declaration ----------------------------- */
 void *page_allocByOrder(pageList_t *usingList, zoneIndex_t index, uint8_t order);
 error_t page_checkIdleMemNum(uint32_t allocNum,zoneIndex_t index);
 void page_initPageDesc(zoneIndex_t index);
+
 
 
 #endif

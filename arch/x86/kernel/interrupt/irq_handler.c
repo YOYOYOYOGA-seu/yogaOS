@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-20 05:11:29
- * @LastEditTime 2020-03-29 00:21:30
+ * @LastEditTime 2020-09-05 22:33:10
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/arch/x86/kernel/interrupt/irq_handler.c
@@ -16,7 +16,8 @@
 #include "io.h"
 #include "keyboard.h"
 #include "kb_map.h"
-
+#include "kernel.h"
+#include "page.h"
 //extern void disp_string32(char *info);
 
 extern long timeCount;
@@ -29,12 +30,33 @@ gateDesc_t * const IDT = (gateDesc_t *)IDT_BASE_ADDR;
  */
 void initInterrupt(void)
 {
+  seg_initGate(&IDT[PAGE_FAULT],(uint32_t)page_fault,SEL_GDT_GLOBAL_CODE,DESC_DPL_3,DESC_TYPE_386GATE_I);
   seg_initGate(&IDT[TIME_IRQ_VECTOR],(uint32_t)timer_IRQhandler,SEL_GDT_GLOBAL_CODE,DESC_DPL_3,DESC_TYPE_386GATE_I);
   seg_initGate(&IDT[KEYBOARD_IRQ_VECTOR],(uint32_t)keyboard_IRQhandler,SEL_GDT_GLOBAL_CODE,DESC_DPL_3,DESC_TYPE_386GATE_I);
   seg_initGate(&IDT[SYSTEM_CALL_VECTOR],(uint32_t)system_call,SEL_GDT_GLOBAL_CODE,DESC_DPL_3,DESC_TYPE_386GATE_I);
   //__enableIRQ();
 }
 
+/**
+ * @brief  
+ * @note  
+ * @param {type} none
+ * @retval none
+ */
+void do_pageError(uint32_t code, uint32_t addr)
+{
+  if(code & 0x01 != 0 )
+  {
+    painc("PAGE ACCESS ERROR!!!");    //！！！！权限问题引起的页错误，如果是用户进程操作此处应该强制关闭此进程
+  }
+  else if(code & 0x02 == 0)
+  {
+    painc("PAGE READ MISS!!!");  //！！！！现在还没有写时复制与换页机制，所以理论上不可能出现读取缺页
+  }
+  else
+    page_missing(addr);
+  return;
+}
 /**
  * @brief  
  * @note  

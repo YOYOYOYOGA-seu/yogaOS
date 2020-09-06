@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-15 22:02:03
- * @LastEditTime 2020-07-16 08:38:56
+ * @LastEditTime 2020-09-05 23:42:33
  * @LastEditors Shi Zhangkun
  * @Description 
  * 
@@ -93,6 +93,8 @@
  *    |                         |
  *    |_________________________| 0x0040 0000
  *    |        task stack       |             // stack growing down
+ *    |_________________________| 0x0000 2000
+ *    |        return code      |             //user main func return handler
  *    |_________________________| 0x0000 1000
  *    |        don't use        |             //don't alloc phy memory, for intercept null pointer 
  *    |_________________________| 0x0000 0000 ---------------------------------------------
@@ -174,9 +176,9 @@
 #define MIN_SUPPRT_MEM_SIZE       2*(PHY_IDLE_MEM_BASE_ADDR)
 
 
-/* -------------------------- Linear address map ------------------------- */
-#define TASK_RETURN_HANDLER_ADDR        0x00000002             
-#define TASK_STACK_TOP                  0x00001000
+/* -------------------------- Linear address map ------------------------- */  
+#define TASK_RETURN_HANDLER_ADDR        0x00001000        
+#define TASK_STACK_TOP                  0x00002000
 #define TASK_STACK_BASE                 0x00400000   // stack growing down
 #define TASK_CODE_START_ADDR            0x00400000   
 #define TASK_HEAP_START_ADDR            0x20400000

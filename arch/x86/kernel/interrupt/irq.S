@@ -1,11 +1,13 @@
 #include "address.h"
 
 .code32
+.global page_fault
 .global irq_default
 .global timer_IRQhandler
 .global keyboard_IRQhandler
 
 // defined in irq_handler.h
+
 irq_default:
   hlt
   jmp irq_default
@@ -21,8 +23,33 @@ irq_default:
 shced_lock:     //P-V lock
   .word 0
 
+/**
+ * @brief  page_fault handler entry
+ * @note  
+ * @param {type} none
+ * @retval none
+ */
+page_fault:
+  pushal
+  push %ds
+  push %es
+  push %fs
+  push %gs
+  mov 44(%esp), %eax   //error code
+  mov %cr2, %ebx      //the linear addr where occured the missing page
+  pushl %ebx
+  pushl %eax
+  call do_pageError
+  add $8, %esp
+  jmp ret_irq
+/**
+ * @brief  timer interrupt entry
+ * @note  
+ * @param {type} none
+ * @retval none
+ */
 timer_IRQhandler:
-  sub $4, %esp
+  sub $4, %esp  //no error code
   pushal
   push %ds
   push %es
@@ -68,7 +95,7 @@ _unlock:
  * @retval none
  */
  keyboard_IRQhandler:
-  sub $4, %esp
+  sub $4, %esp //no error code
   pushal
   push %ds
   push %es

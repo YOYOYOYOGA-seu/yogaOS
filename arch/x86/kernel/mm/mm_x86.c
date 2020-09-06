@@ -1,20 +1,21 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-17 21:58:27
- * @LastEditTime 2020-08-08 07:30:10
+ * @LastEditTime 2020-09-06 00:34:28
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/arch/x86/kernel/mm/mm_x86.c
  */
 #include "mm.h"
 #include "page_x86.h"
+#include "sched.h"
 #include "page.h"
 #include "system_x86.h"
 
 extern zone_t sysMemZone[SYSTEM_ZONE_NUM];
 /**
  * @brief  locate the page manage list address(old vision use,now abandon)
- * @note   arch relevant 
+ * @note   arch relevant
  * @param {uint32_t *} size     :retval list size
  * @param {uint32_t *} phyrBase :retaval managing idle memory base physical address
  * @param {uint32_t *}linearBase:retaval managing idle memory base linear address
@@ -31,7 +32,40 @@ page_t *page_locateList(uint32_t *size, uint32_t *phyrBase, uint32_t *linearBase
   *linearBase = IDLE_MEM_BASE_ADDR;
   return (page_t *)PAGE_MM_LIST_BASE_ADDR;
 }
-
+/**
+ * @brief  
+ * @note  
+ * @param {type} none
+ * @retval none
+ */
+void page_missing(uint32_t addr)
+{
+  PCB_t* pPCB = (PCB_t*)PCB_BASE_ADDR;
+  uint32_t L2pageIndex;
+  uint32_t L1pageIndex;
+  pageTblItem_t *pL1;
+  pageTblItem_t *pL2 = NULL;
+  if(addr < PCB_BASE_ADDR)  // page missing can only occur in user task area
+  {
+    L1pageIndex = addr >> 22;
+    L2pageIndex = (addr >> 12)&0x3FF;
+    pL1 = pPCB->L1PageTbl;
+    if((pL1[L1pageIndex]&0xFFC00000) == 0)  //L2 page addr is null
+    {
+      pL2 = page_allocOne(&pPCB->usingPageList,IDLE_AREA);
+      pL1[L1pageIndex] = pToPhy(pL2)|PDE_P|PDE_RW|PDE_US;  //L1 page tabe don't restrict dpl
+    }
+    else
+    {
+      pL2 = (pageTblItem_t *)phyToLin(pL1[L1pageIndex]&0xFFFFF000);
+    }
+    pL2[L2pageIndex] = pToPhy(page_allocOne(&pPCB->usingPageList,IDLE_AREA))|PTE_P|PTE_RW|PTE_US;
+  }
+  __asm__("mov %0, %%cr3;"
+          :
+          :"r"(pToPhy(pPCB->L1PageTbl))
+          );
+}
 /**
  * @brief  init the zone manager
  * @note  

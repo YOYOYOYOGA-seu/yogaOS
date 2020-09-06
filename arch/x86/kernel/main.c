@@ -23,10 +23,9 @@ void idle_task(void) //test scheduler
 {
   int a = 2;
   
-
+ 
   while(1)
   {
-    
     
   }
 }
@@ -37,13 +36,15 @@ void testTask2(void) //test scheduler
   int time = 0;
   char buf[64];
   request_t test1;
+  int * test= (int *)0x20400000;
+  
   while(1)
   {
     time++;
     test1.type = time;
     reqs(&test1,2);
     reqr(&test1);
-    
+    *test = time;
     printf("/033[0;31;44m req test:%d \n\r",test1.type);
   }
 }

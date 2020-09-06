@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-17 21:59:06
- * @LastEditTime 2020-02-26 23:02:47
+ * @LastEditTime 2020-09-06 00:12:42
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/arch/x86/include/page_x86.h
@@ -15,7 +15,20 @@
 
 typedef uint32_t pageTblItem_t;
 /* ------------------------ define --------------------------- */
-#define pToPhy(a)    ((uint32_t)a - SYS_BASE_LINEAR_ADDR)
+/**
+ * @brief  Transfer address in high mapping area to phy addr
+ * @note  
+ * @param {type} none
+ * @retval none
+ */
+#define pToPhy(a)    ((uint32_t)(a) - SYS_BASE_LINEAR_ADDR)  
+/**
+ * @brief  Transfer phy addr to it's linear addr in high mapping area
+ * @note  
+ * @param {type} none
+ * @retval none
+ */
+#define phyToLin(a)   ((uint32_t)(a) + SYS_BASE_LINEAR_ADDR) 
 /* ------------------ PTE and PDE setting -------------------- */
 #define PDE_P    0x01
 #define PDE_RW   0x02
