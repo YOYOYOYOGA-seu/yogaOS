@@ -5,7 +5,7 @@
 task_retHandler:
   jmp __handler
 __handler:
-  mov $1000, %eax
+  mov $0xFFFFFFFF, %eax  //！！！！！现在函数退出后只是让其永久sleep，并未收回占用的资源，之后应改为exit
   push %eax
   mov $sleep, %esi    
   //becasue of this func have to copy to another address ,

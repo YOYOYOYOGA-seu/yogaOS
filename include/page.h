@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-22 05:14:13
- * @LastEditTime 2020-08-08 07:26:53
+ * @LastEditTime 2020-08-09 01:33:39
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/include/page.h
@@ -29,7 +29,7 @@ page_t *page_locateList(uint32_t *size, uint32_t *phyrBase, uint32_t * linearBas
 /* ------------------------------function define ----------------------------- */
 #define page_allocOne(pUsingList,index)  page_allocByOrder(pUsingList,index,0)
 /* ------------------------------function declaration ----------------------------- */
-void *page_allocByOrder(pageList_t *usingList, zoneIndex_t index, int order);
+void *page_allocByOrder(pageList_t *usingList, zoneIndex_t index, uint8_t order);
 error_t page_checkIdleMemNum(uint32_t allocNum,zoneIndex_t index);
 void page_initPageDesc(zoneIndex_t index);
 
