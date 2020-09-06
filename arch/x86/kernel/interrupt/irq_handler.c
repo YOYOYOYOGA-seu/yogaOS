@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-20 05:11:29
- * @LastEditTime 2020-09-05 22:33:10
+ * @LastEditTime 2020-09-06 01:26:50
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/arch/x86/kernel/interrupt/irq_handler.c
@@ -53,8 +53,13 @@ void do_pageError(uint32_t code, uint32_t addr)
   {
     painc("PAGE READ MISS!!!");  //！！！！现在还没有写时复制与换页机制，所以理论上不可能出现读取缺页
   }
-  else
+  else if(addr < TASK_RETURN_HANDLER_ADDR)
+  {
+    painc("illegal ptr");   //！！！！！非法指针访问，同样需要关闭进程
+  }
+  else if(addr < PCB_BASE_ADDR)
     page_missing(addr);
+  
   return;
 }
 /**
