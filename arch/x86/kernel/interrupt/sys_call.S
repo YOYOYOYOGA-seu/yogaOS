@@ -1,8 +1,11 @@
 #include "address.h"
 .extern  sys_call_table
 .extern  numOfSystemCalls
-
 .global system_call
+
+shced_lock:     //P-V lock
+  .word 0
+
 /**
  * @brief  system call interrupt 
  * @note   INT 0x80
@@ -27,6 +30,12 @@ system_call:
   push %edx
   push %ecx
   push %ebx
+
+__lock:     //lock schedule lock, prevent schedule(in timer irq) when open interrupt
+  add $1, shced_lock
+
+  sti    //open interrupt
+
   call sys_call_table(,%eax,4)
   add $0xc, %esp
   
@@ -49,6 +58,9 @@ illegal_sys_call:
   jmp illegal_sys_call
   
 ret_syscall:
+__unlock:
+  sub $1, shced_lock
+  
   pop %gs
   pop %fs
   pop %es

@@ -5,7 +5,7 @@
 .global irq_default
 .global timer_IRQhandler
 .global keyboard_IRQhandler
-
+.extern shced_lock
 // defined in irq_handler.h
 
 irq_default:
@@ -20,8 +20,6 @@ irq_default:
  * @retval none
  */
 
-shced_lock:     //P-V lock
-  .word 0
 
 /**
  * @brief  page_fault handler entry
@@ -82,7 +80,7 @@ __lock:
   sub $SYS_BASE_LINEAR_ADDR, %eax
   mov %eax, %cr3
 
-_unlock:
+__unlock:
   sub $1, shced_lock
 
   jmp ret_irq
