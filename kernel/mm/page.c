@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-22 05:13:44
- * @LastEditTime 2020-08-09 07:59:31
+ * @LastEditTime 2020-09-11 23:23:45
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/kernel/mm/page.c
@@ -10,6 +10,7 @@
 #include "page.h"
 #include "yogaOS/types.h"
 #include "errno.h"
+#include "kernel.h"
 /* ------------------------ varible declare --------------------------- */
 extern zone_t sysMemZone[SYSTEM_ZONE_NUM];
 
@@ -20,7 +21,7 @@ extern zone_t sysMemZone[SYSTEM_ZONE_NUM];
  * @param {type} none
  * @retval none
  */
-void page_initPageDesc(zoneIndex_t index)
+void page_initPageDesc(zoneIndex_t zone)
 {
   uint32_t i;
   int tempIndex;
@@ -32,16 +33,16 @@ void page_initPageDesc(zoneIndex_t index)
   uint8_t order;
 
   
-  p = sysMemZone[index].pPageDescArray;
-  start = sysMemZone[index].phyBase>>12;
-  end = start + sysMemZone[index].totalPages;
+  p = sysMemZone[zone].pPageDescArray;
+  start = sysMemZone[zone].phyBase>>12;
+  end = start + sysMemZone[zone].totalPages;
   value = start;
   //value = (1 << BUDDY_MAX_ORDER) - (start & ((1 << BUDDY_MAX_ORDER) - 1));
   /* init page mm desc structs in page desc array*/
-  for (i = 0; i < sysMemZone[index].totalPages; i++)
+  for (i = 0; i < sysMemZone[zone].totalPages; i++)
   {
-    p[i].fatherZone = index;
-    p[i].index = i; //the value stored physical addr of the page be managed
+    *(uint8_t*)&p[i].fatherZone = zone;
+    *(uint32_t*)&p[i].index = i; //the value stored physical addr of the page be managed
     p[i].bOrder = 0;
     p[i].lru.pNext = NULL;
     p[i].lru.pPrevious = NULL;
@@ -53,7 +54,7 @@ void page_initPageDesc(zoneIndex_t index)
     if((start + (1<<order)) <= end)
       break;
   }
-  sysMemZone[index].maxFreeOrder = order;
+  sysMemZone[zone].maxFreeOrder = order;
   
   if(value & ((1<<order) - 1) != 0)
     value += 1<<order - (start &((1<<order) - 1));
@@ -62,27 +63,27 @@ void page_initPageDesc(zoneIndex_t index)
   
    /* load the max order block */
   
-  for (; tempIndex <= sysMemZone[index].totalPages - (1 << order); tempIndex += (1 << order) )
+  for (; tempIndex <= sysMemZone[zone].totalPages - (1 << order); tempIndex += (1 << order) )
   {
-    miniList_insertTail(&sysMemZone[index].freeBlock[order],&p[tempIndex],lru);
+    miniList_insertTail(&sysMemZone[zone].freeBlock[order],&p[tempIndex],lru);
     p[tempIndex].bOrder = order;
   }
   /* load the orphan block(with out a buddy) in the tail*/
   while (order > 0)
   {
-    if(tempIndex >= sysMemZone[index].totalPages)
+    if(tempIndex >= sysMemZone[zone].totalPages)
       break;
     order--;
-    if(tempIndex + (1<<order) <= sysMemZone[index].totalPages)
+    if(tempIndex + (1<<order) <= sysMemZone[zone].totalPages)
     {
-      miniList_insertTail(&sysMemZone[index].freeBlock[order], &p[tempIndex],lru);
+      miniList_insertTail(&sysMemZone[zone].freeBlock[order], &p[tempIndex],lru);
       p[tempIndex].bOrder = order;
       tempIndex += 1<<order;
     }
   }
   /* load the orphan block(with out a buddy) in the tail*/
   tempIndex = value - start;
-  order =  sysMemZone[index].maxFreeOrder;
+  order =  sysMemZone[zone].maxFreeOrder;
   while (order > 0)
   {
     if(tempIndex <= 0)
@@ -91,7 +92,7 @@ void page_initPageDesc(zoneIndex_t index)
     if(tempIndex >= 1 << order )
     {
       tempIndex -= 1<<order;
-      miniList_insertTail(&sysMemZone[index].freeBlock[order], &p[tempIndex],lru);
+      miniList_insertTail(&sysMemZone[zone].freeBlock[order], &p[tempIndex],lru);
       p[tempIndex].bOrder = order;
     }
   }
@@ -103,10 +104,9 @@ void page_initPageDesc(zoneIndex_t index)
  * @brief  
  * @note  
  * @param {pageList_t *} usingList :caller provide 
- * @retval NULL :fail
- *         linear address of this idle page in linear relocate area(= phy addr + sys_base_linear_addr)
+ * @retval linear address of this idle page in linear relocate area(= phy addr + sys_base_linear_addr),fail with NULL
  */
-void *page_allocByOrder(pageList_t *usingList, zoneIndex_t index, uint8_t order)
+void *page_allocByOrder(pageList_t *usingList, zoneIndex_t zone, uint8_t order)
 { 
   if(order > BUDDY_MAX_ORDER) return NULL;
   int i;
@@ -114,44 +114,48 @@ void *page_allocByOrder(pageList_t *usingList, zoneIndex_t index, uint8_t order)
   page_t *p;
   for(i = order; i < BUDDY_MAX_ORDER + 1; i++)
   {
-    if(sysMemZone[index].freeBlock[i].value > 0)
+    if(sysMemZone[zone].freeBlock[i].value > 0)
       break;
     if(i == BUDDY_MAX_ORDER)   //not found a bock can be alloced
       return NULL;
   }
-  p = miniList_PopHead(&sysMemZone[index].freeBlock[i],lru);
+  p = miniList_PopHead(&sysMemZone[zone].freeBlock[i],lru);
   tempIndex = p->index;
   p->bOrder = order;
   while(i > order)  //divide specify order bock form a high order block
   {
     i--;
-    miniList_insertHead(&sysMemZone[index].freeBlock[i],&sysMemZone[index].pPageDescArray[tempIndex + (1<<i)],lru);
-    sysMemZone[index].pPageDescArray[tempIndex + (1<<i)].bOrder = i;
+    miniList_insertHead(&sysMemZone[zone].freeBlock[i],&sysMemZone[zone].pPageDescArray[tempIndex + (1<<i)],lru);
+    sysMemZone[zone].pPageDescArray[tempIndex + (1<<i)].bOrder = i;
   }
-  sysMemZone[index].freePages-= 1<<order;
+  sysMemZone[zone].freePages-= 1<<order;
   miniList_insertHead(usingList,p,lru);
-  return (void*)((p->index<<12) + sysMemZone[index].linearBase);
+  return (void*)((p->index<<12) + sysMemZone[zone].linearBase);
 }
+
 /**
- * @brief  
- * @note  
- * @param {type} none
- * @retval none
+ * @brief  recycle a select page to free page
+ * @note  Before call this func you must remove the page from the using list manually ! 
+ * @param {page_t*} page : point to the page desc
+ * @retval error_t
  */
-error_t page_recycle(pageList_t *usingList,page_t* page)
+error_t page_recycleOne(page_t* page)
 {
-  if(usingList == NULL || page == NULL) return  EFAULT;
+  if( page == NULL) return  EFAULT;
+  assertk(!(page->fatherZone < SYSTEM_ZONE_NUM));
+  assertk(!(page->index >= (sysMemZone[page->fatherZone].phyBase>>12)&& \
+          page->index - (sysMemZone[page->fatherZone].phyBase>>12) <= sysMemZone[page->fatherZone].totalPages));
   
-  miniList_remove(usingList,page,lru);
   page_t *p = NULL;
   zoneIndex_t zone = (zoneIndex_t)page->fatherZone;
   uint8_t order;
   uint32_t buddyIndex;
   
+  sysMemZone[zone].freePages += 1<<page->bOrder;
   /* match if there are free buddy block ,and  merge it to a higher order block */
-  for(order= page->bOrder; order < BUDDY_MAX_ORDER + 1; order++)
+  for(order= page->bOrder; order < BUDDY_MAX_ORDER ; order++)
   {
-    buddyIndex = (page->index + (sysMemZone[zone].phyBase)>>12)^(1<<order); /* get buddy block desc index */
+    buddyIndex = page->index^(1<<order); /* get buddy block desc index */
     miniList_matchMtoV(&sysMemZone[zone].freeBlock[order],p,index,==,buddyIndex,lru);
     if(p == NULL)
     {
@@ -160,11 +164,32 @@ error_t page_recycle(pageList_t *usingList,page_t* page)
     else
     {
       miniList_remove(&sysMemZone[zone].freeBlock[order],p,lru);
-      /* ?? ------------------- 2020/8/9 --------------------------- */ 
+      if((p->index & (1 << order)) == 0)
+        page = p;
+      page->bOrder = order + 1;
     }
   }
   
+  miniList_insertHead(&sysMemZone[zone].freeBlock[order],page,lru);
   
+  return ENOERR;
+}
+/**
+ * @brief  recycle all pages in a using pages list
+ * @note  
+ * @param {pageList_t *} usingList : point to the using List
+ * @retval error_t
+ */
+error_t page_recycle(pageList_t *usingList)
+{
+  if( usingList == NULL) return  EFAULT;
+  page_t * page;
+  while(usingList->value > 0)
+  {
+    page = miniList_PopHead(usingList,lru);
+    page_recycleOne(page);
+  }
+  return ENOERR;
 }
 /**
  * @brief  judge if the are enough idle page to alloc
@@ -172,7 +197,7 @@ error_t page_recycle(pageList_t *usingList,page_t* page)
  * @param {uint32_t} allocNum : num of applying page
  * @retval error_t
  */
-error_t page_checkIdleMemNum(uint32_t allocNum,zoneIndex_t index)
+error_t page_checkIdleMemNum(uint32_t allocNum,zoneIndex_t zone)
 {
-  return (allocNum <= sysMemZone[index].freePages ? ENOERR : ENOSPC);
+  return (allocNum <= sysMemZone[zone].freePages ? ENOERR : ENOSPC);
 }

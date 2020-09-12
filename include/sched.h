@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-21 20:25:27
- * @LastEditTime 2020-06-27 03:45:33
+ * @LastEditTime 2020-09-11 23:19:26
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/include/sched.h
@@ -101,6 +101,7 @@ error_t sched_addToList(PCB_t *pPCB);
 error_t sched_removeFromStateList(PCB_t *pPCB);
 error_t sched_suspendTask(PCB_t *pPCB, uint32_t time);
 error_t sched_wakeTask(void);
+void sched_exit(int status);
 void sched_startScheduler(void);
 void sched_timeTick(void);
 uint32_t schedule(void);

@@ -2,7 +2,7 @@
 .extern  sys_call_table
 .extern  numOfSystemCalls
 .global system_call
-
+.global shced_lock
 shced_lock:     //P-V lock
   .word 0
 

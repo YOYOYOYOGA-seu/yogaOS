@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-22 05:14:13
- * @LastEditTime 2020-09-05 22:41:05
+ * @LastEditTime 2020-09-11 20:31:21
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/include/page.h
@@ -27,12 +27,12 @@ typedef miniList_t(page_t) pageList_t;
 page_t *page_locateList(uint32_t *size, uint32_t *phyrBase, uint32_t * linearBase); //old vision use,now abandon
 void page_missing(uint32_t addr);
 /* ------------------------------function define ----------------------------- */
-#define page_allocOne(pUsingList,index)  page_allocByOrder(pUsingList,index,0)
+#define page_allocOne(pUsingList,zone)  page_allocByOrder(pUsingList,zone,0)
 /* ------------------------------function declaration ----------------------------- */
-void *page_allocByOrder(pageList_t *usingList, zoneIndex_t index, uint8_t order);
-error_t page_checkIdleMemNum(uint32_t allocNum,zoneIndex_t index);
-void page_initPageDesc(zoneIndex_t index);
-
-
+error_t page_checkIdleMemNum(uint32_t allocNum,zoneIndex_t zone);
+void page_initPageDesc(zoneIndex_t zone);
+void *page_allocByOrder(pageList_t *usingList, zoneIndex_t zone, uint8_t order);
+error_t page_recycle(pageList_t *usingList);
+error_t page_recycleOne(page_t *page);
 
 #endif

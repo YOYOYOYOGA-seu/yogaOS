@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-25 00:19:41
- * @LastEditTime 2020-06-25 02:24:40
+ * @LastEditTime 2020-09-12 00:46:57
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/kernel/sched/sched.c
@@ -280,6 +280,11 @@ error_t sched_wakeTask(void)
       pPCB->status = TASK_READY;
       sched_addToList(pPCB);
     }
+    else // if no task need weak(not happen unless some task were deleted)
+    {
+      nextTaskwakeTime = suspendTaskList.pFirstItem->value;   //refreash next weak time
+    }
+    
   }
   return ENOERR;
 }
@@ -290,13 +295,30 @@ error_t sched_wakeTask(void)
  * @param {type} none
  * @retval none
  */
-error_t sched_deleteTask(pid_t pid)
+error_t sched_killTask(pid_t pid)
 {
   if(pid >= SCHED_MAX_TASK_NUM)
     return E_SCHED_OUT_TSK_NR;
   PCB_t *pPCB = globalTaskMap[pid];
-  
 
+  /* code : send SIGN to it's child task */
+  
+  /* code : close openning file desc or other resource */
+
+  sched_removeFromStateList(pPCB);  //remove from task state list
+  list_removeformList(&pPCB->eventListItem);  //remove from event list
+
+  //when delete a requst handler task(definitely be system task), can only kill the task waiting for anwser
+  while(pPCB->reqWaitList.numberOfItem > 0)  
+  {
+    PCB_t *temp = pPCB->reqWaitList.pFirstItem->pOwner;
+    list_removeformList(pPCB->reqWaitList.pFirstItem);
+    /* code : send SIGN to their father task : status = -1*/
+    sched_killTask(temp->pid);
+  }
+  sched_logoutPID(pid);
+  page_recycle(&pPCB->usingPageList); 
+  return ENOERR;
 }
 /**
  * @brief  
@@ -315,7 +337,20 @@ void sched_timeTick(void)
     sched_wakeTask();
 
 }
-
+/**
+ * @brief  
+ * @note  
+ * @param {type} none
+ * @retval none
+ */
+void sched_exit(int status)
+{
+  /* code : send SIGN to it's father task : status*/
+  sched_killTask(currentActiveTask->pid);
+  /* after killTask the memory of PCB have been recycled, but still can be 
+    accessd(haven't been re-allocated yet). */
+  currentActiveTask->status = TASK_STOP;  //for shcedule
+}
 /**
  * @brief  
  * @note  
@@ -324,7 +359,7 @@ void sched_timeTick(void)
  */
 uint32_t schedule(void)
 {
-  if(shcedulerState != SCHEDULER_RUN)
+  if(shcedulerState != SCHEDULER_RUN || currentActiveTask == NULL)
     return (uint32_t)NULL;
 
   uint32_t flag;
@@ -342,7 +377,7 @@ uint32_t schedule(void)
     }
     else
     {
-      if(topReadyPriority >= currentActiveTask->p_prio)
+      if(topReadyPriority == currentActiveTask->p_prio)
         painc("topReadyPriority error!\n");
     }
     //before check the if the are a higher p_prio,we suppose it is the task to run

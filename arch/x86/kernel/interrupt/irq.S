@@ -14,14 +14,6 @@ irq_default:
 
 
 /**
- * @brief  timer tick interrupt hanlder
- * @note   
- * @param {type} none
- * @retval none
- */
-
-
-/**
  * @brief  page_fault handler entry
  * @note  
  * @param {type} none
@@ -87,7 +79,7 @@ __unlock:
 
 
 /**
- * @brief  
+ * @brief  keyboad interrupt entry
  * @note  
  * @param {type} none
  * @retval none

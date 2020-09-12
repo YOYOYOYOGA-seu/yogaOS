@@ -31,7 +31,7 @@
 00000000000i[      ]   Sound support: no
 00000000000i[      ]   USB support: no
 00000000000i[      ]   VGA extension support: vbe
-00000000000i[MEM0  ] allocated memory at 0x7f9b02808010. after alignment, vector=0x7f9b02809000
+00000000000i[MEM0  ] allocated memory at 0x7fd53314d010. after alignment, vector=0x7fd53314e000
 00000000000i[MEM0  ] 32.00MB
 00000000000i[MEM0  ] mem block size = 0x00020000, blocks=256
 00000000000i[MEM0  ] rom at 0xfffe0000/131072 ('/usr/local/share/bochs/BIOS-bochs-latest')
@@ -42,7 +42,7 @@
 00000000000i[DEV   ] PIIX3 PCI-to-ISA bridge present at device 1, function 0
 00000000000i[PLUGIN] init_dev of 'cmos' plugin device by virtual method
 00000000000i[CMOS  ] Using local time for initial clock
-00000000000i[CMOS  ] Setting initial clock to: Sun Sep  6 15:44:56 2020 (time0=1599378296)
+00000000000i[CMOS  ] Setting initial clock to: Sat Sep 12 15:30:45 2020 (time0=1599895845)
 00000000000i[PLUGIN] init_dev of 'dma' plugin device by virtual method
 00000000000i[DMA   ] channel 4 used by cascade
 00000000000i[PLUGIN] init_dev of 'pic' plugin device by virtual method
@@ -164,106 +164,94 @@
 00000000000i[PLUGIN] reset of 'extfpuirq' plugin device by virtual method
 00000000000i[PLUGIN] reset of 'parallel' plugin device by virtual method
 00000000000i[PLUGIN] reset of 'serial' plugin device by virtual method
-00000000000i[GDBST ] addr 00000000400014e5 len 1
+00000000000i[GDBST ] addr 0000000040001506 len 1
 00000000000i[GDBST ] addr 000000000000fff0 len 1
 00000000000i[GDBST ] addr 000000000000fff0 len 1
 00000000000i[GDBST ] addr 000000000000ffc0 len 40
 00000000000i[GDBST ] addr 000000000000fff0 len 8
 00000000000i[GDBST ] addr 000000000000fff0 len 7
-00000000000i[GDBST ] Setting breakpoint at 00000000400014e5
+00000000000i[GDBST ] addr 0000000040001d00 len 40
+00000000000i[GDBST ] addr 0000000040001d40 len 40
+00000000000i[GDBST ] addr 0000000040001dbe len 1
+00000000000i[GDBST ] Setting breakpoint at 0000000040001506
+00000000000i[GDBST ] Setting breakpoint at 0000000040001dbe
 00000004662i[BIOS  ] $Revision: 13752 $ $Date: 2019-12-30 14:16:18 +0100 (Mon, 30 Dec 2019) $
-00000340067i[KBD   ] reset-disable command received
-00000350824i[BIOS  ] Starting rombios32
-00000351262i[BIOS  ] Shutdown flag 0
-00000351852i[BIOS  ] ram_size=0x02000000
-00000352274i[BIOS  ] ram_end=32MB
-00000371576i[BIOS  ] Found 1 cpu(s)
-00000385228i[BIOS  ] bios_table_addr: 0x000f9db8 end=0x000fcc00
-00000713049i[PCI   ] i440FX PMC write to PAM register 59 (TLB Flush)
-00001040979i[P2ISA ] PCI IRQ routing: PIRQA# set to 0x0b
-00001040998i[P2ISA ] PCI IRQ routing: PIRQB# set to 0x09
-00001041017i[P2ISA ] PCI IRQ routing: PIRQC# set to 0x0b
-00001041036i[P2ISA ] PCI IRQ routing: PIRQD# set to 0x09
-00001041046i[P2ISA ] write: ELCR2 = 0x0a
-00001041816i[BIOS  ] PIIX3/PIIX4 init: elcr=00 0a
-00001055440i[BIOS  ] PCI: bus=0 devfn=0x00: vendor_id=0x8086 device_id=0x1237 class=0x0600
-00001057753i[BIOS  ] PCI: bus=0 devfn=0x08: vendor_id=0x8086 device_id=0x7000 class=0x0601
-00001059905i[BIOS  ] PCI: bus=0 devfn=0x09: vendor_id=0x8086 device_id=0x7010 class=0x0101
-00001060140i[PIDE  ] BAR #4: i/o base address = 0xc000
-00001060756i[BIOS  ] region 4: 0x0000c000
-00001062821i[BIOS  ] PCI: bus=0 devfn=0x0b: vendor_id=0x8086 device_id=0x7113 class=0x0680
-00001063065i[ACPI  ] new IRQ line = 11
-00001063079i[ACPI  ] new IRQ line = 9
-00001063106i[ACPI  ] new PM base address: 0xb000
-00001063120i[ACPI  ] new SM base address: 0xb100
-00001063148i[PCI   ] setting SMRAM control register to 0x4a
-00001227241i[CPU0  ] Enter to System Management Mode
-00001227252i[CPU0  ] RSM: Resuming from System Management Mode
-00001391273i[PCI   ] setting SMRAM control register to 0x0a
-00001417947i[BIOS  ] MP table addr=0x000f9e90 MPC table addr=0x000f9dc0 size=0xc8
-00001419818i[BIOS  ] SMBIOS table addr=0x000f9ea0
-00001422004i[BIOS  ] ACPI tables: RSDP addr=0x000f9fd0 ACPI DATA addr=0x01ff0000 size=0xff8
-00001425251i[BIOS  ] Firmware waking vector 0x1ff00cc
-00001427731i[PCI   ] i440FX PMC write to PAM register 59 (TLB Flush)
-00001428454i[BIOS  ] bios_table_cur_addr: 0x000f9ff4
-00001557325i[VBIOS ] VGABios $Id: vgabios.c 226 2020-01-02 21:36:23Z vruppert $
-00001557396i[BXVGA ] VBE known Display Interface b0c0
-00001557428i[BXVGA ] VBE known Display Interface b0c5
-00001560071i[VBIOS ] VBE Bios $Id: vbe.c 228 2020-01-02 23:09:02Z vruppert $
-00043466623i[XGUI  ] charmap update. Font is 9 x 16
-00245903927i[BIOS  ] Booting from 0000:7c00
-00247465112i[XGUI  ] charmap update. Font is 9 x 16
-00298037513i[GDBST ] found breakpoint at 400014e5
-00298037513i[XGUI  ] charmap update. Font is 9 x 16
-00298037513i[GDBST ] stopped with ac1
-00298037513i[GDBST ] reg 8 set to 00000000400014e5
-00298037513i[GDBST ] reg 41 set to 00000000ffffffff
-00298037513i[GDBST ] Removing breakpoint at 00000000400014e5
-00326476810i[GDBST ] stopped with ac0
-00326476810i[GDBST ] addr 00000000400012ef len 1
-00472670085i[GDBST ] Got byte 3
-00472670085i[GDBST ] stopped with ac3
-00472670085i[GDBST ] addr 0000000040001440 len 40
-00472670085i[GDBST ] addr 0000000040001466 len 1
-00472670085i[GDBST ] addr 00000000003fffc0 len 40
-00472670085i[GDBST ] addr 0000000000001000 len 8
-00472670085i[GDBST ] addr 0000000000001000 len 7
-00472670085i[GDBST ] Setting breakpoint at 0000000040001466
-00509702486i[GDBST ] found breakpoint at 40001466
-00509702486i[GDBST ] stopped with ac1
-00509702486i[GDBST ] reg 8 set to 0000000040001466
-00509702486i[GDBST ] reg 41 set to 00000000ffffffff
-00509702486i[GDBST ] Removing breakpoint at 0000000040001466
-00509702486i[GDBST ] addr 00000000003fffc0 len 40
-00509702486i[GDBST ] addr 0000000000001000 len 8
-00509702486i[GDBST ] addr 0000000000001000 len 7
-00509702486i[GDBST ] addr 0000000020400000 len 4
-00509702486i[GDBST ] stepping
-00509702487i[GDBST ] stopped with ac2
-00509702487i[GDBST ] addr 00000000003fffc0 len 40
-00509702487i[GDBST ] addr 0000000000001000 len 8
-00509702487i[GDBST ] addr 0000000000001000 len 7
-00509702487i[GDBST ] addr 0000000020400000 len 4
-00509702487p[GDBST ] >>PANIC<< Debugger asked us to quit
-00509702487i[CPU0  ] CPU is in protected mode (active)
-00509702487i[CPU0  ] CS.mode = 32 bit
-00509702487i[CPU0  ] SS.mode = 32 bit
-00509702487i[CPU0  ] EFER   = 0x00000000
-00509702487i[CPU0  ] | EAX=00000000  EBX=00000006  ECX=00000030  EDX=400049b1
-00509702487i[CPU0  ] | ESP=003fffd0  EBP=00000000  ESI=003fffe0  EDI=00000000
-00509702487i[CPU0  ] | IOPL=1 id vip vif ac vm rf nt of df IF tf sf zf af PF cf
-00509702487i[CPU0  ] | SEG sltr(index|ti|rpl)     base    limit G D
-00509702487i[CPU0  ] |  CS:0015( 0002| 1|  1) 00000000 ffffffff 1 1
-00509702487i[CPU0  ] |  DS:000d( 0001| 1|  1) 00000000 ffffffff 1 1
-00509702487i[CPU0  ] |  SS:000d( 0001| 1|  1) 00000000 ffffffff 1 1
-00509702487i[CPU0  ] |  ES:000d( 0001| 1|  1) 00000000 ffffffff 1 1
-00509702487i[CPU0  ] |  FS:000d( 0001| 1|  1) 00000000 ffffffff 1 1
-00509702487i[CPU0  ] |  GS:0028( 0005| 0|  0) 400b8000 0000ffff 0 1
-00509702487i[CPU0  ] | EIP=4000146c (4000146c)
-00509702487i[CPU0  ] | CR0=0xe0000011 CR2=0x20400000
-00509702487i[CPU0  ] | CR3=0x01fc9000 CR4=0x00000000
-00509702487i[CPU0  ] 0x4000146c>> add esp, 0x00000008 : 83C408
-00509702487i[CMOS  ] Last time is 1599378321 (Sun Sep  6 15:45:21 2020)
-00509702487i[XGUI  ] Exit
-00509702487i[      ] restoring default signal behavior
-00509702487i[SIM   ] quit_sim called with exit code 1
+00000325042i[KBD   ] reset-disable command received
+00000335799i[BIOS  ] Starting rombios32
+00000336237i[BIOS  ] Shutdown flag 0
+00000336827i[BIOS  ] ram_size=0x02000000
+00000337249i[BIOS  ] ram_end=32MB
+00000356578i[BIOS  ] Found 1 cpu(s)
+00000370230i[BIOS  ] bios_table_addr: 0x000f9db8 end=0x000fcc00
+00000698051i[PCI   ] i440FX PMC write to PAM register 59 (TLB Flush)
+00001025981i[P2ISA ] PCI IRQ routing: PIRQA# set to 0x0b
+00001026000i[P2ISA ] PCI IRQ routing: PIRQB# set to 0x09
+00001026019i[P2ISA ] PCI IRQ routing: PIRQC# set to 0x0b
+00001026038i[P2ISA ] PCI IRQ routing: PIRQD# set to 0x09
+00001026048i[P2ISA ] write: ELCR2 = 0x0a
+00001026818i[BIOS  ] PIIX3/PIIX4 init: elcr=00 0a
+00001040442i[BIOS  ] PCI: bus=0 devfn=0x00: vendor_id=0x8086 device_id=0x1237 class=0x0600
+00001042755i[BIOS  ] PCI: bus=0 devfn=0x08: vendor_id=0x8086 device_id=0x7000 class=0x0601
+00001044907i[BIOS  ] PCI: bus=0 devfn=0x09: vendor_id=0x8086 device_id=0x7010 class=0x0101
+00001045142i[PIDE  ] BAR #4: i/o base address = 0xc000
+00001045758i[BIOS  ] region 4: 0x0000c000
+00001047823i[BIOS  ] PCI: bus=0 devfn=0x0b: vendor_id=0x8086 device_id=0x7113 class=0x0680
+00001048067i[ACPI  ] new IRQ line = 11
+00001048081i[ACPI  ] new IRQ line = 9
+00001048108i[ACPI  ] new PM base address: 0xb000
+00001048122i[ACPI  ] new SM base address: 0xb100
+00001048150i[PCI   ] setting SMRAM control register to 0x4a
+00001212243i[CPU0  ] Enter to System Management Mode
+00001212254i[CPU0  ] RSM: Resuming from System Management Mode
+00001376275i[PCI   ] setting SMRAM control register to 0x0a
+00001402949i[BIOS  ] MP table addr=0x000f9e90 MPC table addr=0x000f9dc0 size=0xc8
+00001404820i[BIOS  ] SMBIOS table addr=0x000f9ea0
+00001407006i[BIOS  ] ACPI tables: RSDP addr=0x000f9fd0 ACPI DATA addr=0x01ff0000 size=0xff8
+00001410253i[BIOS  ] Firmware waking vector 0x1ff00cc
+00001412733i[PCI   ] i440FX PMC write to PAM register 59 (TLB Flush)
+00001413456i[BIOS  ] bios_table_cur_addr: 0x000f9ff4
+00001542327i[VBIOS ] VGABios $Id: vgabios.c 226 2020-01-02 21:36:23Z vruppert $
+00001542398i[BXVGA ] VBE known Display Interface b0c0
+00001542430i[BXVGA ] VBE known Display Interface b0c5
+00001545073i[VBIOS ] VBE Bios $Id: vbe.c 228 2020-01-02 23:09:02Z vruppert $
+00046523405i[XGUI  ] charmap update. Font is 9 x 16
+00245212693i[BIOS  ] Booting from 0000:7c00
+00246379598i[XGUI  ] charmap update. Font is 9 x 16
+00297569528i[GDBST ] found breakpoint at 40001506
+00297569528i[XGUI  ] charmap update. Font is 9 x 16
+00297569528i[GDBST ] stopped with ac1
+00297569528i[GDBST ] reg 8 set to 0000000040001506
+00297569528i[GDBST ] reg 41 set to 00000000ffffffff
+00297569528i[GDBST ] Removing breakpoint at 0000000040001506
+00297569528i[GDBST ] Removing breakpoint at 0000000040001dbe
+00324801035i[GDBST ] stopped with ac0
+00324801035i[GDBST ] addr 00000000400012ed len 1
+00324801035i[GDBST ] addr 00000000400053c4 len 4
+00324801035i[GDBST ] addr 00000000400064c0 len 4
+00324801035i[GDBST ] addr 00000000400064c4 len 4
+00324801035i[GDBST ] addr 00000000400053c8 len 4
+05783748595i[GDBST ] Got byte 3
+05783748595i[GDBST ] stopped with ac3
+05783748595p[GDBST ] >>PANIC<< Debugger asked us to quit
+05783748595i[CPU0  ] CPU is in protected mode (active)
+05783748595i[CPU0  ] CS.mode = 32 bit
+05783748595i[CPU0  ] SS.mode = 32 bit
+05783748595i[CPU0  ] EFER   = 0x00000000
+05783748595i[CPU0  ] | EAX=00000000  EBX=00000000  ECX=00000000  EDX=00000000
+05783748595i[CPU0  ] | ESP=003ffffc  EBP=00000000  ESI=00000000  EDI=00000000
+05783748595i[CPU0  ] | IOPL=1 id vip vif ac vm rf nt of df IF tf sf zf af pf cf
+05783748595i[CPU0  ] | SEG sltr(index|ti|rpl)     base    limit G D
+05783748595i[CPU0  ] |  CS:0015( 0002| 1|  1) 00000000 ffffffff 1 1
+05783748595i[CPU0  ] |  DS:000d( 0001| 1|  1) 00000000 ffffffff 1 1
+05783748595i[CPU0  ] |  SS:000d( 0001| 1|  1) 00000000 ffffffff 1 1
+05783748595i[CPU0  ] |  ES:000d( 0001| 1|  1) 00000000 ffffffff 1 1
+05783748595i[CPU0  ] |  FS:000d( 0001| 1|  1) 00000000 ffffffff 1 1
+05783748595i[CPU0  ] |  GS:0028( 0005| 0|  0) 400b8000 0000ffff 0 1
+05783748595i[CPU0  ] | EIP=40001451 (40001451)
+05783748595i[CPU0  ] | CR0=0xe0000011 CR2=0x20400000
+05783748595i[CPU0  ] | CR3=0x01fc3000 CR4=0x00000000
+05783748595i[CPU0  ] 0x40001451>> jmp .-2 (0x40001451) : EBFE
+05783748595i[CMOS  ] Last time is 1599896134 (Sat Sep 12 15:35:34 2020)
+05783748595i[XGUI  ] Exit
+05783748595i[      ] restoring default signal behavior
+05783748595i[SIM   ] quit_sim called with exit code 1

@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-07-15 19:22:17
- * @LastEditTime 2020-08-09 01:33:12
+ * @LastEditTime 2020-09-11 23:12:03
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/include/mm.h
@@ -16,9 +16,9 @@
 
 typedef struct page{
   miniListItem_t(struct page) lru;
-  uint32_t index;   /* page desc index, equal to page frame's phy addr >> 12 */
+  const uint32_t index;   /* page desc index, equal to page frame's phy addr >> 12 */
   uint8_t bOrder;  /* buddy order of this page desc */
-  uint8_t fatherZone; 
+  const uint8_t fatherZone; 
   uint16_t __left_16;  /* align 32 , for future use */
 }page_t;
 

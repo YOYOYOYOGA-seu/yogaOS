@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-03-07 22:35:04
- * @LastEditTime 2020-06-27 07:19:33
+ * @LastEditTime 2020-09-11 23:19:53
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/kernel/syscall.c
@@ -44,9 +44,16 @@ int sys_request(int mode, request_t * req, pid_t servPid)
     return 0;
   }
 }
-__attribute__((weak)) int sys_exit(void)
+
+/**
+ * @brief  
+ * @note  
+ * @param {type} none
+ * @retval none
+ */
+__attribute__((weak)) int sys_exit(int status)
 {
-  
+  sched_exit(status);
   return 0;
 }
 
