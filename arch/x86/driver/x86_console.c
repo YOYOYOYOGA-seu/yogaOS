@@ -212,7 +212,7 @@ uint32_t console_dispStr(char *pstr, uint32_t num, uint32_t consoleNum, uint8_t 
   uint32_t addr;
   uint16_t temp = (bColor&0xF)<<12|(fColor&0xF)<<8;
   if(consoleNum >= SYS_MAX_CONSOLE_NUM)
-    return 0;   //注意！！！！！后期改为printk提示
+    return 0;   
   for(i = 0; i < num; i++)
   {
     if(pstr[i] == '\n') // line feed
