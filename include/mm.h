@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-07-15 19:22:17
- * @LastEditTime 2020-09-11 23:12:03
+ * @LastEditTime 2020-09-12 05:25:37
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/include/mm.h
@@ -64,4 +64,6 @@ typedef struct zone{
 void zone_sysZoneInit(void);
 /* ------------------------------function declaration ----------------------------- */
 void zone_init(void);
+
+void heap_initMalloc(void);
 #endif

@@ -2,7 +2,7 @@
 #include "init.h"
 #include "sched.h"
 #include "server.h"
-
+#include "stdlib.h"
 #include "yogaOS/queue.h"
 #include "unistd.h"
 #include "stdio.h"
@@ -69,8 +69,25 @@ void testTask3(void) //test scheduler
   }
 }
 
+void testMalloc(void)  // test task: malloc test
+{
+  int a = 1;
+  void * ptr[10];
+  heap_initMalloc();  //！！！！！ 注意应该改到fork函数中实现
+  while(1)
+  {
+    
+    for(int i = 0; i < 10; i++)
+       ptr[i] = malloc(rand()%128 + 1);
+    sleep(1);
+    for(int i = 0; i < 10; i++)
+      free(ptr[i]);
+  }
+  return;
+}
 
 
+/* 提醒：测试的时候需要注意现在只能使用优先级1、0, 大于1的优先级由于没有fork函数无法使用*/
 int main(void){
   init8254Timer();
   initInterrupt();
@@ -81,9 +98,9 @@ int main(void){
   task_creatNewSysTask(server_tty,512,0,0,"server_tty\0");
   task_creatNewSysTask(server_test,512,0,0,"server_test\0");
   task_creatNewSysTask(idle_task,512,1,10,"idle_task\0");
-  task_creatNewSysTask(testTask2,512,0,0,"testTask2\0");
-  task_creatNewSysTask(testTask3,512,0,15,"testTask3\0");
-  
+  task_creatNewSysTask(testTask2,512,1,0,"testTask2\0");
+  task_creatNewSysTask(testTask3,512,1,0,"testTask3\0");
+  task_creatNewSysTask(testMalloc,512,1,0,"testMalloc\0");
 
   sched_startScheduler();
   while(1)
