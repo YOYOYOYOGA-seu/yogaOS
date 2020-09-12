@@ -98,7 +98,7 @@ pid_t sched_registerPID(PCB_t * pPCB);
 pid_t sched_getCurrentPID(void);
 error_t sched_initScheduler(void);
 error_t sched_addToList(PCB_t *pPCB);
-error_t removeFromStateList(PCB_t *pPCB);
+error_t sched_removeFromStateList(PCB_t *pPCB);
 error_t sched_suspendTask(PCB_t *pPCB, uint32_t time);
 error_t sched_wakeTask(void);
 void sched_startScheduler(void);

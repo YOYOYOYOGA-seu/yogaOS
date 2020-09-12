@@ -42,7 +42,7 @@ error_t req_anwser(request_t* req)
   pPCB->request.length = req->length;
   pPCB->request.pMesg = req->pMesg;
 
-  removeFromStateList(pPCB);
+  sched_removeFromStateList(pPCB);
   pPCB->status = TASK_READY;
   sched_addToList(pPCB);
     
@@ -144,7 +144,7 @@ error_t req_send(request_t* pReqS, pid_t servPid)
   
   if(pPCB_R->status != TASK_READY)   //wake server task
   {
-    removeFromStateList(pPCB_R);
+    sched_removeFromStateList(pPCB_R);
     pPCB_R->status = TASK_READY;
     sched_addToList(pPCB_R);
   }
@@ -194,7 +194,7 @@ error_t req_transpond(request_t* pReqS, pid_t servPid)
     list_insertList(&pPCB_R->reqWaitList ,&currentActiveTask->eventListItem);
   if(pPCB_R->status != TASK_READY)   //wake server task
   {
-    removeFromStateList(pPCB_R);
+    sched_removeFromStateList(pPCB_R);
     pPCB_R->status = TASK_READY;
     sched_addToList(pPCB_R);
   }

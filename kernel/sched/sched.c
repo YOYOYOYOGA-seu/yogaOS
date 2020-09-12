@@ -172,7 +172,7 @@ error_t sched_addToList(PCB_t *pPCB)
  * @param {PCB_t *} pPCB
  * @retval error_t
  */
-error_t removeFromStateList(PCB_t *pPCB)
+error_t sched_removeFromStateList(PCB_t *pPCB)
 {
   int flag = 0;
   error_t errno;
@@ -247,7 +247,7 @@ error_t sched_suspendTask(PCB_t *pPCB, uint32_t time)
   
   if(pPCB->status > TASK_READY)
     return E_SUSPEND;
-  removeFromStateList(pPCB);
+  sched_removeFromStateList(pPCB);
   pPCB->status = TASK_SUSPENDING;
   pPCB->stateListItem.value = wakeTime;
   sched_addToList(pPCB);
@@ -276,7 +276,7 @@ error_t sched_wakeTask(void)
     if(suspendTaskList.pFirstItem->value <= schedRunningTime)
     {
       pPCB = suspendTaskList.pFirstItem->pOwner;
-      removeFromStateList(pPCB);
+      sched_removeFromStateList(pPCB);
       pPCB->status = TASK_READY;
       sched_addToList(pPCB);
     }
