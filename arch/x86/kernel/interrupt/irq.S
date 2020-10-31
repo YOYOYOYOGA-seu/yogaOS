@@ -1,17 +1,56 @@
 #include "address.h"
 
 .code32
+
+.global fault_default
 .global page_fault
-.global irq_default
-.global timer_IRQhandler
-.global keyboard_IRQhandler
-.extern shced_lock
-// defined in irq_handler.h
+.global __entry_8259A_irq_0
+.global __entry_8259A_irq_1
+.global __entry_8259A_irq_2
+.global __entry_8259A_irq_3
+.global __entry_8259A_irq_4
+.global __entry_8259A_irq_5
+.global __entry_8259A_irq_6
+.global __entry_8259A_irq_7
+.global __entry_8259A_irq_8
+.global __entry_8259A_irq_9
+.global __entry_8259A_irq_10
+.global __entry_8259A_irq_11
+.global __entry_8259A_irq_12
+.global __entry_8259A_irq_13
+.global __entry_8259A_irq_14
+.global __entry_8259A_irq_15
+.global keyboard_irq_entry
 
-irq_default:
+.extern irq_enableExt
+.extern irq_disableExt
+.extern ext_irq_handler_table
+
+.macro ENTRY_8259A_MASTER_IRQ irq_num
+  sub $4,%esp 
+  pushal 
+  push %ds
+  push %es 
+  push %fs 
+  push %gs 
+  mov $0x20, %al 
+  out %al, $0x20  
+  movl $\irq_num, %eax 
+  call *ext_irq_handler_table(,%eax,4)  //do keyboard handler
+  sti 
+  call schedule 
+  cmp $0, %eax  
+  je ret_irq  
+  sub $SYS_BASE_LINEAR_ADDR, %eax 
+  mov %eax, %cr3  
+  jmp ret_irq
+.endm
+
+
+
+fault_default:
   hlt
-  jmp irq_default
-
+  jmp fault_default
 
 /**
  * @brief  page_fault handler entry
@@ -32,75 +71,61 @@ page_fault:
   call do_pageError
   add $8, %esp
   jmp ret_irq
+
 /**
- * @brief  timer interrupt entry
+ * @brief IRQ vector of external interrupt (8259A controller)
  * @note  
  * @param {type} none
  * @retval none
  */
-timer_IRQhandler:
-  sub $4, %esp  //no error code
-  pushal
-  push %ds
-  push %es
-  push %fs
-  push %gs
+__entry_8259A_irq_0:
+  ENTRY_8259A_MASTER_IRQ 0
 
-  
-  mov $SEL_GDT_GLOBAL_DATA, %ax
-  mov %ax, %es
-  mov %ax, %fs
-  mov $0x20, %al
-  out %al, $0x20 //enable other 8295A  irq
-  sti
-  
+__entry_8259A_irq_1:
+  ENTRY_8259A_MASTER_IRQ 1
 
-__check_lock:   // P-V lock function, ensure the schedule can't be nested 
-  movw shced_lock, %ax
-  cmp $0, %ax 
-  jne ret_irq    // if current timer_irq is in nesting, don't shedule
+__entry_8259A_irq_2:
+  ENTRY_8259A_MASTER_IRQ 2
 
-__schedule:
+__entry_8259A_irq_3:
+  ENTRY_8259A_MASTER_IRQ 3
 
-__lock:
-  add $1, shced_lock
+__entry_8259A_irq_4:
+  ENTRY_8259A_MASTER_IRQ 4
 
-  call do_timer
-  call schedule
-  cmp $0, %eax
-  je ret_irq
-  sub $SYS_BASE_LINEAR_ADDR, %eax
-  mov %eax, %cr3
+__entry_8259A_irq_5:
+  ENTRY_8259A_MASTER_IRQ 5
 
-__unlock:
-  sub $1, shced_lock
+__entry_8259A_irq_6:
+  ENTRY_8259A_MASTER_IRQ 6
 
-  jmp ret_irq
+__entry_8259A_irq_7:
+  ENTRY_8259A_MASTER_IRQ 7
 
+__entry_8259A_irq_8:
+  ENTRY_8259A_MASTER_IRQ 8
 
-/**
- * @brief  keyboad interrupt entry
- * @note  
- * @param {type} none
- * @retval none
- */
- keyboard_IRQhandler:
-  sub $4, %esp //no error code
-  pushal
-  push %ds
-  push %es
-  push %fs
-  push %gs
-  
-   //be cause 8295A(keyboard IC) IRQ will only be triggered after read data from it's buff(operated in do_keyboard)
-   //so we don't have to consider IRQ nest(the next )
-              
-  mov $0x20, %al //enable other 8295A  irq 
-  out %al, $0x20
-  call do_keyboard  //
-  sti
-  
-  jmp ret_irq
+__entry_8259A_irq_9:
+  ENTRY_8259A_MASTER_IRQ 9
+
+__entry_8259A_irq_10:
+  ENTRY_8259A_MASTER_IRQ 10
+
+__entry_8259A_irq_11:
+  ENTRY_8259A_MASTER_IRQ 11
+
+__entry_8259A_irq_12:
+  ENTRY_8259A_MASTER_IRQ 12
+
+__entry_8259A_irq_13:
+  ENTRY_8259A_MASTER_IRQ 13
+
+__entry_8259A_irq_14:
+  ENTRY_8259A_MASTER_IRQ 14
+
+__entry_8259A_irq_15:
+  ENTRY_8259A_MASTER_IRQ 15
+
 /**
  * @brief  irq handler return point
  * @note  

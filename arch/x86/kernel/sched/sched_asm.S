@@ -10,7 +10,7 @@ __handler:
   mov $exit, %esi    
   //becasue of this func have to copy to another address ,
   //so must use Absolute jump, can't use "call sleep"(Relative to jump)
-  call %esi       
+  call *%esi       
   add $4, %esp
   jmp task_retHandler
 __end_retHandler:

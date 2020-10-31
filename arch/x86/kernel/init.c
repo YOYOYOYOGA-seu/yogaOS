@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-18 02:35:29
- * @LastEditTime 2020-08-08 06:08:28
+ * @LastEditTime 2020-10-31 05:48:08
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/arch/x86/kernel/init.c
@@ -17,8 +17,10 @@
 #include "sched_x86.h"
 #include "time.h"
 #include "io.h"
+#include "irq.h"
 #include "mm.h"
 extern void disp_string32(char *info);
+extern void irq_initHandler(void);
 const sysMsg_t *const sysMessage = (const sysMsg_t *)(SYS_MESSAGE_ADDR);
 /**
  * @brief  
@@ -120,14 +122,10 @@ void initMemManage(void)
 /**
  * @brief  
  * @note  
- * @param {type} none
+ * @param {*}
  * @retval none
  */
-
-void init8254Timer(void)
+void initIRQ(void)
 {
-  IO_outByte(0x34,0x43);
-  IO_outByte((uint8_t)TIMER_FREQ*SYSTEM_TICK/1000,0x40);
-  IO_outByte((uint8_t)((TIMER_FREQ*SYSTEM_TICK/1000)>>8),0x40);
+  irq_initHandler();
 }
-

@@ -1,13 +1,34 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-03-21 03:55:43
- * @LastEditTime 2020-03-27 06:59:12
+ * @LastEditTime 2020-10-31 05:51:52
  * @LastEditors Shi Zhangkun
  * @Description none
- * @FilePath /project/arch/x86/driver/keyboard.c
+ * @FilePath /project/arch/x86/driver/x86_keyboard.c
  */
 #include "keyboard.h"
+#include "irq.h"
+#include "io.h"
 static KBbuff_t keyBoardBuff;
+
+/**
+ * @brief  
+ * @note  
+ * @param {type} none
+ * @retval none
+ */
+void kb_IRQHandler(void)
+{
+  uint8_t data;
+  data = IO_inByte(IO_KB_WR_BUF);
+  kb_writeBuff(data);
+  if(data != 0xE0 && data != 0xE1)
+  {
+    //semctl();           /*注意！！！！！当后期加入IPC后，在这里发送信号量以唤醒tty服务进程
+  }
+  //disp_string32(key);
+}
+
 /**
  * @brief  
  * @note  
@@ -16,6 +37,8 @@ static KBbuff_t keyBoardBuff;
  */
 void kb_init(void)
 {
+  irq_registerExtHandler(KEYBOARD_IRQ_VECTOR, kb_IRQHandler);
+  irq_enableExt(KEYBOARD_IRQ_VECTOR);
   keyBoardBuff.head = 0;
   keyBoardBuff.tail = 0;
   keyBoardBuff.count = 0;
@@ -77,3 +100,5 @@ uint32_t kb_read(uint32_t num, uint32_t *buff)
   }
   return count;
 }
+
+

@@ -80,10 +80,10 @@ uint32_t console_alloc(void)
 void vga_setCursor(uint32_t local)
 {
   __disableIRQ();
-  IO_outByte((uint8_t)VGA_CURSOR_H,(uint16_t)VGA_CRT_ADDR);
-  IO_outByte((uint8_t)((local/2)>>8 & 0xff),(uint16_t)VGA_CRT_DATA);
-  IO_outByte((uint8_t)VGA_CURSOR_L,(uint16_t)VGA_CRT_ADDR);
-  IO_outByte((uint8_t)((local/2) & 0xff),(uint16_t)VGA_CRT_DATA);
+  IO_outByte((uint8_t)VGA_CURSOR_H,(uint16_t)IO_VGA_CRT_ADDR);
+  IO_outByte((uint8_t)((local/2)>>8 & 0xff),(uint16_t)IO_VGA_CRT_DATA);
+  IO_outByte((uint8_t)VGA_CURSOR_L,(uint16_t)IO_VGA_CRT_ADDR);
+  IO_outByte((uint8_t)((local/2) & 0xff),(uint16_t)IO_VGA_CRT_DATA);
   __enableIRQ();
 }
 
@@ -96,10 +96,10 @@ void vga_setCursor(uint32_t local)
 void console_switch(uint32_t consoleNum)
 {
   __disableIRQ();
-  IO_outByte(VGA_START_ADDR_H,VGA_CRT_ADDR);
-  IO_outByte(((s_console[consoleNum].currentStartAddr/2)>>8)&0xff,VGA_CRT_DATA);
-  IO_outByte(VGA_START_ADDR_L,VGA_CRT_ADDR);
-  IO_outByte((s_console[consoleNum].currentStartAddr/2)&0xff,VGA_CRT_DATA);
+  IO_outByte(VGA_START_ADDR_H,IO_VGA_CRT_ADDR);
+  IO_outByte(((s_console[consoleNum].currentStartAddr/2)>>8)&0xff,IO_VGA_CRT_DATA);
+  IO_outByte(VGA_START_ADDR_L,IO_VGA_CRT_ADDR);
+  IO_outByte((s_console[consoleNum].currentStartAddr/2)&0xff,IO_VGA_CRT_DATA);
   __enableIRQ();
  vga_setCursor(s_console[consoleNum].cursor + s_console[consoleNum].baseAddr);
  currentConsole = consoleNum;
@@ -151,10 +151,10 @@ void console_pageMove(uint32_t consoleNum, uint32_t line, uint32_t dir)
   if(currentConsole == consoleNum) // only current active console need refresh
   {
     __disableIRQ();
-    IO_outByte(VGA_START_ADDR_H,VGA_CRT_ADDR);
-    IO_outByte(((s_console[consoleNum].currentStartAddr/2)>>8)&0xff,VGA_CRT_DATA);
-    IO_outByte(VGA_START_ADDR_L,VGA_CRT_ADDR);
-    IO_outByte((s_console[consoleNum].currentStartAddr/2)&0xff,VGA_CRT_DATA);
+    IO_outByte(VGA_START_ADDR_H,IO_VGA_CRT_ADDR);
+    IO_outByte(((s_console[consoleNum].currentStartAddr/2)>>8)&0xff,IO_VGA_CRT_DATA);
+    IO_outByte(VGA_START_ADDR_L,IO_VGA_CRT_ADDR);
+    IO_outByte((s_console[consoleNum].currentStartAddr/2)&0xff,IO_VGA_CRT_DATA);
     __enableIRQ();
   }
 }

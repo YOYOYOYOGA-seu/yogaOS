@@ -7,7 +7,7 @@
 #include "unistd.h"
 #include "stdio.h"
 #include "yogaOS/req.h"
-extern void initInterrupt(void);
+
 int a = 1;
 int b = 1;
 char d = 'a';
@@ -89,11 +89,11 @@ void testMalloc(void)  // test task: malloc test
 
 /* 提醒：测试的时候需要注意现在只能使用优先级1、0, 大于1的优先级由于没有fork函数无法使用*/
 int main(void){
-  init8254Timer();
-  initInterrupt();
+  initIRQ();
   initSysMsg();
   initMemManage();
   sched_initScheduler();
+  init8254Timer();
   task_creatNewSysTask(init_task,512,1,10,"init_task\0");
   task_creatNewSysTask(server_tty,512,0,0,"server_tty\0");
   task_creatNewSysTask(server_test,512,0,0,"server_test\0");

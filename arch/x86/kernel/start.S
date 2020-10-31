@@ -4,7 +4,7 @@
 .include "register.inc"
 
 .code32
-.extern irq_default  // Defined in /arch/x86/kernel/irq.s
+.extern fault_default  // Defined in /arch/x86/kernel/irq.s
 .extern initSegment  // Defined in /arch/x86/kernel/init.c
 .extern resetPageDir // Defined in /arch/x86/kernel/init.c
 .extern main         // Defined in /arch/x86/kernel/main.c
@@ -152,7 +152,7 @@ __load_reg:
 
 /**
  * @brief  init IDT
- * @note  make all IDT point to irq_default
+ * @note  make all IDT point to fault_default
  * @param {type} none
  * @retval none
  */
