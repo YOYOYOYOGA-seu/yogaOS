@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-25 00:19:41
- * @LastEditTime 2020-09-12 00:46:57
+ * @LastEditTime 2020-10-31 06:59:26
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/kernel/sched/sched.c
@@ -13,6 +13,7 @@
 #include "kernel.h"
 #include "time.h"
 #include "string.h"
+static uint8_t needSched;
 PCB_t * currentActiveTask = NULL; 
 static uint32_t taskLeftTime;
 static uint32_t schedRunningTime = 0; 
@@ -25,6 +26,17 @@ static shcedulerState_t shcedulerState = SCHEDULER_STOP; //scheduler status
 static PCB_t* globalTaskMap[SCHED_MAX_TASK_NUM];
 pid_t sysFirstIdlePID = 0; //record the pid have been alloced(now don't recycle pit)
 static int taskNumber = 0;
+/**
+ * @brief  
+ * @note  
+ * @param {*}
+ * @retval none
+ */
+
+void sched_needSched(void)
+{
+  needSched = 1;
+}
 /**
  * @brief  
  * @note  
@@ -154,6 +166,7 @@ error_t sched_addToList(PCB_t *pPCB)
     list_insertTail(&readyTaskList[pPCB->p_prio], &(pPCB->stateListItem));
     if(pPCB->p_prio < topReadyPriority)  //update the highest ready priority
     topReadyPriority = pPCB->p_prio;
+    sched_needSched(); //readyTaskList changed, need shced
     break;
   case TASK_SUSPENDING:
     list_insertList(&suspendTaskList, &(pPCB->stateListItem));
@@ -177,7 +190,10 @@ error_t sched_removeFromStateList(PCB_t *pPCB)
   int flag = 0;
   error_t errno;
   if(pPCB->status <= TASK_READY )
+  {
+    sched_needSched();  //readyTaskList changed, need shced
     flag = 1;
+  }
   errno = list_removeformList(&pPCB->stateListItem);
   if(errno != ENOERR)
     return errno;
@@ -335,7 +351,7 @@ void sched_timeTick(void)
   schedRunningTime ++;
   if(nextTaskwakeTime <= schedRunningTime)
     sched_wakeTask();
-
+  sched_needSched();
 }
 /**
  * @brief  
@@ -359,8 +375,12 @@ void sched_exit(int status)
  */
 uint32_t schedule(void)
 {
-  if(shcedulerState != SCHEDULER_RUN || currentActiveTask == NULL)
+  static unsigned int sched_lock = 0;
+  if(shcedulerState != SCHEDULER_RUN || currentActiveTask == NULL ||needSched != 1)
     return (uint32_t)NULL;
+  if(sched_lock != 0) // check she
+    return (uint32_t)NULL;
+  sched_lock = 1;  // lock
 
   uint32_t flag;
   if(taskLeftTime == 0 )
@@ -397,6 +417,9 @@ uint32_t schedule(void)
     taskLeftTime = currentActiveTask->timeLeft;
     flag = 1;
   }
+
+  sched_lock = 0;  // unlock
+  needSched = 0;
   if(flag == 1) //need sched
   {
     return (uint32_t)currentActiveTask->L1PageTbl;
