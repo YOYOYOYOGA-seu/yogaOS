@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-21 20:25:27
- * @LastEditTime 2020-09-11 23:19:26
+ * @LastEditTime 2020-10-31 06:52:08
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/include/sched.h
@@ -92,6 +92,7 @@ void sched_loadFirstTask(PCB_t *pPCB);
 /* ----------------------- function declaration ------------------------------------ */
 error_t task_creatNewSysTask(void (*taskFunc)(void), uint32_t codeSize, uint32_t p_prio,uint32_t t_prio, const char* name);
 error_t task_initPCB(PCB_t *pPCB,uint32_t p_prio,uint32_t t_prio, const char* name,void (*taskFunc)(void),pageList_t temp);
+void sched_needSched(void);
 void sched_changeState(shcedulerState_t state);
 PCB_t* sched_serchTask(pid_t pid, const char* name_chk);
 pid_t sched_registerPID(PCB_t * pPCB);

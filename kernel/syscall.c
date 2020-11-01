@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-03-07 22:35:04
- * @LastEditTime 2020-09-11 23:19:53
+ * @LastEditTime 2020-11-01 08:19:46
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/kernel/syscall.c
@@ -13,6 +13,7 @@
 #include "tty.h"
 #include "request.h"
 #include "kernel.h"
+#include "string.h"
 /**
  * @brief  
  * @note  
@@ -135,7 +136,10 @@ __attribute__((weak)) int sys_getPID(void)
  */
 __attribute__((weak)) int sys_getTime(void)
 {
-  return time_getTimeCount();
+  unsigned int ut = time_getTimeCount();
+  int t = 0;
+  memcpy(t, ut, sizeof(int));
+  return t;
 }
 
 /**

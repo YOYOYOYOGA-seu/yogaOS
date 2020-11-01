@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-10-31 05:46:39
- * @LastEditTime 2020-10-31 06:19:39
+ * @LastEditTime 2020-10-31 08:34:40
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/arch/x86/driver/timer8254.c
@@ -13,7 +13,7 @@
 #include "yogaOS/types.h"
 
 #define TIMER_FREQ   1193182
-extern long timeCount;
+extern unsigned int timeCount;
 
 /**
  * @brief  
