@@ -43,7 +43,6 @@ void testTask2(void) //test scheduler
     time++;
     test1.type = time;
     reqs(&test1,2);
-    reqr(&test1);
     *test = time;
     printf("/033[0;31;44m req test:%d \n\r",test1.type);
   }

@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-05-19 03:29:27
- * @LastEditTime 2020-06-27 08:18:58
+ * @LastEditTime 2020-11-15 10:02:42
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/server/serv_test.c
@@ -11,7 +11,7 @@
 #include "server.h"
 #include "unistd.h"
 #include "yogaOS/req.h"
-
+#include "errno.h"
 
 /**
  * @brief  
@@ -22,12 +22,12 @@
 void server_test(void)
 {
   request_t req;
-  uint32_t type;
   while(1)
   {
-    type = reqw(&req);
+    if(reqw(&req)!= ENOERR)
+      continue;
     sleep(2);
-    switch (type)
+    switch (req.type)
     {
     case 0:
       req.type = 10;

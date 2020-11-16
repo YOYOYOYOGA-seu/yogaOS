@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-21 20:25:27
- * @LastEditTime 2020-10-31 06:52:08
+ * @LastEditTime 2020-11-13 05:33:58
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/include/sched.h
@@ -59,7 +59,8 @@ typedef struct{
   pageList_t  usingPageList;  //task using page memory manage list
 
   /* request about */
-  request_t request;    //request struct for send request
+  request_t request;    //request struct for send request(！！！！可用kmalloc替代)
+  request_t request_it;    //request struct for request it(！！！！可用kmalloc替代)
   list_t reqWaitList;     //waiting list, for receive request(server task)
   reqState_t reqState;    //request handling state, only used by task can receive request()
 

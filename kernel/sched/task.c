@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-24 22:21:50
- * @LastEditTime 2020-08-08 05:42:08
+ * @LastEditTime 2020-11-13 05:40:59
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/kernel/sched/task.c
@@ -52,6 +52,7 @@ error_t task_initPCB(PCB_t *pPCB,uint32_t p_prio,uint32_t t_prio ,const char* na
   pPCB->name[i] = '\0';
 
   req_init(&pPCB->request, pPCB->pid); //deinit request struct
+  req_init_it(&pPCB->request_it); //deinit request struct
   list_initList(&pPCB->reqWaitList, REQ_MAX_WAIT_TASK);
   pPCB->reqState = REQ_INVALID;
 
