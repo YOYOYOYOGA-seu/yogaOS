@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-03-08 00:32:21
- * @LastEditTime 2020-10-31 06:02:44
+ * @LastEditTime 2020-11-15 19:17:16
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/arch/x86/include/driver/io.h
@@ -21,6 +21,32 @@
 #define IO_PIC2_0         0xA0
 #define IO_PIC2_1         0xA1
 
+/* ata secondary channel */
+#define IO_ATA2_DATA        0x170
+#define IO_ATA2_ERR         0x171
+#define IO_ATA2_FEATURES    0x171
+#define IO_ATA2_SEC_COUNT   0x172
+#define IO_ATA2_LBA_LOW     0x173
+#define IO_ATA2_LBA_MID     0x174
+#define IO_ATA2_LBA_HIGH    0x175
+#define IO_ATA2_DEV         0x176
+#define IO_ATA2_STATUS      0x177
+#define IO_ATA2_CMD         0x177
+#define IO_ATA2_CTR_REG     0x376
+
+/* ata primary channel */
+#define IO_ATA1_DATA        0x1F0
+#define IO_ATA1_ERR         0x1F1
+#define IO_ATA1_FEATURES    0x1F1
+#define IO_ATA1_SEC_COUNT   0x1F2
+#define IO_ATA1_LBA_LOW     0x1F3
+#define IO_ATA1_LBA_MID     0x1F4
+#define IO_ATA1_LBA_HIGH    0x1F5
+#define IO_ATA1_DEV         0x1F6
+#define IO_ATA1_STATUS      0x1F7
+#define IO_ATA1_CMD         0x1F7
+#define IO_ATA1_CTR_REG     0x3F6
+
 #define IO_VGA_MOR_R         0x3cc
 #define IO_VGA_MOR_W         0x3c2
 #define IO_VGA_ISR_0_R       0x3c2
@@ -28,7 +54,6 @@
 #define IO_VGA_FCR_R         0x3ca
 #define IO_VGA_FCR_W         0x3da
 #define IO_VGA_VSER_W        0x3c3
-
 #define IO_VGA_CRT_ADDR      0x3d4
 #define IO_VGA_CRT_DATA      0x3d5
 
