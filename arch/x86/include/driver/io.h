@@ -9,7 +9,8 @@
 #ifndef __IO_H
 #define __IO_H
 #include "yogaOS/types.h"
-
+#include "errno.h"
+#include "time.h"
 
 #define IO_PIC1_0         0x20
 #define IO_PIC1_1         0x21
@@ -50,6 +51,39 @@ inline uint8_t IO_inByte(uint16_t port)
           :"d"(port)
           );
   return data;
+}
+
+inline void IO_inByteStream(uint16_t port, uint8_t* buf, size_t size)
+{
+  __asm__("cld;rep;insb"
+          :
+          :"d"(port),"D"(buf),"c"(size)
+          );
+}
+
+inline void IO_inWordStream(uint16_t port, uint16_t* buf, size_t size)
+{
+  __asm__("cld;rep ;insw" 
+          :
+          :"d"(port),"D"(buf),"c"(size)
+          );
+}
+
+inline error_t IO_waitUntil(uint8_t data, uint8_t mask, uint16_t port)
+{
+  while((IO_inByte(port)&mask) != (data&mask));
+  return ENOERR;
+}
+
+inline error_t IO_waitUntilFor(uint8_t data, uint8_t mask, uint16_t port, int timeout)
+{
+  unsigned int t = timeout + time_getTimeCount();
+  while(t > time_getTimeCount())
+  {
+    if((IO_inByte(port)&mask) == (data&mask))
+      return ENOERR;
+  }
+  return ETIME;
 }
 
 #endif
