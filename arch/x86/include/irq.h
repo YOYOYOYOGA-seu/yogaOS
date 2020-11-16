@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-29 04:35:35
- * @LastEditTime 2020-10-31 06:19:20
+ * @LastEditTime 2020-11-13 04:02:39
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/arch/x86/include/irq.h
@@ -34,7 +34,7 @@
 #define SYSTEM_CALL_VECTOR       0x80
 
 #define EXTERN_IRQ_START         TIMER_IRQ_VECTOR
-#define EXTERN_IRQ_END           EXTERN_IRQ_EMPTY_4
+#define EXTERN_IRQ_END           EXTERN_IRQ_EMPTY_5
 #define MAX_IRQ_NUMBER           0xFF
 
 void irq_enableExt(int irq);

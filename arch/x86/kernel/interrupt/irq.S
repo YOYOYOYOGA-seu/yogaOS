@@ -35,6 +35,9 @@
   push %gs 
   mov $0x20, %al 
   out %al, $0x20  
+.ifge \irq_num-8
+  out %al, $0xA0
+.endif
   movl $\irq_num, %eax 
   call *ext_irq_handler_table(,%eax,4)  //do keyboard handler
   sti 

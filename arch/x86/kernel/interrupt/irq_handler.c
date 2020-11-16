@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-20 05:11:29
- * @LastEditTime 2020-10-31 06:26:09
+ * @LastEditTime 2020-11-13 04:03:25
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/arch/x86/kernel/interrupt/irq_handler.c
@@ -66,8 +66,12 @@ void irq_enableExt(int irq)
   else if(irq < 16)
   {
     irq -= 8;
-    mask = IO_inByte(IO_PIC1_1);
+    mask = IO_inByte(IO_PIC2_1);
     mask &= ~(1 << irq);
+    IO_outByte(mask,IO_PIC2_1);
+    
+    mask = IO_inByte(IO_PIC1_1);
+    mask &= ~(1 << 2);
     IO_outByte(mask,IO_PIC1_1);
   }
 }
@@ -93,9 +97,9 @@ void irq_disableExt(int irq)
   else if(irq < 16)
   {
     irq -= 8;
-    mask = IO_inByte(IO_PIC1_1);
+    mask = IO_inByte(IO_PIC2_1);
     mask |= 1 << irq;
-    IO_outByte(mask,IO_PIC1_1);
+    IO_outByte(mask,IO_PIC2_1);
   }
 }
 /**
