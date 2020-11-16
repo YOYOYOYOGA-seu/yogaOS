@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-15 22:02:03
- * @LastEditTime 2020-09-05 23:42:33
+ * @LastEditTime 2020-11-15 11:07:29
  * @LastEditors Shi Zhangkun
  * @Description 
  * 
@@ -31,7 +31,7 @@
  *    |      system message     |
  *    |_________________________| 0x0009 0000
  *    |                         |
- *    |       system code       |
+ *    |       system code       |                           // .bss start = 0x00070000;
  *    |                         |
  *    |_________________________| 0x0000 1000
  *    |   system stack (init)   |    
@@ -69,7 +69,7 @@
  *    |      system message     |
  *    |_________________________| 0x4009 0000
  *    |                         |
- *    |       system code       |
+ *    |       system code       |             // .bss start = 0x00070000;
  *    |                         |
  *    |_________________________| 0x4000 1000
  *    |  global variable area   |    
@@ -136,6 +136,7 @@
 
 #define PHY_SYS_STACK_TOP_ADDR        0x00000
 #define PHY_SYS_CODE_BASE_ADDR        0x01000
+#define PHY_SYS_BSS_BASE_ADDR         0x70000
 #define PHY_LOADER_BASE_ADDR          0x90000
 #define PHY_VIDEO_MEM_BASE_ADDR       0xb8000
 #define PHY_SYS_MESSAGE_ADDR          PHY_LOADER_BASE_ADDR
@@ -152,6 +153,7 @@
 #define LOADER_CODE_OFFSET_SIZE   (PHY_LOADER_CODE_BASE_ADDR - PHY_LOADER_BASE_ADDR)
 
 #define SYS_STACK_SIZE            (PHY_SYS_CODE_BASE_ADDR - PHY_SYS_STACK_TOP_ADDR)
+#define SYS_BSS_SIZE              (PHY_LOADER_BASE_ADDR - PHY_SYS_BSS_BASE_ADDR)
 #define GDT_AREA_SIZE             (PHY_IDT_BASE_ADDR - PHY_GDT_BASE_ADDR)
 #define IDT_AREA_SIZE             (PHY_LOADER_CODE_BASE_ADDR - PHY_IDT_BASE_ADDR)
 #define SYSTEM_RESERVE_AREA_SIZE  (PHY_IDLE_MEM_BASE_ADDR )       
@@ -192,6 +194,7 @@
 #define SYS_BASE_LINEAR_ADDR         0x40000000     //1G
 #define SYSTEM_STACK_ADDR               (SYS_BASE_LINEAR_ADDR + PHY_SYS_STACK_TOP_ADDR)
 #define SYSTEM_CODE_BASE_ADDR           (SYS_BASE_LINEAR_ADDR + PHY_SYS_CODE_BASE_ADDR)
+#define SYSTEM_BSS_BASE_ADDR           (SYS_BASE_LINEAR_ADDR + PHY_SYS_BSS_BASE_ADDR)
 #define LOADER_BASE_ADDR                (SYS_BASE_LINEAR_ADDR + PHY_LOADER_BASE_ADDR)
 #define VIDEO_MEM_BASE_ADDR             (SYS_BASE_LINEAR_ADDR + PHY_VIDEO_MEM_BASE_ADDR)
 #define SYS_MESSAGE_ADDR                (SYS_BASE_LINEAR_ADDR + PHY_SYS_MESSAGE_ADDR)

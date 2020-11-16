@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-18 02:35:29
- * @LastEditTime 2020-10-31 05:48:08
+ * @LastEditTime 2020-11-15 11:08:00
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/arch/x86/kernel/init.c
@@ -22,6 +22,17 @@
 extern void disp_string32(char *info);
 extern void irq_initHandler(void);
 const sysMsg_t *const sysMessage = (const sysMsg_t *)(SYS_MESSAGE_ADDR);
+
+/**
+ * @brief  init kernel code .bss segment
+ * @note  
+ * @param {*}
+ * @retval none
+ */
+void initBss(void)
+{
+  memset((void*)SYSTEM_BSS_BASE_ADDR,0,SYS_BSS_SIZE);
+}
 /**
  * @brief  
  * @note  
@@ -36,7 +47,7 @@ error_t initGDT(void)
   // 注意！！！！为了测试tty改成的dpl = 3，之后看到记得改回来！！！！！
   seg_addDescToGDT(VIDEO_MEM_BASE_ADDR,VIDEO_MEM_SIZE,3,DESC_TYPE_RW,1);
   
-  disp_string32("GDT init success!!!\n\0");
+  //disp_string32("GDT init success!!!\n\0");
   return ENOERR;
 }
 

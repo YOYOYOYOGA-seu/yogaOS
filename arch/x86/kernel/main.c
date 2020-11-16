@@ -88,6 +88,7 @@ void testMalloc(void)  // test task: malloc test
 
 /* 提醒：测试的时候需要注意现在只能使用优先级1、0, 大于1的优先级由于没有fork函数无法使用*/
 int main(void){
+  initBss();  // init the .bss of kernel segment (kernel's .bss segments must clear to 0 by yourself)
   initIRQ();
   initSysMsg();
   initMemManage();
