@@ -32,11 +32,14 @@ TAG_FLAG += DEBUG=$(DEBUG) \
 						OUTPUT_DIR=../$(OUTPUT_DIR)
 
 
+DISK_SIZE ?= 80
 # make arch about code and link to output image
 
-default:archIrrelevant
+default:archIrrelevant 
 	make -C arch/$(ARCH) $(TAG_FLAG)
-	
+
+creatDiskImage:
+	make -C arch/$(ARCH) creatDiskImage DISK_SIZE=$(DISK_SIZE)
 # make codes that irrelevant from arch
 archIrrelevant:
 	make -C mm	$(TAG_FLAG)

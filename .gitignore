@@ -3,3 +3,4 @@ arch/x86/loader/loader_r.asm
 arch/x86/loader/mbr_r.asm
 arch/x86/image/bochsout.txt
 arch/x86/image/a.img
+arch/x86/image/disk.img
