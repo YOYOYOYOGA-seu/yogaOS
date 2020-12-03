@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-03-09 02:17:29
- * @LastEditTime 2020-09-12 00:11:00
+ * @LastEditTime 2020-11-22 19:07:29
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/lib/process.c
@@ -34,10 +34,10 @@ pid_t fork(void)
  * @param {type} none
  * @retval none
  */
-volatile void exit(int __status)
+void exit(int __status)
 {
   enterSystemCall(SYS_EXIT_VECTOR, __status, 0, 0);
-
+  while(1);
 }
 
 /**
