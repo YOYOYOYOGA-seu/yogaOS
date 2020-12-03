@@ -14,7 +14,7 @@
  * @retval none
  */
 
-volatile void painc(const char * errStr)
+volatile void panic(const char * errStr)
 {
   printk("panic: %s",errStr);
   while(1)

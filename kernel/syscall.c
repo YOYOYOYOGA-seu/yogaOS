@@ -48,7 +48,7 @@ int sys_request(int flag, request_t * req, uint32_t wait)
     return req_transpond(req,servPid);
     break;
   default:
-    painc("iligal request system call mode !!!");
+    panic("iligal request system call mode !!!");
     return 0;
   }
 }

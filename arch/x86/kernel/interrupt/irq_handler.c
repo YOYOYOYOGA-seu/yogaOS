@@ -164,15 +164,15 @@ void do_pageError(uint32_t code, uint32_t addr)
 {
   if(code & 0x01 != 0 )
   {
-    painc("PAGE ACCESS ERROR!!!");    //！！！！权限问题引起的页错误，如果是用户进程操作此处应该强制关闭此进程
+    panic("PAGE ACCESS ERROR!!!");    //！！！！权限问题引起的页错误，如果是用户进程操作此处应该强制关闭此进程
   }
   else if(code & 0x02 == 0)
   {
-    painc("PAGE READ MISS!!!");  //！！！！现在还没有写时复制与换页机制，所以理论上不可能出现读取缺页
+    panic("PAGE READ MISS!!!");  //！！！！现在还没有写时复制与换页机制，所以理论上不可能出现读取缺页
   }
   else if(addr < TASK_RETURN_HANDLER_ADDR)
   {
-    painc("illegal ptr");   //！！！！！非法指针访问，同样需要关闭进程
+    panic("illegal ptr");   //！！！！！非法指针访问，同样需要关闭进程
   }
   else if(addr < PCB_BASE_ADDR)
     page_missing(addr);

@@ -54,7 +54,7 @@ void sched_switchToNextReadyPrio(void)
       return;
     }
   }
-  painc("No task in ready list!\n\0");
+  panic("No task in ready list!\n\0");
 }
 /**
  * @brief  
@@ -116,7 +116,7 @@ pid_t sched_serchNextIdlePID(void)
 pid_t sched_registerPID(PCB_t * pPCB)
 {
   if(sysFirstIdlePID >= SCHED_MAX_TASK_NUM)
-    painc("sched:out max task number limit!!!!\n\r");  //should not run to this (before register must check running task quantity)
+    panic("sched:out max task number limit!!!!\n\r");  //should not run to this (before register must check running task quantity)
   pid_t temp = sysFirstIdlePID;
   globalTaskMap[sysFirstIdlePID] = pPCB;
   sysFirstIdlePID = sched_serchNextIdlePID();
@@ -398,7 +398,7 @@ uint32_t schedule(void)
     else
     {
       if(topReadyPriority == currentActiveTask->p_prio)
-        painc("topReadyPriority error!\n");
+        panic("topReadyPriority error!\n");
     }
     //before check the if the are a higher p_prio,we suppose it is the task to run
     taskLeftTime = currentActiveTask->timeLeft; 
@@ -411,7 +411,7 @@ uint32_t schedule(void)
     if(currentActiveTask->status == TASK_RUN)
       currentActiveTask->status = TASK_READY;
     if(readyTaskList[topReadyPriority].numberOfItem == 0)
-      painc("No task in this preempting priority!\n");
+      panic("No task in this preempting priority!\n");
     currentActiveTask = readyTaskList[topReadyPriority].pFirstItem->pOwner;
     currentActiveTask->status = TASK_RUN;
     taskLeftTime = currentActiveTask->timeLeft;

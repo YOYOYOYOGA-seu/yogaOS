@@ -9,7 +9,7 @@
 #ifndef __KERNEL_H
 #define __KERNEL_H
 
-#define assertk(a)  if(a){printk("/033[0;31;44m Assertion failed! file:%s, func:%s,line=%d\n\r",__FILE__, __func__, __LINE__);painc("assrt\n\r");}
-volatile void painc(const char * errStr);
+#define assertk(a)  if(a){printk("/033[0;31;44m Assertion failed! file:%s, func:%s,line=%d\n\r",__FILE__, __func__, __LINE__);panic("assrt\n\r");}
+volatile void panic(const char * errStr);
 int printk(const char *format,...);
 #endif
