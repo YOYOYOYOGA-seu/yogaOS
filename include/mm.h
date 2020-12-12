@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-07-15 19:22:17
- * @LastEditTime 2020-09-12 05:25:37
+ * @LastEditTime 2020-12-03 16:47:50
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/include/mm.h
@@ -14,9 +14,12 @@
 /* max order of buddy system, the max bock size = 2^n pages; The quantity of order is BUDDY_MAX_ORDER + 1  */
 #define BUDDY_MAX_ORDER    11 
 
+#define PAGE_FLAG_SLOB_MASK   0x01
+
 typedef struct page{
   miniListItem_t(struct page) lru;
-  const uint32_t index;   /* page desc index, equal to page frame's phy addr >> 12 */
+  uint32_t flag:8;
+  uint32_t index:24;   /* page desc index in the vector, can used to caculate the page's offset to the base addr (multiply by PAGE_SIZE) */
   uint8_t bOrder;  /* buddy order of this page desc */
   const uint8_t fatherZone; 
   uint16_t __left_16;  /* align 32 , for future use */
@@ -51,7 +54,7 @@ typedef struct zone{
   }flag;
   
   uint32_t totalPages; /* total pages of this zone*/
-  
+  uint32_t managedPages; /* total pages of this zone that be managed, for flag = DYNAMIC, this equal to totalPages*/
   uint32_t freePages;
   uint32_t phyBase;     /* mem zone start addr */
   /* the linear mapping area base addr of this phy mem, if don't have set as NULL */
@@ -64,6 +67,6 @@ typedef struct zone{
 void zone_sysZoneInit(void);
 /* ------------------------------function declaration ----------------------------- */
 void zone_init(void);
-
 void heap_initMalloc(void);
+
 #endif

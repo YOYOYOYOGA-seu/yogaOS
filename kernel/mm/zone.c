@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-07-15 23:06:47
- * @LastEditTime 2020-08-08 06:20:22
+ * @LastEditTime 2020-11-22 18:55:39
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/kernel/mm/zone.c
@@ -24,5 +24,5 @@ void zone_init(void)
   }
   zone_sysZoneInit();
   page_initPageDesc(IDLE_AREA);
-  
+  page_initPageDesc(FS_CACHE);
 }

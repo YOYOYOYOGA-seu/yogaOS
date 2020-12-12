@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-17 21:58:27
- * @LastEditTime 2020-09-06 00:34:28
+ * @LastEditTime 2020-11-22 19:25:18
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/arch/x86/kernel/mm/mm_x86.c
@@ -78,11 +78,13 @@ void zone_sysZoneInit(void)
   sysMemZone[FS_CACHE].flag = STATIC;
   sysMemZone[FS_CACHE].phyBase = PHY_FILE_BUFF_BASE_ADDR;
   sysMemZone[FS_CACHE].linearBase = FILE_BUFF_BASE_ADDR;
-  sysMemZone[FS_CACHE].freePages = SYS_FILE_BUFF_SIZE >> 12;
   sysMemZone[FS_CACHE].totalPages  = SYS_FILE_BUFF_SIZE >> 12;
+  sysMemZone[FS_CACHE].freePages = sysMemZone[FS_CACHE].totalPages - 
+                                    (sysMemZone[FS_CACHE].totalPages*sizeof(page_t))/PAGE_SIZE;
+  sysMemZone[FS_CACHE].managedPages  = sysMemZone[FS_CACHE].freePages;
   /* fs cache(disk R/W buf)'s mm desc need bootstrap(alloc from fs cache area) */
-  sysMemZone[IDLE_AREA].pPageDescArray = NULL; 
-
+  sysMemZone[FS_CACHE].pPageDescArray = (page_t *)(FILE_BUFF_BASE_ADDR + sysMemZone[FS_CACHE].freePages*PAGE_SIZE); 
+  
   /* idle area zone */
   sysMemZone[IDLE_AREA].flag = DYNAMIC;
   sysMemZone[IDLE_AREA].phyBase = PHY_IDLE_MEM_BASE_ADDR;
@@ -96,6 +98,7 @@ void zone_sysZoneInit(void)
     sysMemZone[IDLE_AREA].totalPages = (SYS_PAGE_TBL_SIZE)/4;
   }
   sysMemZone[IDLE_AREA].freePages = sysMemZone[IDLE_AREA].totalPages;
+  sysMemZone[IDLE_AREA].managedPages = sysMemZone[IDLE_AREA].totalPages;
   /* idle area(disk R/W buf)'s mm desc are in another area(needn't alloc from idle area) */
   sysMemZone[IDLE_AREA].pPageDescArray = (page_t *)PAGE_MM_LIST_BASE_ADDR;
   

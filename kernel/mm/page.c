@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-22 05:13:44
- * @LastEditTime 2020-09-11 23:23:45
+ * @LastEditTime 2020-12-12 20:33:02
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/kernel/mm/page.c
@@ -35,14 +35,15 @@ void page_initPageDesc(zoneIndex_t zone)
   
   p = sysMemZone[zone].pPageDescArray;
   start = sysMemZone[zone].phyBase>>12;
-  end = start + sysMemZone[zone].totalPages;
+  end = start + sysMemZone[zone].managedPages;
   value = start;
   //value = (1 << BUDDY_MAX_ORDER) - (start & ((1 << BUDDY_MAX_ORDER) - 1));
   /* init page mm desc structs in page desc array*/
-  for (i = 0; i < sysMemZone[zone].totalPages; i++)
+  for (i = 0; i < sysMemZone[zone].managedPages; i++)
   {
     *(uint8_t*)&p[i].fatherZone = zone;
-    *(uint32_t*)&p[i].index = i; //the value stored physical addr of the page be managed
+    p[i].index = i; //the value stored physical addr of the page be managed
+    p[i].flag = 0;
     p[i].bOrder = 0;
     p[i].lru.pNext = NULL;
     p[i].lru.pPrevious = NULL;
@@ -63,7 +64,7 @@ void page_initPageDesc(zoneIndex_t zone)
   
    /* load the max order block */
   
-  for (; tempIndex <= sysMemZone[zone].totalPages - (1 << order); tempIndex += (1 << order) )
+  for (; tempIndex <= sysMemZone[zone].managedPages - (1 << order); tempIndex += (1 << order) )
   {
     miniList_insertTail(&sysMemZone[zone].freeBlock[order],&p[tempIndex],lru);
     p[tempIndex].bOrder = order;
@@ -71,10 +72,10 @@ void page_initPageDesc(zoneIndex_t zone)
   /* load the orphan block(with out a buddy) in the tail*/
   while (order > 0)
   {
-    if(tempIndex >= sysMemZone[zone].totalPages)
+    if(tempIndex >= sysMemZone[zone].managedPages)
       break;
     order--;
-    if(tempIndex + (1<<order) <= sysMemZone[zone].totalPages)
+    if(tempIndex + (1<<order) <= sysMemZone[zone].managedPages)
     {
       miniList_insertTail(&sysMemZone[zone].freeBlock[order], &p[tempIndex],lru);
       p[tempIndex].bOrder = order;
@@ -143,8 +144,8 @@ error_t page_recycleOne(page_t* page)
 {
   if( page == NULL) return  EFAULT;
   assertk(!(page->fatherZone < SYSTEM_ZONE_NUM));
-  assertk(!(page->index >= (sysMemZone[page->fatherZone].phyBase>>12)&& \
-          page->index - (sysMemZone[page->fatherZone].phyBase>>12) <= sysMemZone[page->fatherZone].totalPages));
+  assertk(!(page->index >= 0 && \
+          page->index < sysMemZone[page->fatherZone].managedPages));
   
   page_t *p = NULL;
   zoneIndex_t zone = (zoneIndex_t)page->fatherZone;
