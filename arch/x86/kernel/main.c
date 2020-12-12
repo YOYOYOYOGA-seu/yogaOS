@@ -7,7 +7,7 @@
 #include "unistd.h"
 #include "stdio.h"
 #include "yogaOS/req.h"
-
+#include "kernel.h"
 int a = 1;
 int b = 1;
 char d = 'a';
@@ -103,6 +103,17 @@ int main(void){
   task_creatNewSysTask(testTask3,512,1,0,"testTask3\0");
   task_creatNewSysTask(testMalloc,512,1,0,"testMalloc\0");
 
+  void* ptr1 = fmalloc(56464);
+  void* ptr2 = fmalloc(32);
+  void* ptr3 = fmalloc(56);
+  void* ptr4 = fmalloc(75);
+  void* ptr5 = fmalloc(12);
+
+  ffree(ptr4);
+  ffree(ptr5);
+  ffree(ptr3);
+  ffree(ptr2);
+  ffree(ptr1);
   sched_startScheduler();
   while(1)
   {
