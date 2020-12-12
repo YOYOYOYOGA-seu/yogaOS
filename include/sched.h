@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-21 20:25:27
- * @LastEditTime 2020-06-27 03:45:33
+ * @LastEditTime 2020-11-13 05:33:58
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/include/sched.h
@@ -59,7 +59,8 @@ typedef struct{
   pageList_t  usingPageList;  //task using page memory manage list
 
   /* request about */
-  request_t request;    //request struct for send request
+  request_t request;    //request struct for send request(！！！！可用kmalloc替代)
+  request_t request_it;    //request struct for request it(！！！！可用kmalloc替代)
   list_t reqWaitList;     //waiting list, for receive request(server task)
   reqState_t reqState;    //request handling state, only used by task can receive request()
 
@@ -82,7 +83,7 @@ extern PCB_t * currentActiveTask;
 
 /* defined in arch/xxx/kernel/sched/sched_xxx.h, ralevant to the distribution of virtual 
    address space */
-extern  PCB_t * const pLocalPCB;  
+ 
 
 /* ------- Arch relevant function (defined in arch/xxx/kenel/sched/xxx.c) ----------------- */
 error_t task_initPCBArchRelevant(PCB_t *pPCB, void (*taskFunc)(void));
@@ -92,15 +93,17 @@ void sched_loadFirstTask(PCB_t *pPCB);
 /* ----------------------- function declaration ------------------------------------ */
 error_t task_creatNewSysTask(void (*taskFunc)(void), uint32_t codeSize, uint32_t p_prio,uint32_t t_prio, const char* name);
 error_t task_initPCB(PCB_t *pPCB,uint32_t p_prio,uint32_t t_prio, const char* name,void (*taskFunc)(void),pageList_t temp);
+void sched_needSched(void);
 void sched_changeState(shcedulerState_t state);
 PCB_t* sched_serchTask(pid_t pid, const char* name_chk);
 pid_t sched_registerPID(PCB_t * pPCB);
 pid_t sched_getCurrentPID(void);
 error_t sched_initScheduler(void);
 error_t sched_addToList(PCB_t *pPCB);
-error_t removeFromStateList(PCB_t *pPCB);
+error_t sched_removeFromStateList(PCB_t *pPCB);
 error_t sched_suspendTask(PCB_t *pPCB, uint32_t time);
 error_t sched_wakeTask(void);
+void sched_exit(int status);
 void sched_startScheduler(void);
 void sched_timeTick(void);
 uint32_t schedule(void);

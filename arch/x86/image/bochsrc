@@ -9,7 +9,7 @@ boot: floppy
 
 log: bochsout.txt
 
-#ata0-master: type=disk, path="c.img", cylinders=20, heads=16, spt=63
+ata0-master: type=disk, path="disk.img", mode=flat
 mouse: enabled=0
 cpu: ips=20000000
 clock: sync=both

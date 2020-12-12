@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-25 00:19:41
- * @LastEditTime 2020-06-25 02:24:40
+ * @LastEditTime 2020-10-31 06:59:26
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/kernel/sched/sched.c
@@ -13,6 +13,7 @@
 #include "kernel.h"
 #include "time.h"
 #include "string.h"
+static uint8_t needSched;
 PCB_t * currentActiveTask = NULL; 
 static uint32_t taskLeftTime;
 static uint32_t schedRunningTime = 0; 
@@ -25,6 +26,17 @@ static shcedulerState_t shcedulerState = SCHEDULER_STOP; //scheduler status
 static PCB_t* globalTaskMap[SCHED_MAX_TASK_NUM];
 pid_t sysFirstIdlePID = 0; //record the pid have been alloced(now don't recycle pit)
 static int taskNumber = 0;
+/**
+ * @brief  
+ * @note  
+ * @param {*}
+ * @retval none
+ */
+
+void sched_needSched(void)
+{
+  needSched = 1;
+}
 /**
  * @brief  
  * @note  
@@ -42,7 +54,7 @@ void sched_switchToNextReadyPrio(void)
       return;
     }
   }
-  painc("No task in ready list!\n\0");
+  panic("No task in ready list!\n\0");
 }
 /**
  * @brief  
@@ -104,7 +116,7 @@ pid_t sched_serchNextIdlePID(void)
 pid_t sched_registerPID(PCB_t * pPCB)
 {
   if(sysFirstIdlePID >= SCHED_MAX_TASK_NUM)
-    painc("sched:out max task number limit!!!!\n\r");  //should not run to this (before register must check running task quantity)
+    panic("sched:out max task number limit!!!!\n\r");  //should not run to this (before register must check running task quantity)
   pid_t temp = sysFirstIdlePID;
   globalTaskMap[sysFirstIdlePID] = pPCB;
   sysFirstIdlePID = sched_serchNextIdlePID();
@@ -154,6 +166,7 @@ error_t sched_addToList(PCB_t *pPCB)
     list_insertTail(&readyTaskList[pPCB->p_prio], &(pPCB->stateListItem));
     if(pPCB->p_prio < topReadyPriority)  //update the highest ready priority
     topReadyPriority = pPCB->p_prio;
+    sched_needSched(); //readyTaskList changed, need shced
     break;
   case TASK_SUSPENDING:
     list_insertList(&suspendTaskList, &(pPCB->stateListItem));
@@ -172,12 +185,15 @@ error_t sched_addToList(PCB_t *pPCB)
  * @param {PCB_t *} pPCB
  * @retval error_t
  */
-error_t removeFromStateList(PCB_t *pPCB)
+error_t sched_removeFromStateList(PCB_t *pPCB)
 {
   int flag = 0;
   error_t errno;
   if(pPCB->status <= TASK_READY )
+  {
+    sched_needSched();  //readyTaskList changed, need shced
     flag = 1;
+  }
   errno = list_removeformList(&pPCB->stateListItem);
   if(errno != ENOERR)
     return errno;
@@ -247,7 +263,7 @@ error_t sched_suspendTask(PCB_t *pPCB, uint32_t time)
   
   if(pPCB->status > TASK_READY)
     return E_SUSPEND;
-  removeFromStateList(pPCB);
+  sched_removeFromStateList(pPCB);
   pPCB->status = TASK_SUSPENDING;
   pPCB->stateListItem.value = wakeTime;
   sched_addToList(pPCB);
@@ -276,10 +292,15 @@ error_t sched_wakeTask(void)
     if(suspendTaskList.pFirstItem->value <= schedRunningTime)
     {
       pPCB = suspendTaskList.pFirstItem->pOwner;
-      removeFromStateList(pPCB);
+      sched_removeFromStateList(pPCB);
       pPCB->status = TASK_READY;
       sched_addToList(pPCB);
     }
+    else // if no task need weak(not happen unless some task were deleted)
+    {
+      nextTaskwakeTime = suspendTaskList.pFirstItem->value;   //refreash next weak time
+    }
+    
   }
   return ENOERR;
 }
@@ -290,13 +311,30 @@ error_t sched_wakeTask(void)
  * @param {type} none
  * @retval none
  */
-error_t sched_deleteTask(pid_t pid)
+error_t sched_killTask(pid_t pid)
 {
   if(pid >= SCHED_MAX_TASK_NUM)
     return E_SCHED_OUT_TSK_NR;
   PCB_t *pPCB = globalTaskMap[pid];
-  
 
+  /* code : send SIGN to it's child task */
+  
+  /* code : close openning file desc or other resource */
+
+  sched_removeFromStateList(pPCB);  //remove from task state list
+  list_removeformList(&pPCB->eventListItem);  //remove from event list
+
+  //when delete a requst handler task(definitely be system task), can only kill the task waiting for anwser
+  while(pPCB->reqWaitList.numberOfItem > 0)  
+  {
+    PCB_t *temp = pPCB->reqWaitList.pFirstItem->pOwner;
+    list_removeformList(pPCB->reqWaitList.pFirstItem);
+    /* code : send SIGN to their father task : status = -1*/
+    sched_killTask(temp->pid);
+  }
+  sched_logoutPID(pid);
+  page_recycle(&pPCB->usingPageList); 
+  return ENOERR;
 }
 /**
  * @brief  
@@ -313,9 +351,22 @@ void sched_timeTick(void)
   schedRunningTime ++;
   if(nextTaskwakeTime <= schedRunningTime)
     sched_wakeTask();
-
+  sched_needSched();
 }
-
+/**
+ * @brief  
+ * @note  
+ * @param {type} none
+ * @retval none
+ */
+void sched_exit(int status)
+{
+  /* code : send SIGN to it's father task : status*/
+  sched_killTask(currentActiveTask->pid);
+  /* after killTask the memory of PCB have been recycled, but still can be 
+    accessd(haven't been re-allocated yet). */
+  currentActiveTask->status = TASK_STOP;  //for shcedule
+}
 /**
  * @brief  
  * @note  
@@ -324,8 +375,12 @@ void sched_timeTick(void)
  */
 uint32_t schedule(void)
 {
-  if(shcedulerState != SCHEDULER_RUN)
+  static unsigned int sched_lock = 0;
+  if(shcedulerState != SCHEDULER_RUN || currentActiveTask == NULL ||needSched != 1)
     return (uint32_t)NULL;
+  if(sched_lock != 0) // check she
+    return (uint32_t)NULL;
+  sched_lock = 1;  // lock
 
   uint32_t flag;
   if(taskLeftTime == 0 )
@@ -342,8 +397,8 @@ uint32_t schedule(void)
     }
     else
     {
-      if(topReadyPriority >= currentActiveTask->p_prio)
-        painc("topReadyPriority error!\n");
+      if(topReadyPriority == currentActiveTask->p_prio)
+        panic("topReadyPriority error!\n");
     }
     //before check the if the are a higher p_prio,we suppose it is the task to run
     taskLeftTime = currentActiveTask->timeLeft; 
@@ -356,12 +411,15 @@ uint32_t schedule(void)
     if(currentActiveTask->status == TASK_RUN)
       currentActiveTask->status = TASK_READY;
     if(readyTaskList[topReadyPriority].numberOfItem == 0)
-      painc("No task in this preempting priority!\n");
+      panic("No task in this preempting priority!\n");
     currentActiveTask = readyTaskList[topReadyPriority].pFirstItem->pOwner;
     currentActiveTask->status = TASK_RUN;
     taskLeftTime = currentActiveTask->timeLeft;
     flag = 1;
   }
+
+  sched_lock = 0;  // unlock
+  needSched = 0;
   if(flag == 1) //need sched
   {
     return (uint32_t)currentActiveTask->L1PageTbl;

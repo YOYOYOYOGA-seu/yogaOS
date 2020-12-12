@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-18 02:35:29
- * @LastEditTime 2020-03-29 02:02:49
+ * @LastEditTime 2020-11-15 11:08:00
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/arch/x86/kernel/init.c
@@ -17,8 +17,22 @@
 #include "sched_x86.h"
 #include "time.h"
 #include "io.h"
+#include "irq.h"
+#include "mm.h"
 extern void disp_string32(char *info);
+extern void irq_initHandler(void);
 const sysMsg_t *const sysMessage = (const sysMsg_t *)(SYS_MESSAGE_ADDR);
+
+/**
+ * @brief  init kernel code .bss segment
+ * @note  
+ * @param {*}
+ * @retval none
+ */
+void initBss(void)
+{
+  memset((void*)SYSTEM_BSS_BASE_ADDR,0,SYS_BSS_SIZE);
+}
 /**
  * @brief  
  * @note  
@@ -33,7 +47,7 @@ error_t initGDT(void)
   // 注意！！！！为了测试tty改成的dpl = 3，之后看到记得改回来！！！！！
   seg_addDescToGDT(VIDEO_MEM_BASE_ADDR,VIDEO_MEM_SIZE,3,DESC_TYPE_RW,1);
   
-  disp_string32("GDT init success!!!\n\0");
+  //disp_string32("GDT init success!!!\n\0");
   return ENOERR;
 }
 
@@ -111,7 +125,7 @@ void initSysMsg(void)
  */
 void initMemManage(void)
 {
-  page_initPageManage();
+  zone_init();
   disp_string32("Page manager init success!!!\n\0");
 }
 
@@ -119,14 +133,10 @@ void initMemManage(void)
 /**
  * @brief  
  * @note  
- * @param {type} none
+ * @param {*}
  * @retval none
  */
-
-void init8254Timer(void)
+void initIRQ(void)
 {
-  IO_outByte(0x34,0x43);
-  IO_outByte((uint8_t)TIMER_FREQ*SYSTEM_TICK/1000,0x40);
-  IO_outByte((uint8_t)((TIMER_FREQ*SYSTEM_TICK/1000)>>8),0x40);
+  irq_initHandler();
 }
-

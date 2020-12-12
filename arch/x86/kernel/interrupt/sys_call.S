@@ -1,8 +1,9 @@
 #include "address.h"
 .extern  sys_call_table
 .extern  numOfSystemCalls
-
 .global system_call
+
+
 /**
  * @brief  system call interrupt 
  * @note   INT 0x80
@@ -27,7 +28,9 @@ system_call:
   push %edx
   push %ecx
   push %ebx
-  call sys_call_table(,%eax,4)
+  sti    //open interrupt
+
+  call *sys_call_table(,%eax,4)
   add $0xc, %esp
   
   //Save the return data to the stack

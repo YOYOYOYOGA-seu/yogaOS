@@ -4,7 +4,7 @@
 .include "register.inc"
 
 .code32
-.extern irq_default  // Defined in /arch/x86/kernel/irq.s
+.extern fault_default  // Defined in /arch/x86/kernel/irq.s
 .extern initSegment  // Defined in /arch/x86/kernel/init.c
 .extern resetPageDir // Defined in /arch/x86/kernel/init.c
 .extern main         // Defined in /arch/x86/kernel/main.c
@@ -74,13 +74,18 @@ relocate_stack:
  * @retval none
  */
 initKrnelPage:
+  mov $SUPT_MAX_PHY_MEM_SIZE,%eax
+  cmp %eax, sysMemSize  //check max mem size support  
+  jl __mem_less_2G
+  mov %eax, sysMemSize  
+__mem_less_2G:
   movl sysMemSize, %eax
   //Judge if the sysMemSize the multiple of 4M
   and $0xffc00000,%eax    
   cmp sysMemSize, %eax  
-  je __align_4M
+  je __aligned_4M
   add $1<<22, %eax  //if not, make it 4M align 
-__align_4M: 
+__aligned_4M: 
  //L1 table :relocate system area
   shr $22, %eax
   mov %eax, %ecx
@@ -147,7 +152,7 @@ __load_reg:
 
 /**
  * @brief  init IDT
- * @note  make all IDT point to irq_default
+ * @note  make all IDT point to fault_default
  * @param {type} none
  * @retval none
  */

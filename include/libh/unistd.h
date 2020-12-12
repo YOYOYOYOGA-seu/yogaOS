@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-03-09 01:00:29
- * @LastEditTime 2020-04-04 05:44:03
+ * @LastEditTime 2020-11-22 19:03:38
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/include/libh/unistd.h
@@ -10,7 +10,7 @@
 #define __UNISTD_H
 #include "yogaOS/types.h"
 
-void exit(int __status);  //__status :message send to it's father proccess
+void exit(int __status)  __attribute__ ((noreturn));  //__status :message send to it's father proccess
 pid_t fork(void);
 pid_t getpid(void);
 unsigned sleep(unsigned int __seconds);

@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-03-07 22:35:04
- * @LastEditTime 2020-06-27 07:19:33
+ * @LastEditTime 2020-11-15 06:35:32
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/kernel/syscall.c
@@ -13,6 +13,7 @@
 #include "tty.h"
 #include "request.h"
 #include "kernel.h"
+#include "string.h"
 /**
  * @brief  
  * @note  
@@ -20,33 +21,47 @@
  * @retval none
  */
 
-int sys_request(int mode, request_t * req, pid_t servPid)
+int sys_request(int flag, request_t * req, uint32_t wait)
 {
+  uint8_t mode = flag&0x0F;
+  uint32_t servPid = flag>>8;
+  if(wait != 0xFFFFFFFF)
+    wait /= SYSTEM_TICK;
   switch (mode)
   {
   case 0:    //send a request
-    return req_send(req,servPid);
+    return req_send(req,servPid,wait);
     break;
   case 1:    //get a request tesult
     return req_result(req);
     break;
   case 2:    //wait a request
-    return req_wait(req);
+    return req_wait(req,wait);
     break;
-  case 3:
+  case 3:    //wait a request from irq
+    return req_wait_it(req,wait);
+    break;
+  case 4:    
     return req_anwser(req);
     break;
-  case 4:
+  case 5:
     return req_transpond(req,servPid);
     break;
   default:
-    painc("iligal request system call mode !!!");
+    panic("iligal request system call mode !!!");
     return 0;
   }
 }
-__attribute__((weak)) int sys_exit(void)
+
+/**
+ * @brief  
+ * @note  
+ * @param {type} none
+ * @retval none
+ */
+__attribute__((weak)) int sys_exit(int status)
 {
-  
+  sched_exit(status);
   return 0;
 }
 
@@ -128,7 +143,10 @@ __attribute__((weak)) int sys_getPID(void)
  */
 __attribute__((weak)) int sys_getTime(void)
 {
-  return time_getTimeCount();
+  unsigned int ut = time_getTimeCount();
+  int t = 0;
+  memcpy(&t, &ut, sizeof(int));
+  return t;
 }
 
 /**

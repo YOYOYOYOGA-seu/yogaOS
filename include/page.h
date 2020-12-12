@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-22 05:14:13
- * @LastEditTime 2020-07-15 19:25:25
+ * @LastEditTime 2020-11-19 01:16:34
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/include/page.h
@@ -11,13 +11,7 @@
 #include "yogaOS/types.h"
 #include "yogaOS/list.h"
 #include "errno.h"
-
-/* ------------------------------- type define ------------------------------------- */
-typedef miniListItem_t page_t;  //page manage list item, storing the page base phy addr, owner ...
-
-typedef miniList_t     pageList_t; //page manage list
-
-
+#include "mm.h"
 /* ---------------------------------- define ------------------------------------ */
 
 //temporary Invalid page table item pointer, Some time's when alloc a physical page, the
@@ -27,15 +21,20 @@ typedef miniList_t     pageList_t; //page manage list
 // After the page table ready, it must be changed using function phyPageSetOwner()
 #define PHY_PAGE_ALLOC_NO_OWNER      0xffffffff  
 
+typedef miniList_t(page_t) pageList_t;
 /* ------- Arch relevant function (defined in arch/xxx/xxx/xxx.c) ----------------- */
 
-page_t *page_locateList(uint32_t *size, uint32_t *phyrBase, uint32_t * linearBase);
+page_t *page_locateList(uint32_t *size, uint32_t *phyrBase, uint32_t * linearBase); //old vision use,now abandon
+void page_missing(uint32_t addr);
 
 
 /* ------------------------------function declaration ----------------------------- */
-void *page_allocOne(pageList_t *usingList);
-error_t page_checkIdleMemNum(uint32_t allocNum);
-void page_initPageManage(void);
+error_t page_checkIdleMemNum(uint32_t allocNum,zoneIndex_t zone);
+void page_initPageDesc(zoneIndex_t zone);
+void *page_allocByOrder(pageList_t *usingList, zoneIndex_t zone, uint8_t order);
+error_t page_recycle(pageList_t *usingList);
+error_t page_recycleOne(page_t *page);
 
-
+/* ------------------------------function define ----------------------------- */
+inline void* page_allocOne(pageList_t * pUsingList,zoneIndex_t zone){return page_allocByOrder(pUsingList,zone,0);}
 #endif

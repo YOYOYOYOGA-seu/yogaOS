@@ -46,12 +46,14 @@ default:
 	# use creatIamge.sh to load loader.bin and kernel file to the output image
 	./creatImage.sh
 
+creatDiskImage:
+	./creatHDimage.sh  $(DISK_SIZE)
 
 .PHNOY:clean
 clean:
 	sudo make -C $(x86_LOADER_DIR) clean
 	# must ad '-f'(force remove),or it will return fail and 
 	# shutdown the "make clean" process
-	rm -f $(x86_IMAGE_DIR)/*.img 
+	rm -f $(x86_IMAGE_DIR)/a.img 
 	rm -f $(x86_OUTPUT_DIR)/*
 	

@@ -1,16 +1,16 @@
 #include "address.h"
 .global task_copyRetHandler
 .global task_retHandler
-.extern sleep
+.extern exit
 task_retHandler:
   jmp __handler
 __handler:
-  mov $1000, %eax
+  mov $0, %eax  //！！！！！现在函数退出后只是让其永久sleep，并未收回占用的资源，之后应改为exit
   push %eax
-  mov $sleep, %esi    
+  mov $exit, %esi    
   //becasue of this func have to copy to another address ,
   //so must use Absolute jump, can't use "call sleep"(Relative to jump)
-  call %esi       
+  call *%esi       
   add $4, %esp
   jmp task_retHandler
 __end_retHandler:

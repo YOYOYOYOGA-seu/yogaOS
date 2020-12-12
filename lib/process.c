@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-03-09 02:17:29
- * @LastEditTime 2020-06-25 01:44:33
+ * @LastEditTime 2020-11-22 19:07:29
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/lib/process.c
@@ -27,6 +27,19 @@ pid_t fork(void)
     return pid;
   
 }
+
+/**
+ * @brief  
+ * @note  
+ * @param {type} none
+ * @retval none
+ */
+void exit(int __status)
+{
+  enterSystemCall(SYS_EXIT_VECTOR, __status, 0, 0);
+  while(1);
+}
+
 /**
  * @brief  
  * @note  

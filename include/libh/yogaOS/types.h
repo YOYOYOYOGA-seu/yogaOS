@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-17 22:12:51
- * @LastEditTime 2020-07-15 19:38:07
+ * @LastEditTime 2020-11-15 04:56:47
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/include/libh/yogaOS/types.h
@@ -43,7 +43,10 @@ typedef enum{
 
 typedef struct {
   /* data */
-    pid_t ownerPid;   
+    union {
+      pid_t ownerPid;
+      uint8_t it;   
+    };
     uint32_t type;
     uint32_t length;  //length of data in pMesg, uint is byte
     void *pMesg;      //！！！！！由于没有写共享内存空间或文件系统，这个版本不能使用，尽量用type实现信息传输,或使用result[]回复小量信息
