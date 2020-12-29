@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-17 21:58:27
- * @LastEditTime 2020-11-22 19:25:18
+ * @LastEditTime 2020-12-29 23:38:54
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/arch/x86/kernel/mm/mm_x86.c
@@ -47,8 +47,8 @@ void page_missing(uint32_t addr)
   pageTblItem_t *pL2 = NULL;
   if(addr < PCB_BASE_ADDR)  // page missing can only occur in user task area
   {
-    L1pageIndex = addr >> 22;
-    L2pageIndex = (addr >> 12)&0x3FF;
+    L1pageIndex = addr >> 2*PAGE_SIZE_ORDER - 2;  
+    L2pageIndex = (addr >> PAGE_SIZE_ORDER)&0x3FF;
     pL1 = pPCB->L1PageTbl;
     if((pL1[L1pageIndex]&0xFFC00000) == 0)  //L2 page addr is null
     {
@@ -78,7 +78,7 @@ void zone_sysZoneInit(void)
   sysMemZone[FS_CACHE].flag = STATIC;
   sysMemZone[FS_CACHE].phyBase = PHY_FILE_BUFF_BASE_ADDR;
   sysMemZone[FS_CACHE].linearBase = FILE_BUFF_BASE_ADDR;
-  sysMemZone[FS_CACHE].totalPages  = SYS_FILE_BUFF_SIZE >> 12;
+  sysMemZone[FS_CACHE].totalPages  = SYS_FILE_BUFF_SIZE >> PAGE_SIZE_ORDER;
   sysMemZone[FS_CACHE].freePages = sysMemZone[FS_CACHE].totalPages - 
                                     (sysMemZone[FS_CACHE].totalPages*sizeof(page_t))/PAGE_SIZE;
   sysMemZone[FS_CACHE].managedPages  = sysMemZone[FS_CACHE].freePages;

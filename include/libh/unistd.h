@@ -10,6 +10,9 @@
 #define __UNISTD_H
 #include "yogaOS/types.h"
 
+typedef long off_t;
+typedef long long loff_t;
+
 void exit(int __status)  __attribute__ ((noreturn));  //__status :message send to it's father proccess
 pid_t fork(void);
 pid_t getpid(void);

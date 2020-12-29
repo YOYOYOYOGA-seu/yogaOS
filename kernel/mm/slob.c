@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-11-16 03:35:17
- * @LastEditTime 2020-12-12 17:01:13
+ * @LastEditTime 2020-12-29 23:35:34
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/kernel/mm/slob.c
@@ -12,6 +12,8 @@
 #include "yogaOS/types.h"
 #include "kernel.h"
 #define PAGE_SIZE       0x1000
+#define PAGE_SIZE_ORDER 12
+
 #define SLOB_MINI_SIZE  256
 #define SLOB_MID_SIZE   1024
 #define SLOB_MAX_SIZE   (PAGE_SIZE - sizeof(slobBlock_t))
@@ -100,7 +102,7 @@ inline error_t slob_page_free(slobPage_t *ptr ,zoneIndex_t zone)
  */
 inline void* slob_getPageAddr(const slobPage_t* page, zoneIndex_t zone)
 {
-  return (void*)((page->index<<12) + sysMemZone[zone].linearBase);
+  return (void*)((page->index<<PAGE_SIZE_ORDER) + sysMemZone[zone].linearBase);
 }
 
 void slob_init()

@@ -11,6 +11,8 @@
 #include "yogaOS/types.h"
 #include "errno.h"
 #include "kernel.h"
+
+#define PAGE_SIZE_ORDER 12
 /* ------------------------ varible declare --------------------------- */
 extern zone_t sysMemZone[SYSTEM_ZONE_NUM];
 
@@ -34,7 +36,7 @@ void page_initPageDesc(zoneIndex_t zone)
 
   
   p = sysMemZone[zone].pPageDescArray;
-  start = sysMemZone[zone].phyBase>>12;
+  start = sysMemZone[zone].phyBase>>PAGE_SIZE_ORDER;
   end = start + sysMemZone[zone].managedPages;
   value = start;
   //value = (1 << BUDDY_MAX_ORDER) - (start & ((1 << BUDDY_MAX_ORDER) - 1));
@@ -131,7 +133,7 @@ void *page_allocByOrder(pageList_t *usingList, zoneIndex_t zone, uint8_t order)
   }
   sysMemZone[zone].freePages-= 1<<order;
   miniList_insertHead(usingList,p,lru);
-  return (void*)((p->index<<12) + sysMemZone[zone].linearBase);
+  return (void*)((p->index<<PAGE_SIZE_ORDER) + sysMemZone[zone].linearBase);
 }
 
 /**

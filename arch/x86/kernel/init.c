@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-18 02:35:29
- * @LastEditTime 2020-11-15 11:08:00
+ * @LastEditTime 2020-12-29 23:36:23
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/arch/x86/kernel/init.c
@@ -112,8 +112,8 @@ void initSysMsg(void)
 {
   sysMsg_t *p = (sysMsg_t *)sysMessage;
   p->idleMemSize = (p -> memSize) - SYSTEM_RESERVE_AREA_SIZE;
-  p->phyPageNum = (p -> memSize)>>12;
-  p->idlePageNum = (p->idleMemSize)>>12;
+  p->phyPageNum = (p -> memSize)>>PAGE_SIZE_ORDER;
+  p->idlePageNum = (p->idleMemSize)>>PAGE_SIZE_ORDER;
   disp_string32("System message init success!!!\n\0");
 }
 

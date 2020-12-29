@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-15 22:02:03
- * @LastEditTime 2020-11-15 11:07:29
+ * @LastEditTime 2020-12-29 23:35:59
  * @LastEditors Shi Zhangkun
  * @Description 
  * 
@@ -170,7 +170,7 @@
 
 /* -------------------------- mssege and area size -------------------------- */
 #define PAGE_SIZE                 0x1000   // 4K
-
+#define PAGE_SIZE_ORDER           12
 
 #define PTE_SIZE                  0x0004
 
