@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-17 22:12:51
- * @LastEditTime 2020-11-15 04:56:47
+ * @LastEditTime 2020-12-30 22:42:53
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/include/libh/yogaOS/types.h
@@ -37,7 +37,11 @@ typedef enum{
   
   SYS_WRITE_VECTOR,
   SYS_READ_VECTOR,
-  SYS_OPEN_VECTOR
+  SYS_OPEN_VECTOR,
+  SYS_MALLOC_VECTOR,
+  SYS_FREE_VECTOR,
+  
+  SYS_PANIC_VECTOR
 }syscall_vector_t;
 
 

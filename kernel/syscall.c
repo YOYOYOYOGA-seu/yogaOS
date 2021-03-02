@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-03-07 22:35:04
- * @LastEditTime 2020-11-15 06:35:32
+ * @LastEditTime 2020-12-29 21:14:43
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/kernel/syscall.c
@@ -13,7 +13,9 @@
 #include "tty.h"
 #include "request.h"
 #include "kernel.h"
+#include "mm.h"
 #include "string.h"
+
 /**
  * @brief  
  * @note  
@@ -182,5 +184,58 @@ __attribute__((weak)) int sys_read(void)
  */
 __attribute__((weak)) int sys_open(void)
 {
+  return 0;
+}
+
+/**
+ * @brief  
+ * @note  
+ * @param {type} none
+ * @retval none
+ */
+__attribute__((weak)) int sys_malloc(int flag, unsigned int size)
+{
+  switch (flag)
+  {
+  case FS_CACHE:
+    return (int)(kmalloc(size));
+    break;
+  
+  default:
+    break;
+  }
+  return 0;
+}
+
+/**
+ * @brief  
+ * @note  
+ * @param {type} none
+ * @retval none
+ */
+__attribute__((weak)) int sys_free(int flag, void* ptr)
+{
+  switch (flag)
+  {
+  case FS_CACHE:
+    ffree(ptr);
+    break;
+
+  default:
+    panic("system call: sys_free() invaild flag");
+    break;
+  }
+  return 0;
+}
+
+/**
+ * @brief  
+ * @note  
+ * @param {const char*}  str
+ * @retval none
+ */
+__attribute__((weak)) int sys_panic(const char* str)
+{
+  panic(str);
   return 0;
 }
