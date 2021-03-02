@@ -46,3 +46,21 @@ __attribute__((weak)) int strcmp(const char* str1, const char *str2)
   }
   return *str1 - *str2;
 }
+
+/**
+ * @brief  gernal memory area compare
+ * @note  compare two memory area
+ * @param {type} none
+ * @retval 0: equal  num: first different char's different value
+ */
+__attribute__((weak))int memcmp(const void *str1, const void *str2, size_t n)
+{
+  if(!str1||!str2)
+    return 0xffffff;
+  for(size_t i = 0; i < n; i++)
+  {
+    if(((const char*)str1)[i] != ((const char*)str2)[i])
+      return ((const char*)str1)[i] - ((const char*)str2)[i];
+  }
+  return 0;
+}
