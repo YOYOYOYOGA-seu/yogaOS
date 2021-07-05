@@ -8,7 +8,7 @@
 
 
 # 源文件结构
-  ![图片不存在](https://raw.githubusercontent.com/YOYOYOYOGA-seu/yogaOS/develop/readme/structure.png)  
+  ![图片不存在](https://gitee.com/YOYOYOYOGA-seu/yogaOS/raw/master/readme/structure.png)  
     
 # 开发日志
 2020.2.01 - 2020.2.22   
