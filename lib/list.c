@@ -1,10 +1,10 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-22 22:42:24
- * @LastEditTime 2020-08-01 08:16:58
+ * @LastEditTime 2022-04-14 20:28:18
  * @LastEditors Shi Zhangkun
  * @Description none
- * @FilePath /project/lib/list.c
+ * @FilePath /yogaOS/lib/list.c
  */
 
 #include "yogaOS/list.h"
@@ -23,7 +23,7 @@ error_t list_insertList(list_t *list, listItem_t *item)
   listItem_t *p = list->pFirstItem;
   if(item->value > list->listValueLimit)
     return E_OUT_LIST_VALUE;
-  if(item->pOwnList == list)   //already in this list
+  if(item->pListHead == list)   //already in this list
     return ENOERR;
   if(p == NULL)
   {
@@ -35,7 +35,7 @@ error_t list_insertList(list_t *list, listItem_t *item)
   {
     for(i = 0; ; i++)
     {
-      if((item->value <= p->value)||i == list->numberOfItem)
+      if((item->value <= p->value)||i == list->size)
       {
         item->pNext = p;
         p->pPrevious->pNext = item;
@@ -50,8 +50,8 @@ error_t list_insertList(list_t *list, listItem_t *item)
     }
   }
   
-  item->pOwnList = list;
-  list->numberOfItem ++;
+  item->pListHead = list;
+  list->size ++;
   return ENOERR;
 }
 
@@ -82,8 +82,8 @@ error_t list_insertHead(list_t *list, listItem_t *item)
     p->pPrevious = item;
     list->pFirstItem = item;
   }
-  item->pOwnList = list;
-  list->numberOfItem ++;
+  item->pListHead = list;
+  list->size ++;
   return ENOERR;
 }
 
@@ -113,8 +113,8 @@ error_t list_insertTail(list_t *list, listItem_t *item)
     item->pPrevious = p->pPrevious;
     p->pPrevious = item;
   }
-  item->pOwnList = list;
-  list->numberOfItem ++;
+  item->pListHead = list;
+  list->size ++;
   return ENOERR;
 }
 
@@ -129,25 +129,25 @@ error_t list_removeformList(listItem_t *item)
 {
   if(item->pNext == NULL||item->pPrevious == NULL)
     return E_NOT_IN_LIST;
-  if(((list_t *)item->pOwnList)->numberOfItem >= 1)
-    ((list_t *)item->pOwnList)->numberOfItem--;
+  if(((list_t *)item->pListHead)->size >= 1)
+    ((list_t *)item->pListHead)->size--;
   else
     return E_ITEM_NUM_ERR;
   
   if(item->pNext == item)  //can't use pNext = pPrevious, because they equal when num = 1 or 2
   {
-    ((list_t *)item->pOwnList)->pFirstItem = NULL;
+    ((list_t *)item->pListHead)->pFirstItem = NULL;
   }
   else
   {
     item->pNext->pPrevious = item->pPrevious;
     item->pPrevious->pNext = item->pNext;
-    if(((list_t *)item->pOwnList)->pFirstItem == item)
-      ((list_t *)item->pOwnList)->pFirstItem = item->pNext;
+    if(((list_t *)item->pListHead)->pFirstItem == item)
+      ((list_t *)item->pListHead)->pFirstItem = item->pNext;
   }
   item->pNext = NULL;
   item->pPrevious = NULL;
-  item->pOwnList = NULL;
+  item->pListHead = NULL;
   return ENOERR;
 }
 
@@ -159,7 +159,7 @@ error_t list_removeformList(listItem_t *item)
  */
 void list_initList(list_t *list, uint32_t listMaxValue)
 {
-  list->numberOfItem = 0;
+  list->size = 0;
   list->listValueLimit = listMaxValue;
   list->pFirstItem = NULL;
 }

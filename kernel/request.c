@@ -1,10 +1,10 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-04-18 21:27:25
- * @LastEditTime 2020-11-15 06:35:20
+ * @LastEditTime 2022-04-14 20:37:13
  * @LastEditors Shi Zhangkun
  * @Description none
- * @FilePath /project/kernel/request.c
+ * @FilePath /yogaOS/kernel/request.c
  */
 #include "string.h"
 #include "errno.h"
@@ -84,7 +84,7 @@ error_t req_wait(request_t* req, uint32_t wait)
   
 
   // the list should be ranged by prio, so the first item are always the highest prio to handler
-  if(currentActiveTask->reqWaitList.numberOfItem >= 1)   
+  if(currentActiveTask->reqWaitList.size >= 1)   
   {
     currentActiveTask->reqState = REQ_BUSY;
     pReqS = &((PCB_t *)currentActiveTask->reqWaitList.pFirstItem->pOwner)->request;

@@ -1,10 +1,10 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-25 00:19:41
- * @LastEditTime 2020-10-31 06:59:26
+ * @LastEditTime 2022-04-14 20:40:43
  * @LastEditors Shi Zhangkun
  * @Description none
- * @FilePath /project/kernel/sched/sched.c
+ * @FilePath /yogaOS/kernel/sched/sched.c
  */
 #include "yogaOS/types.h"
 #include "sched.h"
@@ -48,7 +48,7 @@ void sched_switchToNextReadyPrio(void)
   uint32_t i;
   for(i = topReadyPriority; i < SCHED_MAX_P_PRIO_NUM; i++)
   {
-    if(readyTaskList[i].numberOfItem > 0)
+    if(readyTaskList[i].size > 0)
     {
       topReadyPriority = i;
       return;
@@ -286,7 +286,7 @@ error_t sched_wakeTask(void)
 
   int i, num;
   PCB_t * pPCB;
-  num = suspendTaskList.numberOfItem;
+  num = suspendTaskList.size;
   for(i = 0; i < num; i++)
   {
     if(suspendTaskList.pFirstItem->value <= schedRunningTime)
@@ -325,7 +325,7 @@ error_t sched_killTask(pid_t pid)
   list_removeformList(&pPCB->eventListItem);  //remove from event list
 
   //when delete a requst handler task(definitely be system task), can only kill the task waiting for anwser
-  while(pPCB->reqWaitList.numberOfItem > 0)  
+  while(pPCB->reqWaitList.size > 0)  
   {
     PCB_t *temp = pPCB->reqWaitList.pFirstItem->pOwner;
     list_removeformList(pPCB->reqWaitList.pFirstItem);
@@ -389,7 +389,7 @@ uint32_t schedule(void)
     if(currentActiveTask->status == TASK_RUN)  //if current task haven't be pending
       currentActiveTask->status = TASK_READY;
 
-    if(readyTaskList[currentActiveTask->p_prio].numberOfItem != 0) // prevent the current p_prio have no task
+    if(readyTaskList[currentActiveTask->p_prio].size != 0) // prevent the current p_prio have no task
     {
       readyTaskList[currentActiveTask->p_prio].pFirstItem =readyTaskList[currentActiveTask->p_prio].pFirstItem->pNext;
       currentActiveTask = readyTaskList[currentActiveTask->p_prio].pFirstItem->pOwner;
@@ -410,7 +410,7 @@ uint32_t schedule(void)
     currentActiveTask->timeLeft = taskLeftTime; //save current task left time slice
     if(currentActiveTask->status == TASK_RUN)
       currentActiveTask->status = TASK_READY;
-    if(readyTaskList[topReadyPriority].numberOfItem == 0)
+    if(readyTaskList[topReadyPriority].size == 0)
       panic("No task in this preempting priority!\n");
     currentActiveTask = readyTaskList[topReadyPriority].pFirstItem->pOwner;
     currentActiveTask->status = TASK_RUN;

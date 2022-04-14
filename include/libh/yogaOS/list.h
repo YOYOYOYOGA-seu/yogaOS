@@ -1,10 +1,10 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-21 20:59:03
- * @LastEditTime 2020-12-12 21:06:32
+ * @LastEditTime 2022-04-14 20:40:13
  * @LastEditors Shi Zhangkun
  * @Description none
- * @FilePath /project/include/libh/yogaOS/list.h
+ * @FilePath /yogaOS/include/libh/yogaOS/list.h
  */
 #ifndef __LIST_H
 #define __LIST_H
@@ -13,37 +13,24 @@
 
 /* ------------------------ type define --------------------------- */
 /* double linked  list */
-typedef struct listItem{
-  unsigned int value;
-  struct listItem * pNext;
-  struct listItem * pPrevious;
-  void * pOwner;
-  void * pOwnList;
-}listItem_t;
+struct list;
+struct listItem;
+typedef struct list list_t;
+typedef struct listItem listItem_t;
 
-typedef struct {
-  unsigned int numberOfItem;
+struct listItem{
+  unsigned int value;
+  listItem_t * pNext;
+  listItem_t * pPrevious;
+  void* pOwner;
+  list_t * pListHead;
+};
+
+struct list {
+  unsigned int size;
   unsigned int listValueLimit;
   listItem_t *pFirstItem;
-
-}list_t; 
-
-/*simple single linked list(haven't carried out) */
-
-typedef struct sigListItem_t{
-  union {
-    void * pOwner;
-    unsigned int value;
-  };
-  struct sigListItem_t * pNext;
-  
-}sigListItem_t_t;
-
-
-typedef struct {
-  unsigned int numberOfItem;
-  sigListItem_t_t *pFirstItem;
-}sigList_t;
+}; 
 
 /** A mini list creat define, this define can creat a struct obj that 
  * using the specified input type, so it can easily embed into any data
@@ -238,7 +225,7 @@ typedef struct {
             } \
           } \
         }
-        
+
 void list_initList(list_t *list, uint32_t listMaxValue);
 error_t list_insertList(list_t *list, listItem_t *item);
 error_t list_insertHead(list_t *list, listItem_t *item);
