@@ -43,7 +43,6 @@ GLOBAL_INC_DIR := include \
 									include/libh \
 									include/driver 
 
-
 TAG_FLAG += DEBUG=$(DEBUG) \
 						ARCH=$(ARCH) \
 						GLOBAL_INC_DIR="$(patsubst %,../%, $(GLOBAL_INC_DIR))" \
@@ -65,6 +64,7 @@ archIrrelevant:
 	@echo "compile commom source...."
 	@make -C mm	$(TAG_FLAG) -s
 	@make -C kernel	$(TAG_FLAG) -s
+	@make -C fs	$(TAG_FLAG) -s
 	@make -C driver	$(TAG_FLAG) -s
 	@make -C server	$(TAG_FLAG) -s
 	@make -C lib	$(TAG_FLAG) -s

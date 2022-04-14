@@ -1,13 +1,13 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-12-13 22:39:05
- * @LastEditTime 2020-12-13 22:39:06
+ * @LastEditTime 2022-04-14 21:25:18
  * @LastEditors Shi Zhangkun
  * @Description none
- * @FilePath /project/server/serv_fs.c
+ * @FilePath /yogaOS/server/serv_fs.c
  */
 
-#include "vfs.h"
+#include "fs/vfs.h"
 #include "yogaOS/req.h"
 #include "yogaOS/types.h"
 #include "errno.h"
@@ -17,10 +17,11 @@
  * @param {*}
  * @retval none
  */
-void server_hd(void)
+void server_VFS(void)
 {
   request_t req;
   uint32_t type;
+  fcache_init();
   while (1)
   {
     if(reqw(&req)!= ENOERR)

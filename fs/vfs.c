@@ -1,30 +1,34 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-12-06 13:53:01
- * @LastEditTime 2020-12-28 09:36:12
+ * @LastEditTime 2022-04-14 20:56:59
  * @LastEditors Shi Zhangkun
  * @Description none
- * @FilePath /project/fs/vfs.c
+ * @FilePath /yogaOS/fs/vfs.c
  */
 
-#include "vfs.h"
-#include "mount.h"
+#include "fs/vfs.h"
+#include "fs/mount.h"
 #include "yogaOS/list.h"
 #include "yogaOS/types.h"
 #include "string.h"
 #include "errno.h"
-static miniList_t(fsType_t) fs_list = {0, NULL};
+static list_t fs_list;
 
+void vfs_init(void)
+{
+  list_initList(&fs_list, 0xFFFFFFFF);
+}
 
 fsType_t* vfs_findFS(const char* name)
 {
-  fsType_t* p = fs_list.firstItem;
-  for(size_t i = 0; i < fs_list.value && p != NULL; i++)
+  listItem_t* p = fs_list.pFirstItem;
+  for(size_t i = 0; i < fs_list.size && p != NULL; i++)
   {
-    if(strcmp(p->name,name) == 0)
+    if(strcmp(((fsType_t*)p->pOwner)->name, name) == 0)
       return p;
     else
-      p = p->fs_list.pNext;
+      p = p->pNext;
   }
   return NULL;
 }

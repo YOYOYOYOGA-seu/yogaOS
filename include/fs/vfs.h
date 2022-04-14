@@ -1,10 +1,10 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-12-06 13:53:37
- * @LastEditTime 2020-12-28 16:51:33
+ * @LastEditTime 2022-04-14 20:46:03
  * @LastEditors Shi Zhangkun
  * @Description none
- * @FilePath /project/include/fs/vfs.h
+ * @FilePath /yogaOS/include/fs/vfs.h
  */
 #ifndef __VFS_H
 #define __VFS_H
@@ -14,6 +14,7 @@
 #include "unistd.h"
 #include "time.h"
 #include "mount.h"
+#include "fs/fcache.h"
 
 #define VFS_SNMAE_SIZE 16
 
@@ -23,13 +24,19 @@ struct fileOperations;
 struct dentryOperations;
 struct inodeOperations;
 struct superOperations;
+struct superBlock;
 
+typedef struct superBlock superBlock_t;
 #define F_RD      0x01
 #define F_WR      0x02
 #define F_RDWR    F_RDONLY|F_WRONLY
 
 typedef unsigned int mode_t;
-
+typedef struct fsType fsType_t;
+typedef struct inode inode_t;
+typedef struct dentry dentry_t;
+typedef struct file file_t;
+typedef struct nameidata nameidata_t;
 typedef struct {
   char* str;
   uint16_t count;
@@ -38,7 +45,7 @@ typedef struct {
 typedef struct{
   uint8_t ifShort;
   union {
-    dentryName_t lname;
+    string_t lname;
     char sname[VFS_SNMAE_SIZE];
   };
 }dentryName_t;
@@ -46,19 +53,18 @@ typedef struct{
 /**
  * fsType
  */
-typedef struct fsType{
-  miniListItem_t(struct fsType) fs_list;
+struct fsType{
+  listItem_t fs_list;
   const char* name;
   superBlock_t* (*get_sb)(struct fsType* ,int ,const char*, void*, vfsmount_t*);
   superBlock_t* (*kill_sb)(superBlock_t*);
   list_t supers;
-  
-}fsType_t;
+};
 
 /**
  * dentry
  */
-typedef struct dentry{
+struct dentry{
   struct inode* inode;
   struct dentry* parent;
   list_t childList;
@@ -67,12 +73,12 @@ typedef struct dentry{
   dentryName_t name;
   struct dentryOperations* op; /* opreation of dentry */
   listItem_t d_list;
-}dentry_t;
+};
 
 /**
  * inode
  */
-typedef struct inode{
+struct inode{
   uint16_t mode;  /* file type and access permission */
   uint16_t uid;  /* owner user id */
   uint16_t gid;
@@ -86,9 +92,10 @@ typedef struct inode{
   uint16_t count; /* reference counts */
   uint16_t blockSize;
   uint16_t dataBlockNum;
-  vfsBlockHead_t firstOrderMap[2];  /* desc to block that store data block mapping */
-  vfsBlockHead_t *secondOrderMap;  /* desc to block that store data block mapping */
-  vfsBlockHead_t *data; /*data block descs */
+  vfsBlockHead_t data[7]; /*data block descs */
+  vfsBlockHead_t firstOrderMap;  /* desc to block that store data block mapping */
+  vfsBlockHead_t secondOrderMap;  /* desc to block that store data block mapping */
+  
   uint8_t lock;
   uint8_t dirt;
   uint8_t pipe;
@@ -98,12 +105,12 @@ typedef struct inode{
   struct inodeOperations* op; /* opreation of inode */
   listItem_t i_list;
   listItem_t i_dirtList;
-}inode_t;
+};
 
 /**
  * superBlock
  */
-typedef struct superBlock{
+struct superBlock{
   uint32_t blockSize; /* one block size */
   uint32_t inodeNum;
   uint32_t BlockNum;  /*total blocks number */
@@ -125,25 +132,25 @@ typedef struct superBlock{
 
   list_t s_inodes;
   list_t s_dirt;
-}superBlock_t;
+};
 
 /**
  * file description
  */
-typedef struct file{
+struct file{
   dentry_t* dentry;
   struct fileOperations* op; 
   unsigned int flags;
   mode_t mode;
   listItem_t f_list;
-}file_t;
+};
 
 /**
  * used for path lookup
  */
-typedef struct nameidata{
+ struct nameidata{
   dentry_t dentry;
-}nameidata_t;
+};
 
 
 

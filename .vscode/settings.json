@@ -23,6 +23,13 @@
     "type_traits": "c",
     "typeinfo": "c",
     "limits": "cpp",
-    "mm.h": "c"
+    "mm.h": "c",
+    "hd.h": "c",
+    "cmath": "c",
+    "*.tcc": "c",
+    "vfs.h": "c",
+    "mount.h": "c",
+    "types.h": "c",
+    "hmap.h": "c"
   }
 }
