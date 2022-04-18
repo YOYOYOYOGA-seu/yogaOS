@@ -1,10 +1,10 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-11-16 03:35:17
- * @LastEditTime 2020-12-29 23:35:34
+ * @LastEditTime 2022-04-14 21:29:09
  * @LastEditors Shi Zhangkun
  * @Description none
- * @FilePath /project/kernel/mm/slob.c
+ * @FilePath /yogaOS/kernel/mm/slob.c
  */
 #include "mm.h"
 #include "page.h"
@@ -138,7 +138,7 @@ void* slob_AllocSerachInPage(slobPage_t * page, const size_t blkNum, zoneIndex_t
           block[last].nextFree = index + blkNum + 1;
 
         page->units -= blkNum + 1;
-        return &block[index + 1];
+        return (void*)(&block[index + 1]);
       }
       else if(block[index].units = blkNum)
       {
@@ -149,7 +149,7 @@ void* slob_AllocSerachInPage(slobPage_t * page, const size_t blkNum, zoneIndex_t
           block[last].nextFree = block[index].nextFree; 
         
         page->units -= blkNum;
-        return &block[index + 1];
+        return (void*)(&block[index + 1]);
       }
       last = index;
       index = block[index].nextFree;
@@ -365,7 +365,7 @@ void* kmalloc(size_t size)
  */
 void* fmalloc(size_t size)
 {
-  slob_malloc(size,FS_CACHE);
+  slob_malloc(size,HS_CACHE);
 }
 
 /**
@@ -387,5 +387,5 @@ void kfree(void* ptr)
  */
 void ffree(void* ptr)
 {
-  slob_free(ptr,FS_CACHE);
+  slob_free(ptr,HS_CACHE);
 }

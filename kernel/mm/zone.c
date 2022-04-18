@@ -24,5 +24,5 @@ void zone_init(void)
   }
   zone_sysZoneInit();
   page_initPageDesc(IDLE_AREA);
-  page_initPageDesc(FS_CACHE);
+  page_initPageDesc(HS_CACHE);
 }

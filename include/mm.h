@@ -1,10 +1,10 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-07-15 19:22:17
- * @LastEditTime 2020-12-03 16:47:50
+ * @LastEditTime 2022-04-18 13:14:29
  * @LastEditors Shi Zhangkun
  * @Description none
- * @FilePath /project/include/mm.h
+ * @FilePath /yogaOS/include/mm.h
  */ 
 #ifndef __MM_H
 #define __MM_H
@@ -28,7 +28,7 @@ typedef struct page{
 #define SYSTEM_ZONE_NUM 2
 
 typedef enum{
-  FS_CACHE = 0,
+  HS_CACHE = 0,
   IDLE_AREA
 }zoneIndex_t;
 

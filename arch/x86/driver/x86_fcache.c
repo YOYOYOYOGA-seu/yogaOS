@@ -21,12 +21,12 @@ size_t fcache_getCacheSize(void)
   uint32_t size = 0;
   for(int i = 8*sizeof(uint32_t); i > PAGE_SIZE_ORDER&& ((1<<i)>(FCACHE_ALLOC_UNIT<<FCACHE_BLOCK_MAX_ORDER)); i--)
   {
-    if((SYS_FILE_BUFF_SIZE& (1 << i)) != 0)
+    if((SYS_HS_CACHE_SIZE& (1 << i)) != 0)
     {
       size = 1 << i;
       if(i >= BUDDY_MAX_ORDER + PAGE_SIZE_ORDER)  // max fs cache size (limited by the max order of buddy system)
         size = 1 << (PAGE_SIZE_ORDER + BUDDY_MAX_ORDER);
-      if(size > ((SYS_FILE_BUFF_SIZE*3)/4))
+      if(size > ((SYS_HS_CACHE_SIZE*3)/4))
         size /= 2;
       break;
     }

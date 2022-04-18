@@ -1,10 +1,10 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-03-07 22:35:04
- * @LastEditTime 2020-12-29 21:14:43
+ * @LastEditTime 2022-04-18 13:17:40
  * @LastEditors Shi Zhangkun
  * @Description none
- * @FilePath /project/kernel/syscall.c
+ * @FilePath /yogaOS/kernel/syscall.c
  */
 
 #include "sys.h"
@@ -197,8 +197,8 @@ __attribute__((weak)) int sys_malloc(int flag, unsigned int size)
 {
   switch (flag)
   {
-  case FS_CACHE:
-    return (int)(kmalloc(size));
+  case HS_CACHE:
+    return (int)(fmalloc(size));
     break;
   
   default:
@@ -217,10 +217,9 @@ __attribute__((weak)) int sys_free(int flag, void* ptr)
 {
   switch (flag)
   {
-  case FS_CACHE:
+  case HS_CACHE:
     ffree(ptr);
     break;
-
   default:
     panic("system call: sys_free() invaild flag");
     break;

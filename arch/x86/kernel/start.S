@@ -126,15 +126,15 @@ __3:
 
 
 //L2 table : file buff area
-  movl $SYS_FILE_BUFF_SIZE, %eax
+  movl $SYS_HS_CACHE_SIZE, %eax
   shr $12, %eax
   mov %eax, %ecx
-  mov $PHY_FILE_BUFF_BASE_ADDR,%eax   //get the sys relocate addr in page dir 
+  mov $PHY_HS_CACHE_BASE_ADDR,%eax   //get the sys relocate addr in page dir 
   shr $10, %eax
   add $PHY_SYS_PAGE_TBL_BASE_ADDR,%eax
   mov %eax, %edi
   xor %eax,%eax
-  mov $PHY_FILE_BUFF_BASE_ADDR|PTE_P|PTE_RW|PTE_G|PTE_US, %eax //file buff area can be accessed by all user (public)
+  mov $PHY_HS_CACHE_BASE_ADDR|PTE_P|PTE_RW|PTE_G|PTE_US, %eax //file buff area can be accessed by all user (public)
 __4:
   stosl
   add $4096, %eax

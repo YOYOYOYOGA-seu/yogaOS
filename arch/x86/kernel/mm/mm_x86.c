@@ -75,15 +75,15 @@ void page_missing(uint32_t addr)
 void zone_sysZoneInit(void)
 {
   /* fs cache zone */
-  sysMemZone[FS_CACHE].flag = STATIC;
-  sysMemZone[FS_CACHE].phyBase = PHY_FILE_BUFF_BASE_ADDR;
-  sysMemZone[FS_CACHE].linearBase = FILE_BUFF_BASE_ADDR;
-  sysMemZone[FS_CACHE].totalPages  = SYS_FILE_BUFF_SIZE >> PAGE_SIZE_ORDER;
-  sysMemZone[FS_CACHE].freePages = sysMemZone[FS_CACHE].totalPages - 
-                                    (sysMemZone[FS_CACHE].totalPages*sizeof(page_t))/PAGE_SIZE;
-  sysMemZone[FS_CACHE].managedPages  = sysMemZone[FS_CACHE].freePages;
+  sysMemZone[HS_CACHE].flag = STATIC;
+  sysMemZone[HS_CACHE].phyBase = PHY_HS_CACHE_BASE_ADDR;
+  sysMemZone[HS_CACHE].linearBase = HS_CACHE_BASE_ADDR;
+  sysMemZone[HS_CACHE].totalPages  = SYS_HS_CACHE_SIZE >> PAGE_SIZE_ORDER;
+  sysMemZone[HS_CACHE].freePages = sysMemZone[HS_CACHE].totalPages - 
+                                    (sysMemZone[HS_CACHE].totalPages*sizeof(page_t))/PAGE_SIZE;
+  sysMemZone[HS_CACHE].managedPages  = sysMemZone[HS_CACHE].freePages;
   /* fs cache(disk R/W buf)'s mm desc need bootstrap(alloc from fs cache area) */
-  sysMemZone[FS_CACHE].pPageDescArray = (page_t *)(FILE_BUFF_BASE_ADDR + sysMemZone[FS_CACHE].freePages*PAGE_SIZE); 
+  sysMemZone[HS_CACHE].pPageDescArray = (page_t *)(HS_CACHE_BASE_ADDR + sysMemZone[HS_CACHE].freePages*PAGE_SIZE); 
   
   /* idle area zone */
   sysMemZone[IDLE_AREA].flag = DYNAMIC;
