@@ -1,10 +1,10 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-18 00:59:44
- * @LastEditTime 2020-08-08 20:19:32
+ * @LastEditTime 2022-04-14 22:17:03
  * @LastEditors Shi Zhangkun
  * @Description none
- * @FilePath /project/include/libh/errno.h
+ * @FilePath /yogaOS/include/libh/errno.h
  */
 #ifndef __ERRNO_H
 #define __ERRNO_H
@@ -148,6 +148,10 @@ typedef enum{
 #define E_OUT_LIST_VALUE        1001/* Out the list max value when insert circle list  */
 #define E_NOT_IN_LIST           1002
 #define E_ITEM_NUM_ERR          1003
+
+// map about
+#define E_HMAP_KEY_EXIST        1005/* key already exist in the map  */
+
 // queue about 
 #define E_QUEUE_NULL_P          1011
 #define E_QUEUE_FULL            1012

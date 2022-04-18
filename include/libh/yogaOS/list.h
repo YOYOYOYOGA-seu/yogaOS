@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-21 20:59:03
- * @LastEditTime 2022-04-14 20:40:13
+ * @LastEditTime 2022-04-18 12:50:48
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /yogaOS/include/libh/yogaOS/list.h
@@ -72,7 +72,7 @@ struct list {
  * @param 
  * @retval 
  */
-#define miniList_matchTemplate(pHead,pItem,__expl,__operator,__expr,__listItemObjName) {  \
+#define __miniList_matchTemplate(pHead,pItem,__expl,__operator,__expr,__listItemObjName) {  \
   if((pHead)->firstItem != 0&&(pHead)->value > 0){ \
     void *pTempHead = (pHead)->firstItem; \
     while(!(__expl __operator __expr)) \
@@ -102,7 +102,7 @@ struct list {
  * @retval 
  */
 #define miniList_matchMtoV(pHead,pItem,__expl,__operator,__expr,__listItemObjName) \
-          miniList_matchTemplate(pHead,pItem,(pHead)->firstItem->__expl,__operator,__expr,__listItemObjName)
+          __miniList_matchTemplate(pHead,pItem,(pHead)->firstItem->__expl,__operator,__expr,__listItemObjName)
 /**
  * @brief match a item in list, search condition is the relationship between item member and item member
  * @note  
@@ -115,8 +115,38 @@ struct list {
  * @retval 
  */
 #define miniList_matchMtoM(pHead,pItem,__expl,__operator,__expr,__listItemObjName) \
-          miniList_matchTemplate(pHead,pItem,(pHead)->firstItem->__expl,__operator,(pHead)->firstItem->__expr,__listItemObjName)
+          __miniList_matchTemplate(pHead,pItem,(pHead)->firstItem->__expl,__operator,(pHead)->firstItem->__expr,__listItemObjName)
  
+/**
+ * @brief match a item in list by function
+ * @note  
+ * @param {miniList_t *} pHead : list pHead 
+ * @param {<type*>} pItem : return the match result in this point 
+ * @param {} equalFunc : compare function
+ * @param {} Member : member of the item struct
+ * @param {} target : match target
+ * @param {} __listItemObjName : the name of the miniListItem object 
+ * @retval 
+ */
+#define miniList_matchByFunc(pHead,pItem, equalFunc, Member, target,__listItemObjName) {  \
+  if((pHead)->firstItem != 0&&(pHead)->value > 0){ \
+    void *pTempHead = (pHead)->firstItem; \
+    while(!equalFunc((pHead)->firstItem->Member, target)) \
+    { \
+      (pHead)->firstItem = (pHead)->firstItem->__listItemObjName.pNext; \
+      if((pHead)->firstItem == pTempHead) \
+      { \
+        (pHead)->firstItem = 0; \
+        break; \
+      } \
+    } \
+    pItem = (pHead)->firstItem; \
+    (pHead)->firstItem = pTempHead; \
+  }else{ \
+    pItem = 0; \
+  } \
+}
+
 /**
  * @brief  insert a item to a mini list
  * @note  don't support circle, it mean's the firstItem.pPrevious and lastItem.pNext are both 0

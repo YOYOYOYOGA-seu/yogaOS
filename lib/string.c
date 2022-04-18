@@ -1,10 +1,10 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-04-18 04:10:44
- * @LastEditTime 2020-05-19 00:36:45
+ * @LastEditTime 2022-04-18 16:18:10
  * @LastEditors Shi Zhangkun
  * @Description none
- * @FilePath /project/lib/string.c
+ * @FilePath /yogaOS/lib/string.c
  */
 #include "string.h"
 /**
@@ -63,4 +63,19 @@ __attribute__((weak))int memcmp(const void *str1, const void *str2, size_t n)
       return ((const char*)str1)[i] - ((const char*)str2)[i];
   }
   return 0;
+}
+
+/**
+ * @brief  gernal memory area compare
+ * @note  compare two memory area
+ * @param {type} none
+ * @retval 0: equal  num: first different char's different value
+ */
+__attribute__((weak))size_t strlen(const char *str)
+{
+  if (!str) return 0;
+  int len = 0;
+  while (*str++ != '\0')
+    len++;
+  return len;
 }
