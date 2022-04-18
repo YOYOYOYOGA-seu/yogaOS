@@ -22,6 +22,7 @@
     "cstdio": "c",
     "type_traits": "c",
     "typeinfo": "c",
-    "limits": "cpp"
+    "limits": "cpp",
+    "mm.h": "c"
   }
 }
