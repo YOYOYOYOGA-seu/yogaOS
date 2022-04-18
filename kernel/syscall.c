@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-03-07 22:35:04
- * @LastEditTime 2022-04-18 13:17:40
+ * @LastEditTime 2022-04-18 16:28:03
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /yogaOS/kernel/syscall.c
@@ -13,6 +13,7 @@
 #include "tty.h"
 #include "request.h"
 #include "kernel.h"
+#include "server.h"
 #include "mm.h"
 #include "string.h"
 
@@ -189,7 +190,7 @@ __attribute__((weak)) int sys_open(void)
 
 /**
  * @brief  
- * @note  
+ * @note  malloc() in user mode worked by missing page interrupt rather than this systemcall
  * @param {type} none
  * @retval none
  */
@@ -226,6 +227,33 @@ __attribute__((weak)) int sys_free(int flag, void* ptr)
   }
   return 0;
 }
+
+/**
+ * @brief  
+ * @note  
+ * @param {type} none
+ * @retval none
+ */
+__attribute__((weak)) int sys_serv(int flag, char* name)
+{
+  switch (flag)
+  {
+  case 0: //reg serv
+    (int)server_reg(name, sched_getCurrentPID());
+    break;
+  case 1: //remove serv
+    (int)server_remove(name, sched_getCurrentPID());
+    break;
+  case 2: //remove serv
+    (int)server_search(name);
+    break;
+  default:
+    panic("system call: sys_serv() invaild flag");
+    break;
+  }
+  return 0;
+}
+
 
 /**
  * @brief  

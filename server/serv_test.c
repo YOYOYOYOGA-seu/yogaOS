@@ -1,17 +1,19 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-05-19 03:29:27
- * @LastEditTime 2020-11-15 10:02:42
+ * @LastEditTime 2022-04-18 16:35:42
  * @LastEditors Shi Zhangkun
  * @Description none
- * @FilePath /project/server/serv_test.c
+ * @FilePath /yogaOS/server/serv_test.c
  */ 
 
 #include "yogaOS/types.h"
-#include "server.h"
+#include "yogaOS/serv.h"
 #include "unistd.h"
 #include "yogaOS/req.h"
 #include "errno.h"
+
+#define SERVER_TEST_NAME "SERV_TEST"
 
 /**
  * @brief  
@@ -27,6 +29,7 @@ void server_test(void)
     if(reqw(&req)!= ENOERR)
       continue;
     sleep(2);
+    serv_reg(SERVER_TEST_NAME);
     switch (req.type)
     {
     case 0:
@@ -42,7 +45,6 @@ void server_test(void)
       reqa(&req);
       break;
     }
-   
   }
-  
+  serv_remove(SERVER_TEST_NAME);
 }

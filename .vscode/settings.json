@@ -30,6 +30,9 @@
     "vfs.h": "c",
     "mount.h": "c",
     "types.h": "c",
-    "hmap.h": "c"
-  }
+    "hmap.h": "c",
+    "list.h": "c",
+    "device.h": "c"
+  },
+  "C_Cpp.errorSquiggles": "Disabled"
 }

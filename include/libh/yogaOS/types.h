@@ -1,10 +1,10 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-17 22:12:51
- * @LastEditTime 2020-12-30 22:42:53
+ * @LastEditTime 2022-04-18 15:52:35
  * @LastEditors Shi Zhangkun
  * @Description none
- * @FilePath /project/include/libh/yogaOS/types.h
+ * @FilePath /yogaOS/include/libh/yogaOS/types.h
  */
 #ifndef __TYPE_H
 #define __TYPE_H
@@ -40,7 +40,8 @@ typedef enum{
   SYS_OPEN_VECTOR,
   SYS_MALLOC_VECTOR,
   SYS_FREE_VECTOR,
-  
+  SYS_SERV_VECTOR,
+
   SYS_PANIC_VECTOR
 }syscall_vector_t;
 

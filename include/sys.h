@@ -1,10 +1,10 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-03-07 22:02:50
- * @LastEditTime 2020-12-30 22:40:55
+ * @LastEditTime 2022-04-18 15:53:17
  * @LastEditors Shi Zhangkun
  * @Description warnning!! this file can only be included once!!!
- * @FilePath /project/include/sys.h
+ * @FilePath /yogaOS/include/sys.h
  */
 #ifndef __SYS_H
 #define __SYS_H
@@ -26,13 +26,13 @@ extern int sys_open();
 
 extern int sys_malloc();
 extern int sys_free();
-
+extern int sys_serv();
 extern int sys_panic();
 /* *****you must correspond system call number in header file include/libh/yogaOS/types.h !!!***** */
 
 /* ------------------------------------- system call handler func vector --------------------------------------- */
 void * sys_call_table[]={sys_request,sys_exit,sys_fork,sys_sleep,sys_wait,sys_kill, \
                         sys_excve,sys_getPID, sys_getTime,sys_write,sys_read,sys_open, \
-                        sys_malloc,sys_free,sys_panic};
+                        sys_malloc,sys_free,sys_serv,sys_panic};
 int numOfSystemCalls = sizeof(sys_call_table)/sizeof(void *);
 #endif
