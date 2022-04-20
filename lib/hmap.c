@@ -1,10 +1,10 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2022-04-14 21:01:03
- * @LastEditTime 2022-04-18 13:39:03
+ * @LastEditTime 2022-04-19 03:32:23
  * @LastEditors Shi Zhangkun
  * @Description none
- * @FilePath /yogaOS/lib/hmap.c
+ * @FilePath /project/lib/hmap.c
  */
 #include "yogaOS/list.h"
 #include "yogaOS/hmap.h"
@@ -27,10 +27,10 @@ static void default_clearFunc(hashMap_t* map);
 error_t hashMap_init(hashMap_t* map, void* mem, size_t size)
 {
 
-  if (!map || !map->bucket || !map->bucketSize) return EFAULT;
+  if (!map || !mem || !size) return EFAULT;
   *(size_t*)(&map->size) = 0;
   *(size_t*)(&map->bucketSize) = size/sizeof(*map->bucket);
-  *(miniList_t(mapItem_t)**)(map->bucketSize) = mem;
+  *(miniList_t(mapItem_t)**)(&map->bucket) = mem;
   *(putFunc_t*)(&map->put) = default_putFunc;
   *(getFunc_t*)(&map->get) = default_getFunc;
   *(rmFunc_t*)(&map->remove) = default_rmFunc;
@@ -155,9 +155,9 @@ error_t default_putFunc(hashMap_t* map, void * key, void* value)
   if (!map) return EFAULT;
   mapItem_t* item = (mapItem_t*)(value + map->offset);
   item->key = key;
-  size_t index = map->hashCode(map, item->key);
-  if (__getFromList(map, index%map->bucketSize, item->key)) return E_HMAP_KEY_EXIST;
-  miniList_insertHead(&map->bucket[index%map->bucketSize], item, lru);
+  size_t index = map->hashCode(map, item->key)%map->bucketSize;
+  if (__getFromList(map, index, item->key)) return E_HMAP_KEY_EXIST;
+  miniList_insertHead(&map->bucket[index], item, lru);
   return ENOERR;
 }
 

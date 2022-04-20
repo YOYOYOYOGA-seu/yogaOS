@@ -31,7 +31,7 @@ LDS_FILE := $(LDS_FILE_NAME)
 # output kernel file define
 KERNEL_FILE_NAME := kernel.bin
 KERNEL_FILE := $(x86_OBJ_DIR)/$(KERNEL_FILE_NAME)
-KERNEL_DBG_FILE_NAME := $(patsubst %.bin,%_dbg.bin,$(KERNEL_FILE_NAME))
+KERNEL_DBG_FILE_NAME := $(patsubst %.bin,%_dbg.elf,$(KERNEL_FILE_NAME))
 KERNEL_DBG_FILE := $(x86_OBJ_DIR)/$(KERNEL_DBG_FILE_NAME)
 default:
 	@make -C $(x86_KERNEL_DIR)	$(TAG_FLAG)  -s

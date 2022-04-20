@@ -1,10 +1,10 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-05-19 03:29:27
- * @LastEditTime 2022-04-18 16:35:42
+ * @LastEditTime 2022-04-19 03:12:11
  * @LastEditors Shi Zhangkun
  * @Description none
- * @FilePath /yogaOS/server/serv_test.c
+ * @FilePath /project/server/serv_test.c
  */ 
 
 #include "yogaOS/types.h"
@@ -24,12 +24,13 @@
 void server_test(void)
 {
   request_t req;
+  serv_reg(SERVER_TEST_NAME);
   while(1)
   {
     if(reqw(&req)!= ENOERR)
       continue;
     sleep(2);
-    serv_reg(SERVER_TEST_NAME);
+    
     switch (req.type)
     {
     case 0:

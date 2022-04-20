@@ -94,9 +94,8 @@ int main(void){
   initMemManage();
   sched_initScheduler();
   init8254Timer();
-  server_init();
-  
   task_creatNewSysTask(init_task,512,1,10,"init_task\0");
+  server_init();
   task_creatNewSysTask(idle_task,512,1,10,"idle_task\0");
   task_creatNewSysTask(testTask2,512,1,0,"testTask2\0");
   task_creatNewSysTask(testTask3,512,1,0,"testTask3\0");

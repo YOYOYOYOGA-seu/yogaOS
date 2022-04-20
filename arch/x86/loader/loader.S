@@ -13,10 +13,8 @@ emptyMsg:
   .fill 256 - (emptyMsg - loadMsg)
 memChkBuf:
 .fill 256
-secLoadBuff:
-.fill 512
-fat1LoadBuff:
-.fill 512
+dumpArea:
+.fill 2*512
 memChkNumber: 
  .long 0
 __empty_sys_data:
@@ -352,16 +350,16 @@ __findInThisSec:
   movw %es:(%si), %ax
   add $FILE_BLOCK_SEC_BASE - 2, %ax
   movw %ax,  currentSectors
-  mov $1, %cl
+  mov $4, %cl
   mov BPB_RsvdSecCnt, %ax
   mov $SEC_BUFF_BASE_ADDR, %bx
   call readSector
 __transferFAT1:
   mov $FAT1_BUFF_ADDR, %ax
-  mov %ax,%di
+  mov %ax, %di
   mov $3, %si
   add $SEC_BUFF_BASE_ADDR, %si
-  mov $510/2, %cx
+  mov $510*2, %cx
 __loopTrasFAT1:
   movw (%si), %ax
   and $0x0fff, %ax
@@ -385,10 +383,11 @@ copyCode:
   mov %ax, %di
   sub $FILE_BLOCK_SEC_BASE, %di
   shl $1, %di
+  add $FAT1_BUFF_ADDR, %di
 __copyLoop:
   mov $1, %cl
   call readSector
-  mov %gs:(%di), %ax
+  mov (%di), %ax
   cmp $0xfff, %ax
   je __finishLoad
   add BPB_BytsPerSec, %bx
@@ -396,6 +395,7 @@ __copyLoop:
   mov %ax, %di
   sub $FILE_BLOCK_SEC_BASE, %di
   shl $1, %di
+  add $FAT1_BUFF_ADDR, %di
   jmp __copyLoop
 __finishLoad:
   mov $strFinish, %di
@@ -545,6 +545,11 @@ __nop_loop:
   ret
 
 __label_end_cod16:
+
+secLoadBuff:
+.fill 4*512
+fat1LoadBuff:
+.fill 6*512
 
 
 

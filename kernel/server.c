@@ -1,10 +1,10 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2022-04-18 16:05:00
- * @LastEditTime 2022-04-18 16:42:05
+ * @LastEditTime 2022-04-19 03:15:29
  * @LastEditors Shi Zhangkun
  * @Description none
- * @FilePath /yogaOS/kernel/server.c
+ * @FilePath /project/kernel/server.c
  */
 #include "server.h"
 #include "sched.h"
@@ -35,10 +35,10 @@ extern void server_VFS(void);
 error_t server_init()
 {
   hashMap_init(&serverMap, bucket, sizeof(bucket));
-  task_creatNewSysTask(server_VFS,512,0,0,"server_vfs\0");
+  //task_creatNewSysTask(server_VFS,512,0,0,"server_vfs\0");
   task_creatNewSysTask(server_tty,512,0,0,"server_tty\0");
-  task_creatNewSysTask(server_hd,512,0,0,"server_hd\0");
   task_creatNewSysTask(server_test,512,0,0,"server_test\0");
+  task_creatNewSysTask(server_hd,512,0,0,"server_hd\0");
   return ENOERR;
 }
 
@@ -55,7 +55,7 @@ error_t server_reg(char* name, pid_t pid)
   item->name = kmalloc(strlen(name));
   strcpy(item->name, name);
   item->pid = pid;
-  return serverMap.put(&serverMap, item->name, &item);
+  return serverMap.put(&serverMap, item->name, item);
 }
 
 /**
