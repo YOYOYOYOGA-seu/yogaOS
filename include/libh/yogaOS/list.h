@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-21 20:59:03
- * @LastEditTime 2022-04-18 12:50:48
+ * @LastEditTime 2022-04-27 23:01:52
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /yogaOS/include/libh/yogaOS/list.h
@@ -32,9 +32,9 @@ struct list {
   listItem_t *pFirstItem;
 }; 
 
-/** A mini list creat define, this define can creat a struct obj that 
- * using the specified input type, so it can easily embed into any data
- * struct and can opreate the struct as a list item.
+/** A mini list (ring list) creat define, this define can creat a struct obj that 
+ * using the specified input type, so it can easily embed into any data struct 
+ * and can opreate the struct as a list item.
  * 
  * for example :
  *         miniList_t(type) listHead;
@@ -122,8 +122,8 @@ struct list {
  * @note  
  * @param {miniList_t *} pHead : list pHead 
  * @param {<type*>} pItem : return the match result in this point 
- * @param {} equalFunc : compare function
- * @param {} Member : member of the item struct
+ * @param {} equalFunc : compare function (bool func(Member, target))
+ * @param {} Member : member of the list item struct 
  * @param {} target : match target
  * @param {} __listItemObjName : the name of the miniListItem object 
  * @retval 
@@ -148,8 +148,84 @@ struct list {
 }
 
 /**
+ * @brief  insert a item to a mini list by range
+ * @note 
+ * @param {miniList_t *} pHead : list pHead 
+ * @param {<type>} pItem : point to the item waitting to insert
+ * @param {} __operator : operator, like  < , >
+ * @param {} __rangeItemObjName : ranged item name
+ * @param {} __listItemObjName : the name of the miniListItem object
+ * @retval none
+ */
+#define miniList_insert(pHead,pItem, __operator, __rangeItemObjName, __listItemObjName) {   \
+          if((pHead)->firstItem != 0){   \
+            void *pTempHead = (pHead)->firstItem; \
+            int ifHead = 1; \
+            while (!((pItem)->__rangeItemObjName __operator ((pHead)->firstItem->__rangeItemObjName))) { \
+              (pHead)->firstItem = (pHead)->firstItem->__listItemObjName.pNext;  \
+               ifHead = 0; \
+              if ((pHead)->firstItem == pTempHead) { \
+                break; \
+              } \
+            } \
+            (pItem)->__listItemObjName.pNext = (pHead)->firstItem;  \
+            (pItem)->__listItemObjName.pPrevious = (pHead)->firstItem->__listItemObjName.pPrevious; \
+            (pHead)->firstItem->__listItemObjName.pPrevious->__listItemObjName.pNext = (pItem);  \
+            (pHead)->firstItem->__listItemObjName.pPrevious = (pItem);  \
+            if ((pHead)->firstItem == pTempHead && ifHead) { \
+              (pHead)->firstItem = (pItem); \
+            } else { \
+              (pHead)->firstItem = pTempHead; \
+            } \
+          }else{ \
+            (pItem)->__listItemObjName.pNext = (pItem);  \
+            (pItem)->__listItemObjName.pPrevious = (pItem); \
+            (pHead)->firstItem = (pItem); \
+          } \
+          (pHead)->value++;   \
+        }
+
+/**
+ * @brief  insert a item to a mini list by range
+ * @note 
+ * @param {miniList_t *} pHead : list pHead 
+ * @param {<type>} pItem : point to the item waitting to insert
+ * @param {} __operatorFunc : operator function
+ * @param {} __rangeItemObjName : ranged item name
+ * @param {} __listItemObjName : the name of the miniListItem object
+ * @retval none
+ */
+#define miniList_insertByFunc(pHead,pItem, __operatorFunc, __rangeItemObjName, __listItemObjName) {   \
+          if((pHead)->firstItem != 0){   \
+            void *pTempHead = (pHead)->firstItem; \
+            int ifHead = 1; \
+            while (!__operatorFunc((pItem)->__rangeItemObjName,((pHead)->firstItem->__rangeItemObjName))) { \
+              (pHead)->firstItem = (pHead)->firstItem->__listItemObjName.pNext;  \
+               ifHead = 0; \
+              if ((pHead)->firstItem == pTempHead) { \
+                break; \
+              } \
+            } \
+            (pItem)->__listItemObjName.pNext = (pHead)->firstItem;  \
+            (pItem)->__listItemObjName.pPrevious = (pHead)->firstItem->__listItemObjName.pPrevious; \
+            (pHead)->firstItem->__listItemObjName.pPrevious->__listItemObjName.pNext = (pItem);  \
+            (pHead)->firstItem->__listItemObjName.pPrevious = (pItem);  \
+            if ((pHead)->firstItem == pTempHead && ifHead) { \
+              (pHead)->firstItem = (pItem); \
+            } else { \
+              (pHead)->firstItem = pTempHead; \
+            } \
+          }else{ \
+            (pItem)->__listItemObjName.pNext = (pItem);  \
+            (pItem)->__listItemObjName.pPrevious = (pItem); \
+            (pHead)->firstItem = (pItem); \
+          } \
+          (pHead)->value++;   \
+        }
+
+/**
  * @brief  insert a item to a mini list
- * @note  don't support circle, it mean's the firstItem.pPrevious and lastItem.pNext are both 0
+ * @note  
  * @param {miniList_t *} pHead : list pHead 
  * @param {<type>} pItem : point to the item waitting to insert
  * @param {} __listItemObjName : the name of the miniListItem object
@@ -170,7 +246,7 @@ struct list {
         }
 /**
  * @brief  insert a item to a mini list
- * @note  don't support circle, it mean's the firstItem.pPrevious and lastItem.pNext are both 0
+ * @note  
  * @param {miniList_t *} pHead : list pHead 
  * @param {<type>} pItem : point to the item waitting to insert
  * @param {} __listItemObjName : the name of the miniListItem object

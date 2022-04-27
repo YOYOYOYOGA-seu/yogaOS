@@ -1,10 +1,10 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2022-04-14 21:01:03
- * @LastEditTime 2022-04-19 03:32:23
+ * @LastEditTime 2022-04-27 13:57:57
  * @LastEditors Shi Zhangkun
  * @Description none
- * @FilePath /project/lib/hmap.c
+ * @FilePath /yogaOS/lib/hmap.c
  */
 #include "yogaOS/list.h"
 #include "yogaOS/hmap.h"
@@ -75,6 +75,21 @@ error_t hashMap_setEqualFunction(hashMap_t* map, equalFunc_t func)
  * @brief  
  * @note  
  * @param {hashMap_t*} map
+ * @param {lessFunc_t} func
+ * @retval none
+ */
+error_t hashMap_setLessFunction(hashMap_t* map, lessFunc_t func)
+{
+  if (!func) return EFAULT;
+  *(lessFunc_t*)(&map->less) = func;
+  return ENOERR;
+}
+
+
+/**
+ * @brief  
+ * @note  
+ * @param {hashMap_t*} map
  * @param {size_t} index
  * @param {void*} key
  * @retval none
@@ -139,8 +154,33 @@ int default_equalFunc_int(void * key1, void * key2)
  */
 int default_equalFunc_string(void * key1, void * key2)
 {
-  return strcmp(key1, key2);
+  return (strcmp(key1, key2) == 0);
 }
+
+/**
+ * @brief  
+ * @note  
+ * @param {void *} key1
+ * @param {void *} key2
+ * @retval none
+ */
+int default_lessFunc_int(void * key1, void * key2)
+{
+  return (size_t)(key1) < (size_t)(key2);
+}
+
+/**
+ * @brief  
+ * @note  
+ * @param {void *} key1
+ * @param {void *} key2
+ * @retval none
+ */
+int default_lessFunc_string(void * key1, void * key2)
+{
+  return (strcmp(key1, key2) < 0);
+}
+
 
 /**
  * @brief  
@@ -157,7 +197,8 @@ error_t default_putFunc(hashMap_t* map, void * key, void* value)
   item->key = key;
   size_t index = map->hashCode(map, item->key)%map->bucketSize;
   if (__getFromList(map, index, item->key)) return E_HMAP_KEY_EXIST;
-  miniList_insertHead(&map->bucket[index], item, lru);
+  miniList_insertByFunc(&map->bucket[index], item, map->less, key, lru);
+  *(size_t*)(&map->size)++;
   return ENOERR;
 }
 
@@ -191,6 +232,7 @@ void default_rmFunc(hashMap_t* map, void * key)
   if (matchRes)
   {
     miniList_remove(&map->bucket[index%map->bucketSize], matchRes, lru);
+    *(size_t*)(&map->size)--;
   }
   return;
 }
