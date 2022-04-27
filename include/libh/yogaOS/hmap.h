@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2022-04-14 14:33:27
- * @LastEditTime 2022-04-26 14:23:58
+ * @LastEditTime 2022-04-28 01:42:36
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /yogaOS/include/libh/yogaOS/hmap.h
@@ -25,8 +25,8 @@ struct mapItem {
 typedef miniList_t(mapItem_t) hashMapBucket_t;
 
 typedef size_t(*hashFunc_t)(hashMap_t* map, void * key);
-typedef int(*equalFunc_t)(void * key1, void * key2);
-typedef int(*lessFunc_t)(void * key1, void * key2);
+typedef int(*equalFunc_t)(mapItem_t * item1, mapItem_t * item2);
+typedef int(*lessFunc_t)(mapItem_t * item1, mapItem_t * item2);
 typedef error_t(*putFunc_t)(hashMap_t* map, void * key, void* value);
 typedef void*(*getFunc_t)(hashMap_t* map, void * key);
 typedef void(*rmFunc_t)(hashMap_t* map, void * key);
@@ -58,7 +58,7 @@ struct hashMap {
             .offset = offsetof(TYPE, ENTRYNAME),\
             .bucket = NULL, \
             .hashCode = default_hashFunc_int, \
-            .equal = default_equalFunc_int \
+            .equal = default_equalFunc_int, \
             .less = default_lessFunc_int \
         }
 
@@ -72,11 +72,11 @@ struct hashMap {
         }
 
 size_t default_hashFunc_int(hashMap_t* map, void * key);
-int default_equalFunc_int(void * key1, void * key2);
-int default_lessFunc_int(void * key1, void * key2);
+int default_equalFunc_int(mapItem_t * item1, mapItem_t * item2);
+int default_lessFunc_int(mapItem_t * item1, mapItem_t * item2);
 size_t default_hashFunc_string(hashMap_t* map, void * key);
-int default_equalFunc_string(void * key1, void * key2);
-int default_lessFunc_string(void * key1, void * key2);
+int default_equalFunc_string(mapItem_t * item1, mapItem_t * item2);
+int default_lessFunc_string(mapItem_t * item1, mapItem_t * item2);
 
 
 error_t hashMap_init(hashMap_t* map, void* mem, size_t size); 

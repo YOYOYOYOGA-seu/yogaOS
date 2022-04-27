@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-21 20:59:03
- * @LastEditTime 2022-04-27 23:01:52
+ * @LastEditTime 2022-04-28 01:10:14
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /yogaOS/include/libh/yogaOS/list.h
@@ -122,16 +122,14 @@ struct list {
  * @note  
  * @param {miniList_t *} pHead : list pHead 
  * @param {<type*>} pItem : return the match result in this point 
- * @param {} equalFunc : compare function (bool func(Member, target))
- * @param {} Member : member of the list item struct 
- * @param {} target : match target
  * @param {} __listItemObjName : the name of the miniListItem object 
+ * @param {} matchFunc : match function (bool equal(itemType_t* a, Args...))
  * @retval 
  */
-#define miniList_matchByFunc(pHead,pItem, equalFunc, Member, target,__listItemObjName) {  \
+#define miniList_matchByFunc(pHead,pItem,__listItemObjName, matchFunc, ...) {  \
   if((pHead)->firstItem != 0&&(pHead)->value > 0){ \
     void *pTempHead = (pHead)->firstItem; \
-    while(!equalFunc((pHead)->firstItem->Member, target)) \
+    while(!matchFunc((pHead)->firstItem, __VA_ARGS__)) \
     { \
       (pHead)->firstItem = (pHead)->firstItem->__listItemObjName.pNext; \
       if((pHead)->firstItem == pTempHead) \
@@ -152,7 +150,7 @@ struct list {
  * @note 
  * @param {miniList_t *} pHead : list pHead 
  * @param {<type>} pItem : point to the item waitting to insert
- * @param {} __operator : operator, like  < , >
+ * @param {} __operator : operator for range, like  < , >
  * @param {} __rangeItemObjName : ranged item name
  * @param {} __listItemObjName : the name of the miniListItem object
  * @retval none
@@ -190,16 +188,15 @@ struct list {
  * @note 
  * @param {miniList_t *} pHead : list pHead 
  * @param {<type>} pItem : point to the item waitting to insert
- * @param {} __operatorFunc : operator function
- * @param {} __rangeItemObjName : ranged item name
+ * @param {} cmpFunc : compare function for range(bool compare(itemType_t* a, itemType_t* b))
  * @param {} __listItemObjName : the name of the miniListItem object
  * @retval none
  */
-#define miniList_insertByFunc(pHead,pItem, __operatorFunc, __rangeItemObjName, __listItemObjName) {   \
+#define miniList_insertByFunc(pHead,pItem, cmpFunc, __listItemObjName) {   \
           if((pHead)->firstItem != 0){   \
             void *pTempHead = (pHead)->firstItem; \
             int ifHead = 1; \
-            while (!__operatorFunc((pItem)->__rangeItemObjName,((pHead)->firstItem->__rangeItemObjName))) { \
+            while (!cmpFunc((pItem),((pHead)->firstItem))) { \
               (pHead)->firstItem = (pHead)->firstItem->__listItemObjName.pNext;  \
                ifHead = 0; \
               if ((pHead)->firstItem == pTempHead) { \

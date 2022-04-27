@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2022-04-14 21:01:03
- * @LastEditTime 2022-04-27 13:57:57
+ * @LastEditTime 2022-04-28 01:43:04
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /yogaOS/lib/hmap.c
@@ -97,7 +97,8 @@ error_t hashMap_setLessFunction(hashMap_t* map, lessFunc_t func)
 static mapItem_t* __getFromList(hashMap_t* map, size_t index, void* key) 
 {
   mapItem_t* matchRes = NULL;
-  miniList_matchByFunc(&map->bucket[index], matchRes, map->equal, key, key, lru);
+  mapItem_t temp = {.key = key};
+  miniList_matchByFunc(&map->bucket[index], matchRes, lru,  map->equal, &temp);
   return matchRes;
 }
 
@@ -140,9 +141,9 @@ size_t default_hashFunc_string(hashMap_t* map, void * key)
  * @param {void *} key2
  * @retval none
  */
-int default_equalFunc_int(void * key1, void * key2)
+int default_equalFunc_int(mapItem_t * item1, mapItem_t * item2)
 {
-  return (size_t)(key1) == (size_t)(key2);
+  return (size_t)(item1->key) == (size_t)(item2->key);
 }
 
 /**
@@ -152,9 +153,9 @@ int default_equalFunc_int(void * key1, void * key2)
  * @param {void *} key2
  * @retval none
  */
-int default_equalFunc_string(void * key1, void * key2)
+int default_equalFunc_string(mapItem_t * item1, mapItem_t * item2)
 {
-  return (strcmp(key1, key2) == 0);
+  return (strcmp(item1->key, item2->key) == 0);
 }
 
 /**
@@ -164,9 +165,9 @@ int default_equalFunc_string(void * key1, void * key2)
  * @param {void *} key2
  * @retval none
  */
-int default_lessFunc_int(void * key1, void * key2)
+int default_lessFunc_int(mapItem_t * item1, mapItem_t * item2)
 {
-  return (size_t)(key1) < (size_t)(key2);
+  return (size_t)(item1->key) < (size_t)(item2->key);
 }
 
 /**
@@ -176,9 +177,9 @@ int default_lessFunc_int(void * key1, void * key2)
  * @param {void *} key2
  * @retval none
  */
-int default_lessFunc_string(void * key1, void * key2)
+int default_lessFunc_string(mapItem_t * item1, mapItem_t * item2)
 {
-  return (strcmp(key1, key2) < 0);
+  return (strcmp(item1->key, item2->key) < 0);
 }
 
 
@@ -197,8 +198,8 @@ error_t default_putFunc(hashMap_t* map, void * key, void* value)
   item->key = key;
   size_t index = map->hashCode(map, item->key)%map->bucketSize;
   if (__getFromList(map, index, item->key)) return E_HMAP_KEY_EXIST;
-  miniList_insertByFunc(&map->bucket[index], item, map->less, key, lru);
-  *(size_t*)(&map->size)++;
+  miniList_insertByFunc(&map->bucket[index], item, map->less, lru);
+  *(size_t*)(&map->size) = map->size + 1;
   return ENOERR;
 }
 
@@ -232,7 +233,7 @@ void default_rmFunc(hashMap_t* map, void * key)
   if (matchRes)
   {
     miniList_remove(&map->bucket[index%map->bucketSize], matchRes, lru);
-    *(size_t*)(&map->size)--;
+    *(size_t*)(&map->size) = map->size - 1;
   }
   return;
 }
