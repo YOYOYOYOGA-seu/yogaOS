@@ -32,7 +32,8 @@
     "types.h": "c",
     "hmap.h": "c",
     "list.h": "c",
-    "device.h": "c"
+    "device.h": "c",
+    "ata_controller.h": "c"
   },
   "C_Cpp.errorSquiggles": "Disabled"
 }
