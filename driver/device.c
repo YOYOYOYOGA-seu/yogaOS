@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2022-04-18 14:26:38
- * @LastEditTime 2022-05-04 14:31:37
+ * @LastEditTime 2022-05-06 21:40:54
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /yogaOS/driver/device.c
@@ -13,7 +13,7 @@
 #include "stdlib.h"
 
 hashMap_t deviceMap = HASH_MAP_WITH_INT_KEY(device_t,item);
-miniList_t(mapItem_t) devMapBucket[MAIN_DEV_NUM_SIZE];
+miniList_t(mapItem_t) devMapBucket[MAJOR_DEV_NUM_SIZE];
 
 /**
  * @brief  
@@ -25,7 +25,7 @@ miniList_t(mapItem_t) devMapBucket[MAIN_DEV_NUM_SIZE];
 static size_t hashFunc_deviceMap(hashMap_t* map, void * key)
 {
   size_t num = (size_t)(key);
-  return GET_MAIN_DEV_NUM(num);
+  return GET_MAJOR_DEV_NUM(num);
 }
 
 /**
@@ -59,7 +59,7 @@ device_t* dev_register(char* name, int major, pid_t serv, devType_t type)
       if (deviceMap.bucket[i].value == 0)
       {
         ret = malloc(sizeof(device_t));
-        SET_MAIN_DEV_NUM(ret->number, i);
+        SET_MAJOR_DEV_NUM(ret->number, i);
         SET_SEC_DEV_NUM(ret->number, 0);
         ret->serv = serv;
         ret->name = malloc(strlen(name));
@@ -69,18 +69,33 @@ device_t* dev_register(char* name, int major, pid_t serv, devType_t type)
       }
     }
   }
-  else if (major < deviceMap.bucketSize)
+  else if (major < deviceMap.bucketSize && deviceMap.bucket[major].value < SEC_DEV_NUM_SIZE)
   {
     ret = malloc(sizeof(device_t));
-    SET_MAIN_DEV_NUM(ret->number, major);
+    SET_MAJOR_DEV_NUM(ret->number, major);
     ret->serv = serv;
     ret->name = malloc(strlen(name));
     strcpy(ret->name, name);
     ret->type = type;
     if (deviceMap.bucket[major].value == 0)
+    {
       SET_SEC_DEV_NUM(ret->number, 0);
+    }
     else
-      SET_SEC_DEV_NUM(ret->number, GET_SEC_DEV_NUM((int)(deviceMap.bucket[major].firstItem->lru.pPrevious->key)) + 1);
+    {
+      mapItem_t* pItem = NULL;
+      int i = 0;
+      miniList_matchMtoV(&deviceMap.bucket[major], pItem, key, <, (void*)(i++), lru);
+      if (pItem)
+      {
+        SET_SEC_DEV_NUM(ret->number, i + 1);
+      }
+      else
+      {
+        SET_SEC_DEV_NUM(ret->number, GET_SEC_DEV_NUM((int)(deviceMap.bucket[major].firstItem->lru.pPrevious->key)) + 1);
+      }
+    }
+      
   }
 
   if (ret)
@@ -100,7 +115,7 @@ device_t* dev_register(char* name, int major, pid_t serv, devType_t type)
  * @param {devNumber_t} major
  * @retval none
  */
-error_t dev_remove(devNumber_t device)
+error_t dev_unregister(devNumber_t device)
 {
   device_t* mach = deviceMap.get(&deviceMap, (void*)((int)device));
   if (mach != NULL)
@@ -120,7 +135,7 @@ error_t dev_remove(devNumber_t device)
  */
 error_t dev_open_func(pid_t pid, devNumber_t dev)
 {
-  request_t req = {.type = (DEV_OPEN << sizeof(devNumber_t))&(dev), .length = 0, .pMesg = NULL};
+  request_t req = {.type = SET_DEV_REQ_TYPE(DEV_OPEN, dev), .length = 0, .pMesg = NULL};
   reqs(&req, pid);
   return req.type;
 }
@@ -134,7 +149,7 @@ error_t dev_open_func(pid_t pid, devNumber_t dev)
  */
 error_t dev_close_func(pid_t pid, devNumber_t dev)
 {
-  request_t req = {.type = (DEV_CLOSE << sizeof(devNumber_t))&(dev), .length = 0, .pMesg = NULL};
+  request_t req = {.type = SET_DEV_REQ_TYPE(DEV_CLOSE, dev), .length = 0, .pMesg = NULL};
   reqs(&req, pid);
   return req.type;
 }
@@ -150,7 +165,7 @@ error_t dev_close_func(pid_t pid, devNumber_t dev)
  */
 error_t dev_write_func(pid_t pid, devNumber_t dev, void* content, size_t size)
 {
-  request_t req = {.type = (DEV_WRITE << sizeof(devNumber_t))&(dev), .length = size, .pMesg = content};
+  request_t req = {.type = SET_DEV_REQ_TYPE(DEV_WRITE, dev), .length = size, .pMesg = content};
   reqs(&req, pid);
   return req.type;
 }
@@ -166,7 +181,7 @@ error_t dev_write_func(pid_t pid, devNumber_t dev, void* content, size_t size)
  */
 size_t dev_read_func(pid_t pid, devNumber_t dev, void* dest, size_t size)
 {
-  request_t req = {.type = (DEV_READ << sizeof(devNumber_t))&(dev), .length = size, .pMesg = dest};
+  request_t req = {.type = SET_DEV_REQ_TYPE(DEV_READ, dev), .length = size, .pMesg = dest};
   reqs(&req, pid);
   if(req.type != ENOERR) return 0;
   return req.length;

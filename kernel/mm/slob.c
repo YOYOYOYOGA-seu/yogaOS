@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-11-16 03:35:17
- * @LastEditTime 2022-04-14 21:29:09
+ * @LastEditTime 2022-05-06 15:52:55
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /yogaOS/kernel/mm/slob.c
@@ -354,7 +354,9 @@ void slob_free(void* ptr, zoneIndex_t zone)
  */
 void* kmalloc(size_t size)
 {
-  slob_malloc(size,IDLE_AREA);
+  void* ret = slob_malloc(size,IDLE_AREA);
+  if (ret == NULL) panic("[kernerl] kmalloc failed.\n\r");
+  return ret;
 }
 
 /**
@@ -365,7 +367,9 @@ void* kmalloc(size_t size)
  */
 void* fmalloc(size_t size)
 {
-  slob_malloc(size,HS_CACHE);
+  void* ret = slob_malloc(size,HS_CACHE);
+  if (ret == NULL) panic("[kernerl] fmalloc failed.\n\r");
+  return ret;
 }
 
 /**

@@ -1,15 +1,15 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-09-12 02:53:06
- * @LastEditTime 2020-09-12 05:49:13
+ * @LastEditTime 2022-05-06 21:51:10
  * @LastEditors Shi Zhangkun
  * @Description none
- * @FilePath /project/include/libh/yogaOS/malloc.h
+ * @FilePath /yogaOS/include/libh/yogaOS/malloc.h
  */
 #ifndef __MALLOC_H
 #define __MALLOC_H
 
-#include "types.h"
+#include "yogaOS/types.h"
 /* define -------------------------------------------------*/
 #define AIGN_SIZE sizeof(void*)  //must be the mutiply of sizeof(void*)
 #define MALLOC_USE_MEM_SIZE (4096*4096)     //only use the beginning 16M area of task heap linear addr area for malloc use
