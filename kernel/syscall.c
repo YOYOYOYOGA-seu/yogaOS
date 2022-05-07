@@ -1,10 +1,10 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-03-07 22:35:04
- * @LastEditTime 2022-04-18 16:28:03
+ * @LastEditTime 2022-05-07 17:41:37
  * @LastEditors Shi Zhangkun
  * @Description none
- * @FilePath /yogaOS/kernel/syscall.c
+ * @FilePath /project/kernel/syscall.c
  */
 
 #include "sys.h"
@@ -239,13 +239,13 @@ __attribute__((weak)) int sys_serv(int flag, char* name)
   switch (flag)
   {
   case 0: //reg serv
-    (int)server_reg(name, sched_getCurrentPID());
+    return (int)server_reg(name, sched_getCurrentPID());
     break;
   case 1: //remove serv
-    (int)server_remove(name, sched_getCurrentPID());
+    return (int)server_remove(name, sched_getCurrentPID());
     break;
   case 2: //remove serv
-    (int)server_search(name);
+    return server_search(name);
     break;
   default:
     panic("system call: sys_serv() invaild flag");

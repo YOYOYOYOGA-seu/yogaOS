@@ -1,10 +1,10 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2022-04-18 14:26:38
- * @LastEditTime 2022-05-06 21:40:54
+ * @LastEditTime 2022-05-07 17:13:03
  * @LastEditors Shi Zhangkun
  * @Description none
- * @FilePath /yogaOS/driver/device.c
+ * @FilePath /project/driver/device.c
  */
 #include "fs/device.h"
 #include "yogaOS/hmap.h"
@@ -12,7 +12,7 @@
 #include "string.h"
 #include "stdlib.h"
 
-hashMap_t deviceMap = HASH_MAP_WITH_INT_KEY(device_t,item);
+static hashMap_t deviceMap = HASH_MAP_WITH_INT_KEY(device_t,item);
 miniList_t(mapItem_t) devMapBucket[MAJOR_DEV_NUM_SIZE];
 
 /**
@@ -36,8 +36,9 @@ static size_t hashFunc_deviceMap(hashMap_t* map, void * key)
  */
 error_t dev_initManager(void)
 {
-  hashMap_init(&deviceMap, devMapBucket, sizeof(devMapBucket));
-  hashMap_setHashFunction(&deviceMap, hashFunc_deviceMap);
+  hashMap_t* map = &deviceMap;
+  hashMap_init(map, devMapBucket, sizeof(devMapBucket));
+  hashMap_setHashFunction(map, hashFunc_deviceMap);
 }
 
 /**
@@ -85,10 +86,10 @@ device_t* dev_register(char* name, int major, pid_t serv, devType_t type)
     {
       mapItem_t* pItem = NULL;
       int i = 0;
-      miniList_matchMtoV(&deviceMap.bucket[major], pItem, key, <, (void*)(i++), lru);
+      miniList_matchMtoV(&deviceMap.bucket[major], pItem, key, >, (void*)(i++), lru);
       if (pItem)
       {
-        SET_SEC_DEV_NUM(ret->number, i + 1);
+        SET_SEC_DEV_NUM(ret->number, i - 1);
       }
       else
       {

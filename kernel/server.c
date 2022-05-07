@@ -1,10 +1,10 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2022-04-18 16:05:00
- * @LastEditTime 2022-05-06 22:02:23
+ * @LastEditTime 2022-05-07 17:36:07
  * @LastEditors Shi Zhangkun
  * @Description none
- * @FilePath /yogaOS/kernel/server.c
+ * @FilePath /project/kernel/server.c
  */
 #include "server.h"
 #include "sched.h"
@@ -84,12 +84,12 @@ error_t server_remove(char* name, pid_t pid)
  * @param {char*} name
  * @retval none
  */
-pid_t server_search(char* name)
+int server_search(char* name)
 {
   serverItem_t* item = serverMap.get(&serverMap,name);
-  if (!item)
+  if (item)
   {
     return item->pid;
   }
-  return 0;
+  return -1;
 }

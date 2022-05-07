@@ -1,10 +1,10 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2022-04-18 15:56:48
- * @LastEditTime 2022-05-06 21:48:41
+ * @LastEditTime 2022-05-07 17:03:34
  * @LastEditors Shi Zhangkun
  * @Description none
- * @FilePath /yogaOS/include/libh/yogaOS/dev.h
+ * @FilePath /project/include/libh/yogaOS/dev.h
  */
 #ifndef __DEV_H
 #define __DEV_H
@@ -13,8 +13,8 @@
 #define GET_DEV_NUM(num) (dev&&0xFFFF)
 #define GET_MAJOR_DEV_NUM(dev) ((dev >> 8)&(0xFF))
 #define GET_SEC_DEV_NUM(dev) ((dev)&(0xFF))
-#define SET_MAJOR_DEV_NUM(dev, major) ((dev&0xFF)|((major&0xFF)<<8))
-#define SET_SEC_DEV_NUM(dev, sec) ((dev&0xFF00)|(sec&0xFF))
+#define SET_MAJOR_DEV_NUM(dev, major) dev = ((dev&0xFF)|((major&0xFF)<<8))
+#define SET_SEC_DEV_NUM(dev, sec) dev = ((dev&0xFF00)|(sec&0xFF))
 
 #define MAJOR_DEV_NUM_SIZE 0xFF
 #define SEC_DEV_NUM_SIZE 0xFE

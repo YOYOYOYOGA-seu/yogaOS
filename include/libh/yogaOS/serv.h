@@ -1,10 +1,10 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2022-04-18 15:56:48
- * @LastEditTime 2022-05-06 21:42:33
+ * @LastEditTime 2022-05-07 17:54:41
  * @LastEditors Shi Zhangkun
  * @Description none
- * @FilePath /yogaOS/include/libh/yogaOS/serv.h
+ * @FilePath /project/include/libh/yogaOS/serv.h
  */
 #ifndef __SERV_H
 #define __SERV_H
@@ -26,7 +26,7 @@ typedef enum {
 /* server task oprate */
 error_t serv_reg(char* name);
 error_t serv_remove(char* name);
-pid_t serv_search(char* name);
+int serv_search(char* name); //return: pid >=0, -1 not find
 
 void sfree(void *ptr); //free shared area
 void* smalloc(size_t size); //alloc a shared area(shared by all system server)

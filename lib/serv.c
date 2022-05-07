@@ -1,10 +1,10 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2022-04-18 15:59:40
- * @LastEditTime 2022-05-06 21:43:53
+ * @LastEditTime 2022-05-07 17:37:26
  * @LastEditors Shi Zhangkun
  * @Description none
- * @FilePath /yogaOS/lib/serv.c
+ * @FilePath /project/lib/serv.c
  */
 #include "yogaOS/serv.h"
 
@@ -20,7 +20,7 @@ error_t serv_remove(char* name)
   return enterSystemCall(SYS_SERV_VECTOR, 1, (int)(name), 0);
 }
 
-pid_t serv_search(char* name)
+int serv_search(char* name)
 {
   return enterSystemCall(SYS_SERV_VECTOR, 2, (int)(name), 0);
 }
