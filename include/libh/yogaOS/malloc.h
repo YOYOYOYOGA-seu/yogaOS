@@ -1,10 +1,10 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-09-12 02:53:06
- * @LastEditTime 2022-05-06 21:51:10
+ * @LastEditTime 2022-05-07 15:31:30
  * @LastEditors Shi Zhangkun
  * @Description none
- * @FilePath /yogaOS/include/libh/yogaOS/malloc.h
+ * @FilePath /project/include/libh/yogaOS/malloc.h
  */
 #ifndef __MALLOC_H
 #define __MALLOC_H
@@ -20,14 +20,14 @@ typedef struct memBlock{
 }memBlock_t;
 
 typedef struct{
-  memBlock_t *pIdeMapBase;
+  memBlock_t *pIdleMapBase;
   memBlock_t *pUsingMapBase;
-  size_t ideSize;
+  size_t idleSize;
   size_t usingSize;
   void *pBase;
   void *pTop;
   uint32_t usingBlockNum;
-  uint32_t ideBlockNum;
+  uint32_t idleBlockNum;
 }memArea_t;
 
 void * mem_getHeapLocation(void);

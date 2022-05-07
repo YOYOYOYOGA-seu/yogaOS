@@ -59,21 +59,21 @@ static error_t delFromIdeMap(memBlock_t *ptrLast,memArea_t *memArea)
   {
     if(ptrLast->pNext <= (memBlock_t *)memArea->pTop && ptrLast->pNext >= (memBlock_t *)memArea->pBase)
     {
-      /*the block size = ideBl_xxx.size + sizeof(memBlock_t),the ideBl_xxx.size was added to ideSize,
+      /*the block size = ideBl_xxx.size + sizeof(memBlock_t),the ideBl_xxx.size was added to idleSize,
       but the sizeof(memBlock_t) was added to usingSize. So you should minus both of them */
-      memArea->ideSize -= ptrLast->pNext->size; 
+      memArea->idleSize -= ptrLast->pNext->size; 
       memArea->usingSize -= sizeof(memBlock_t); 
-      memArea->ideBlockNum --; 
+      memArea->idleBlockNum --; 
       ptrLast->pNext = ptrLast->pNext->pNext;
       return 0;
     }
   }
   else
   {
-    memArea->ideSize -= memArea->pIdeMapBase->size; 
+    memArea->idleSize -= memArea->pIdleMapBase->size; 
     memArea->usingSize -= sizeof(memBlock_t); 
-    memArea->ideBlockNum --; 
-    memArea->pIdeMapBase = memArea->pIdeMapBase->pNext;
+    memArea->idleBlockNum --; 
+    memArea->pIdleMapBase = memArea->pIdleMapBase->pNext;
     return 0;
   }
   
@@ -127,15 +127,15 @@ static memBlock_t *mergeIdeBlock(memBlock_t *ptr,memArea_t *memArea)
 {
   
   /* Current ide block num, because after one merge operate, the
-  memArea->ideBlockNum would minus once ,and that would cause 
+  memArea->idleBlockNum would minus once ,and that would cause 
   the travese circulation finish earlier than it should be*/
-  uint32_t crtIdeBlockNum = memArea->ideBlockNum; 
+  uint32_t crtidleBlockNum = memArea->idleBlockNum; 
   int i;
 
-  memBlock_t *pTemp = memArea->pIdeMapBase;
+  memBlock_t *pTemp = memArea->pIdleMapBase;
   memBlock_t *pLast = NULL;
   void *pNextSpace = (char *)ptr + sizeof(memBlock_t) + ptr->size;
-  for(i = 0;(pTemp != NULL && i < crtIdeBlockNum ); i++)
+  for(i = 0;(pTemp != NULL && i < crtidleBlockNum ); i++)
   {
     if(pTemp == pNextSpace)  //pTemp point to the next continuous block of ptr
     {
@@ -173,20 +173,20 @@ static error_t addToIdeMap(memBlock_t *ptr,memArea_t *memArea)
   merge)*/
   ptr = mergeIdeBlock(ptr,memArea); 
 
-  memArea->ideBlockNum++;
-  memArea->ideSize += ptr->size ;
+  memArea->idleBlockNum++;
+  memArea->idleSize += ptr->size ;
   memArea->usingSize += sizeof(memBlock_t); 
 
-  pTemp = memArea->pIdeMapBase;
+  pTemp = memArea->pIdleMapBase;
   /* Conditon witch the block should be add at the base of map */
   if(pTemp == NULL || ptr->size <= pTemp->size)
   {
-    memArea->pIdeMapBase = ptr;
+    memArea->pIdleMapBase = ptr;
     ptr->pNext = pTemp;
     return 0;
   }
   /* Travese map */
-  for(i = 0;i < memArea->ideBlockNum; i++)
+  for(i = 0;i < memArea->idleBlockNum; i++)
   {
      /*The "if,else if" is to prevent when pTemp->pNext == NULL, access the NULL address */
     if(pTemp->pNext == NULL)
@@ -222,10 +222,10 @@ void *malloc(size_t size)
     return NULL;
   size = (size - size%AIGN_SIZE) + ((size%AIGN_SIZE)>0) * AIGN_SIZE;
   memArea_t *memArea = mem_getHeapLocation();
-  memBlock_t *pTemp = memArea->pIdeMapBase;
+  memBlock_t *pTemp = memArea->pIdleMapBase;
   memBlock_t *pNew = NULL;  //before alloc complate pNew point to the last pTemp.
   uint32_t i;
-  for(i = 0 ; (pTemp != NULL&&i < memArea->ideBlockNum); i++)
+  for(i = 0 ; (pTemp != NULL&&i < memArea->idleBlockNum); i++)
   {
     if(size + sizeof(memBlock_t) + AIGN_SIZE< pTemp->size)  //Condition to creat a new block
     {

@@ -7,6 +7,7 @@
 #include "unistd.h"
 #include "stdio.h"
 #include "yogaOS/req.h"
+#include "yogaOS/serv.h"
 #include "kernel.h"
 int a = 1;
 int b = 1;
@@ -36,14 +37,16 @@ void testTask2(void) //test scheduler
   int time = 0;
   char buf[64];
   request_t test1;
-  int * test= (int *)0x20400000;
   
   while(1)
   {
-    time++;
     test1.type = time;
-    reqs(&test1,2);
-    *test = time;
+    if (reqs(&test1,serv_search("SERV_TEST")) != ENOERR)
+    {
+      sleep(2);
+      continue;
+    }
+    time++;
     printf("/033[0;31;44m req test:%d \n\r",test1.type);
   }
 }

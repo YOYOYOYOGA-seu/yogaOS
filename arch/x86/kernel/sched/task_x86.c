@@ -1,10 +1,10 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-22 02:59:19
- * @LastEditTime 2022-05-07 15:08:09
+ * @LastEditTime 2022-05-07 15:59:31
  * @LastEditors Shi Zhangkun
  * @Description none
- * @FilePath /yogaOS/arch/x86/kernel/sched/task_x86.c
+ * @FilePath /project/arch/x86/kernel/sched/task_x86.c
  */
 #include "sched_x86.h"
 #include "page_x86.h"
@@ -116,8 +116,8 @@ error_t task_initTaskPage(PCB_t * pPCB)
 
   pL2 = page_allocOne(&pPCB->usingPageList,IDLE_AREA);
   void* heapStart = page_allocOne(&pPCB->usingPageList,IDLE_AREA);
-  heap_initMalloc(heapStart);
-  pL2[TASK_HEAP_START_ADDR/PAGE_SIZE] = pToPhy(heapStart)|PTE_P|PTE_RW|PTE_US; //user heap, can visit, r/w.
+  heap_initMalloc(heapStart, (void*)TASK_HEAP_START_ADDR);
+  pL2[(TASK_HEAP_START_ADDR/PAGE_SIZE)%(PAGE_SIZE/sizeof(pageTblItem_t))] = pToPhy(heapStart)|PTE_P|PTE_RW|PTE_US; //user heap, can visit, r/w.
   pL1[TASK_HEAP_START_ADDR>>22] = pToPhy(pL2)|PDE_P|PDE_RW|PDE_US;
   return ENOERR;
   

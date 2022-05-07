@@ -67,6 +67,6 @@ typedef struct zone{
 void zone_sysZoneInit(void);
 /* ------------------------------function declaration ----------------------------- */
 void zone_init(void);
-void heap_initMalloc(void* heapBegin);
+void heap_initMalloc(void* firstPage, void* heapBase);
 
 #endif
