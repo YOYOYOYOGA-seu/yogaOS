@@ -1,14 +1,15 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-02-22 02:59:19
- * @LastEditTime 2020-09-06 01:07:59
+ * @LastEditTime 2022-05-07 14:58:36
  * @LastEditors Shi Zhangkun
  * @Description none
- * @FilePath /project/arch/x86/kernel/sched/task_x86.c
+ * @FilePath /yogaOS/arch/x86/kernel/sched/task_x86.c
  */
 #include "sched_x86.h"
 #include "page_x86.h"
 #include "sched.h"
+#include "mm.h"
 #include "yogaOS/types.h"
 #include "errno.h"
 #include "segment.h"
@@ -109,7 +110,10 @@ error_t task_initTaskPage(PCB_t * pPCB)
 
   //alloc phy mem for page table which describe the task stack space
   pL2 = page_allocOne(&pPCB->usingPageList,IDLE_AREA);
-  pL2[TASK_RETURN_HANDLER_ADDR/4096] = pToPhy(pPCB->retFuncPage)|PTE_P|PTE_US; //task return page, user task can visit, read only.
+  void* heapStart = page_allocOne(&pPCB->usingPageList,IDLE_AREA);
+  heap_initMalloc(heapStart);
+  pL2[TASK_RETURN_HANDLER_ADDR/PAGE_SIZE] = pToPhy(pPCB->retFuncPage)|PTE_P|PTE_US; //task return page, user task can visit, read only.
+  pL2[TASK_HEAP_START_ADDR/PAGE_SIZE] = pToPhy(heapStart)|PTE_P|PTE_RW|PTE_US; //user heap, can visit, r/w.
   pL2[PAGE_SIZE/sizeof(pageTblItem_t) - 1] = pToPhy(pPCB->pStackPage)|PTE_P|PTE_RW|PTE_US; //user stack, user task can visit
   pL1[0] = pToPhy(pL2)|PDE_P|PDE_RW|PDE_US; //L1 page tabe don't restrict dpl
 

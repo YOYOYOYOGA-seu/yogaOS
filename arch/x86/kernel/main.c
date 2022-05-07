@@ -72,7 +72,6 @@ void testMalloc(void)  // test task: malloc test
 {
   int a = 1;
   void * ptr[10];
-  heap_initMalloc();  //！！！！！ 注意应该改到fork函数中实现
   while(1)
   {
     

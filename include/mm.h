@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-07-15 19:22:17
- * @LastEditTime 2022-04-18 13:14:29
+ * @LastEditTime 2022-05-07 14:57:52
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /yogaOS/include/mm.h
@@ -67,6 +67,6 @@ typedef struct zone{
 void zone_sysZoneInit(void);
 /* ------------------------------function declaration ----------------------------- */
 void zone_init(void);
-void heap_initMalloc(void);
+void heap_initMalloc(void* heapBegin);
 
 #endif

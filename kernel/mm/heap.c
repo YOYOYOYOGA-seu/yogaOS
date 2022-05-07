@@ -16,10 +16,10 @@
  * @param {type} none
  * @retval none
  */
-void heap_initMalloc(void)
+void heap_initMalloc(void* heapBegin)
 {
   
-  memArea_t* memArea = mem_getHeapLocation();  //the struct located in the start of heap
+  memArea_t* memArea = heapBegin;  //the struct located in the start of heap
   void *base = (void *)memArea + ((sizeof(memArea_t)/AIGN_SIZE) + 1)*(AIGN_SIZE);  
   /*Mem Area struct init*/
   memArea->pIdeMapBase =(memBlock_t*)base;
