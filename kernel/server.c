@@ -1,10 +1,10 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2022-04-18 16:05:00
- * @LastEditTime 2022-04-19 03:15:29
+ * @LastEditTime 2022-05-06 22:02:23
  * @LastEditors Shi Zhangkun
  * @Description none
- * @FilePath /project/kernel/server.c
+ * @FilePath /yogaOS/kernel/server.c
  */
 #include "server.h"
 #include "sched.h"
@@ -24,7 +24,7 @@ hashMapBucket_t bucket[64];
 extern void server_test(void);
 extern void server_tty(void);
 extern void server_hd(void);
-extern void server_VFS(void);
+extern void server_FS(void);
 
 /**
  * @brief  init server register
@@ -35,7 +35,7 @@ extern void server_VFS(void);
 error_t server_init()
 {
   hashMap_init(&serverMap, bucket, sizeof(bucket));
-  //task_creatNewSysTask(server_VFS,512,0,0,"server_vfs\0");
+  task_creatNewSysTask(server_FS,512,0,0,"server_fs\0");
   task_creatNewSysTask(server_tty,512,0,0,"server_tty\0");
   task_creatNewSysTask(server_test,512,0,0,"server_test\0");
   task_creatNewSysTask(server_hd,512,0,0,"server_hd\0");
