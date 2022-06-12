@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-10-24 21:01:44
- * @LastEditTime 2020-11-14 22:29:42
+ * @LastEditTime 2022-06-12 14:48:41
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/include/driver/hd.h
@@ -11,13 +11,19 @@
 #define __HD_H
 
 #include "yogaOS/types.h"
+#include "yogaOS/dev.h"
 
 #define MAX_HD_NUM 4
 #define HD_LOGIC_SECTOR_SIZE   512   //default logic sector size(LBA28)
-
+#define HD_MBR_DPT_OFFSET    0x01BE
 #define HD_TYPE_ASCII_SIZE   40
 #define HD_SERIAL_ASCII_SIZE 20
 
+typedef enum {
+  HD_CMD_READ,
+  HD_CMD_WRITE,
+  HD_CMD_FORMAT
+}hdOprType_t;
 
 typedef struct 
 {
@@ -48,17 +54,28 @@ typedef struct
 
 
 typedef struct{
-  uint32_t size;
+  uint64_t size;
   hdInfo_t info;
   uint8_t channel;  //used to flag access channel
   uint8_t port; //used to flag the hd index in the access channel(some arch like x86 one channel can connect two or more hard disk)
+  uint8_t valid;
+  devNumber_t devNum;
+  uint8_t dpt[4][16];
 }hd_t;
 
-
+typedef struct {
+  hdOprType_t cmd;
+  void *dest;
+  int startSec;
+  int counts;
+  int secSize;
+}hdOperate_t;
 
 /* ------------------------------Arch relevant function  ----------------------------- */
 int hd_controllerInit(hd_t* vector);
+int hd_operate(const hd_t* hd, hdOperate_t ctl);
 /* ------------------------------function declaration ----------------------------- */
 error_t hd_init(void);
-
+error_t hd_read(size_t hd, void *dest, size_t size);
+error_t hd_write(size_t hd, void *dest, size_t size);
 #endif

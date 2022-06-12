@@ -1,7 +1,7 @@
 /*
  * @Author Shi Zhangkun
  * @Date 2020-10-01 05:29:37
- * @LastEditTime 2020-11-15 10:26:15
+ * @LastEditTime 2022-06-12 14:48:00
  * @LastEditors Shi Zhangkun
  * @Description none
  * @FilePath /project/arch/x86/driver/x86_ata.c
@@ -49,6 +49,7 @@ inline uint8_t ata_creatPortReg(int port, int mod, uint32_t lba)
   ret |= (lba>>24)&ATA_HSx_MASK;
   return ret;
 }
+
 /**
  * @brief  
  * @note  
@@ -145,4 +146,51 @@ int hd_controllerInit(hd_t* vector)
     if(ata_traverse(&vector[i]) == ENOERR)
       i++;
   }
+}
+
+/**
+ * @brief  
+ * @note  
+ * @param {hd_t*} hd
+ * @param {hdOperate_t} ctl
+ * @retval none
+ */
+int hd_operate(const hd_t* hd, hdOperate_t ctl)
+{
+  uint32_t offset = hd->channel == 0? 0:(IO_ATA2_DATA - IO_ATA1_DATA);
+  request_t reqIt;
+
+  // sector counts verfiy
+  if (ctl.startSec >= hd->info.totalSectors) return -1;
+  ctl.counts = ctl.startSec + ctl.counts > hd->info.totalSectors ? hd->info.totalSectors - ctl.startSec : ctl.counts;
+
+  ataCmd_t cmd={
+    .ata_channel = hd->channel,
+    .device = ata_creatPortReg(hd->port,ATA_MODE_LBA_MASK,ctl.startSec),
+    .lbaHight = (uint8_t)((ctl.startSec >> 16)&0xFF),
+    .lbaMid = (uint8_t)((ctl.startSec >> 16)&0xFF),
+    .lbaLow = (uint8_t)((ctl.startSec >> 16)&0xFF),
+    .SecCount = ctl.counts
+  };
+
+  switch (ctl.cmd)
+  {
+  case HD_CMD_READ:
+    cmd.cmd = ATA_CMD_READ;
+    break;
+  case HD_CMD_WRITE:
+    cmd.cmd = ATA_CMD_WRITE;
+    break;
+  default:
+    return -1;
+  }
+
+  if(IO_waitUntilFor(0, ATA_BUSY_STAT_MASK,IO_ATA1_STATUS + offset, 1000) != ENOERR)
+    return -1;
+  ata_sendCmd(&cmd);
+  if(reqw_it_for(&reqIt,100) != ENOERR)
+    return -1;
+
+  IO_inWordStream(IO_ATA1_DATA + offset, ctl.dest, cmd.SecCount * (ctl.secSize/sizeof(uint16_t)));
+  return cmd.SecCount;
 }
